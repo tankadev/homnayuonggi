@@ -1,0 +1,16 @@
+<div>
+    <ng-container *ngIf="listOrders.length > 0; else noDataOrders">
+        <p *ngFor="let order of listOrders">
+            {{ order | json }}
+        </p>
+    </ng-container>
+    <ng-template #noDataOrders>
+       <div class="create-orders">
+            <i nz-icon nzType="plus" nzTheme="outline"></i>
+            <p>Tạo bình chọn</p>
+       </div>
+    </ng-template>
+</div>
+
+<!-- <button (click)="onSave()">Save</button>
+<button (click)="addNewOrder()">RenewOrder</button> -->
