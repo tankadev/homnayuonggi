@@ -1,31 +1,5 @@
-.create-orders {
-    width: 20vh;
-    height: 20vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    border: 1px solid rgba(236, 236, 236, 1);
-    border-radius: 5px;
-    background-color: rgba(236, 236, 236, 0.2);
-    cursor: pointer;
-
-    i {
-        font-size: 30px;
-        color: rgba(0,0,0,.65);
-    }
-
-    p {
-        margin-top: 0.5rem;
-        font-size: 20px;
-    }
-
-    &:hover {
-        background-color: #1890ff;
-        transition: all 0.5s;
-
-        i, p {
-            color: #ffffff;
-        }
+:host ::ng-deep .order-content {
+    nz-tabset {
+        margin-top: 1rem;
     }
 }

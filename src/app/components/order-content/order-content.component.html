@@ -1,5 +1,5 @@
-<div>
-    <ng-container *ngIf="listOrders.length > 0; else noDataOrders">
+<div class="order-content">
+    <!-- <ng-container *ngIf="listOrders.length > 0; else noDataOrders">
         <p *ngFor="let order of listOrders">
             {{ order | json }}
         </p>
@@ -9,7 +9,30 @@
             <i nz-icon nzType="plus" nzTheme="outline"></i>
             <p>Tạo bình chọn</p>
        </div>
-    </ng-template>
+    </ng-template> -->
+    <nz-row [nzGutter]="16">
+        <nz-col [nzSpan]="12">
+          <nz-statistic [nzValueTemplate]="linkOrder" [nzTitle]="'Link quán'"></nz-statistic>
+          <ng-template #linkOrder>
+            <ngx-link-preview [apiRoute]="myApiRoute" [links]="links" [getApiEndpoint$]="apiCallbackFn" (previewClicked)="previewClick($event)"></ngx-link-preview>
+          </ng-template>
+        </nz-col>
+        <nz-col [nzSpan]="12">
+            <nz-countdown [nzValue]="deadline" [nzTitle]="'Thời gian bình chọn còn lại'"></nz-countdown>
+        </nz-col>
+    </nz-row>
+    <nz-tabset nzType="card">
+        <nz-tab nzTitle="Bình chọn">
+            <div nz-row>
+                <div nz-col nzSpan="8">col-8</div>
+                <div nz-col nzSpan="8">col-8</div>
+                <div nz-col nzSpan="8">col-8</div>
+            </div>
+        </nz-tab>
+        <nz-tab nzTitle="Chia tiền">
+          Content of Tab Pane 2
+        </nz-tab>
+      </nz-tabset>
 </div>
 
 <!-- <button (click)="onSave()">Save</button>

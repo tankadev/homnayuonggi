@@ -1,9 +1,5 @@
-.logo {
-    width: 120px;
-    height: 31px;
-    background: rgba(255, 255, 255, 0.2);
-    margin: 16px 24px 16px 0;
-    float: left;
+nz-layout {
+	background-color: #ffffff;
 }
 
 nz-content {
@@ -13,12 +9,19 @@ nz-content {
 
 nz-footer {
     text-align: center;
+    font-size: 1rem;
+    background: #fff;
+    border-top: 1px solid #ececec;
+	span {
+    	color: #FFC529;
+		font-weight: bold;
+	}
 }
 
 .inner-content {
     background: #fff;
     padding: 24px;
-    height: calc(98vh - 70px - 64px);
+    height: calc(97vh - 70px - 64px);
     overflow-y: auto;
 }
 

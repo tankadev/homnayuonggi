@@ -1,0 +1,50 @@
+nz-header {
+    width: 80%;
+    margin: 0 auto;
+    border-bottom-left-radius: 25px;
+    border-bottom-right-radius: 25px;
+    background-color: #23212A;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    .logo {
+        font-weight: bold;
+        font-size: 25px;
+        font-family: 'Dosis';
+        color: #ffffff;
+    }
+
+    .nick-name-box {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+        transition: all 0.5s;
+
+        .avatar {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #FFC529;
+
+            span {
+                font-size: 0.9rem;
+                color: #ffffff;
+            }
+        }
+
+        .text {
+            font-size: 1rem;
+            margin-left: 0.5rem;
+            color: #ffffff;
+        }
+
+        &:hover {
+            opacity: 0.8;
+        }
+    }
+}

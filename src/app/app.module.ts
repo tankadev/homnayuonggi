@@ -9,19 +9,22 @@ import en from '@angular/common/locales/en';
 
 import { NZ_I18N } from 'ng-zorro-antd/i18n';
 import { en_US } from 'ng-zorro-antd/i18n';
+import { NgxLinkPreviewModule } from 'ngx-link-preview';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { environment } from '../environments/environment';
 import { ZoroAntdModule } from './zoro.module';
 import { OrderContentComponent } from './components/order-content/order-content.component';
+import { HeaderComponent } from './components/header/header.component';
 
 registerLocaleData(en);
 
 @NgModule({
   declarations: [
     AppComponent,
-    OrderContentComponent
+    OrderContentComponent,
+    HeaderComponent
   ],
   imports: [
     BrowserModule,
@@ -31,6 +34,8 @@ registerLocaleData(en);
     FormsModule,
     HttpClientModule,
     BrowserAnimationsModule,
+    NgxLinkPreviewModule,
+    HttpClientModule
   ],
   providers: [{ provide: NZ_I18N, useValue: en_US }],
   bootstrap: [AppComponent]
