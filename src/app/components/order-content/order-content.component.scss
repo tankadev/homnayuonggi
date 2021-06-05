@@ -2,4 +2,109 @@
     nz-tabset {
         margin-top: 1rem;
     }
+
+    .link-order {
+        width: 40vw;
+        white-space: nowrap; 
+        overflow: hidden;
+        text-overflow: ellipsis; /* text-overflow: clip; */
+        font-size: 1rem;
+        color: #F93C64;
+    }
+
+
+    .order-item-row {
+        padding-bottom: 1rem;
+
+        .order-item-col {
+            margin-bottom: 1.5rem;
+    
+            .order-item {
+                padding: 1rem;
+                width: 90%;
+                height: 100%;
+                margin: 0 auto;
+                border-radius: 5px;
+                border: 1px solid #ececec;
+                box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.1);
+                cursor: pointer;
+                transition: all 0.3s ease 0s;
+        
+                &__main-info {
+                    display: flex;
+                    flex-direction: column;
+                    align-items: flex-start;
+                    justify-content: center;
+        
+                    .item-name {
+                        font-weight: bold;
+                        font-size: 15px;
+                        font-family: 'Dosis';
+                        color: #0F0F0E;
+                    }
+
+                    .item-price {
+                        color: rgb(86,213,161);
+                        background-color: #E6F8F1;
+                        font-size: 11px;
+                        font-weight: bold;
+                        padding: 0.1rem 0.5rem;
+                        border-radius: 10px;
+                    }
+                }
+
+                &:hover {
+                    box-shadow: 2px 5px 10px rgba(249, 60, 100, 0.2);
+                    // transform: translateY(-2px);
+                    border-color: rgba(249, 60, 100, 0.2);
+                }
+
+                .line-break {
+                    width: 100%;
+                    margin: 1rem auto;
+                    height: 1px;
+                    background: #ececec;
+                }
+
+                .users-order {
+                    display: flex;
+                    align-items: center;
+                    justify-content: flex-start;
+
+                    span {
+                        font-size: 13px;
+                        color: #AAB1B6;
+                        margin-right: 0.5rem;
+                    }
+                }
+
+                .check-order {display: none;}
+            }
+
+            .order-item.selected-order-item {
+                border-width: 2px;
+                border-color: #F93C64;
+                position: relative;
+                overflow: hidden;
+
+                .check-order {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    background-color: #F93C64;
+                    color: #ffffff;
+                    position: absolute;
+                    right: 0;
+                    top: 0;
+                    width: 40px;
+                    height: 30px;
+                    border-bottom-left-radius: 15px;
+                }
+            }
+
+            .add-order-item {
+                
+            }
+        }
+    }
 }

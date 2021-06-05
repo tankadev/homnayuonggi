@@ -1,32 +1,56 @@
 <div class="order-content">
-    <!-- <ng-container *ngIf="listOrders.length > 0; else noDataOrders">
-        <p *ngFor="let order of listOrders">
-            {{ order | json }}
-        </p>
-    </ng-container>
-    <ng-template #noDataOrders>
-       <div class="create-orders">
-            <i nz-icon nzType="plus" nzTheme="outline"></i>
-            <p>Tạo bình chọn</p>
-       </div>
-    </ng-template> -->
     <nz-row [nzGutter]="16">
         <nz-col [nzSpan]="12">
           <nz-statistic [nzValueTemplate]="linkOrder" [nzTitle]="'Link quán'"></nz-statistic>
           <ng-template #linkOrder>
-            <ngx-link-preview [apiRoute]="myApiRoute" [links]="links" [getApiEndpoint$]="apiCallbackFn" (previewClicked)="previewClick($event)"></ngx-link-preview>
+              <div class="link-order">
+                <a [href]="myApiRoute" target="_blank">{{myApiRoute}}</a>
+              </div>
           </ng-template>
         </nz-col>
-        <nz-col [nzSpan]="12">
-            <nz-countdown [nzValue]="deadline" [nzTitle]="'Thời gian bình chọn còn lại'"></nz-countdown>
+        <nz-col [nzSpan]="8">
+            <nz-countdown [nzValue]="deadline" [nzTitle]="'Thời gian bình chọn còn lại'" (nzCountdownFinish)=orderFinish($event)></nz-countdown>
+        </nz-col>
+        <nz-col [nzSpan]="4">
+            
         </nz-col>
     </nz-row>
     <nz-tabset nzType="card">
         <nz-tab nzTitle="Bình chọn">
-            <div nz-row>
-                <div nz-col nzSpan="8">col-8</div>
-                <div nz-col nzSpan="8">col-8</div>
-                <div nz-col nzSpan="8">col-8</div>
+            <div nz-row class="order-item-row">
+                <div *ngFor="let a of [].constructor(10); let i=index;" nz-col nzMd="8" nzLg="6" class="order-item-col">
+                  <div class="order-item" [class.selected-order-item]="i===0">
+                    <div class="check-order">
+                      <i nz-icon nzType="check" nzTheme="outline"></i>
+                    </div>
+                    <div class="order-item__main-info">
+                      <span class="item-name">Nước mía Mỹ Tho (MT68)</span>
+                      <span class="item-price">20.000 vnđ</span>
+                    </div>
+                    <div class="line-break"></div>
+                    <div class="users-order" nz-popover nzPopoverTitle="Danh sách người chọn món này" [nzPopoverContent]="contentUsersOrderTemplate">
+                      <span>Người đặt: </span>
+                      <nz-avatar-group>
+                        <nz-avatar style="background-color: rgb(249, 60, 100)" nzText="HN" [nzSize]="'small'"></nz-avatar>
+                        <nz-avatar style="background-color: rgb(249, 60, 100)" nzText="SD" [nzSize]="'small'"></nz-avatar>
+                        <nz-avatar style="background-color: rgb(249, 60, 100)" nzText="TA" [nzSize]="'small'"></nz-avatar>
+                        <nz-avatar style="background-color: rgb(243, 202, 211); color: rgb(236, 41, 83)" nzText="+2" [nzSize]="'small'"></nz-avatar>
+                      </nz-avatar-group>
+                    </div>
+                    <ng-template #contentUsersOrderTemplate>
+                      <ul>
+                        <li>Hoai Van</li>
+                        <li>Khanh DUong</li>
+                      </ul>
+                    </ng-template>
+                  </div>
+                </div>
+                <!-- add item -->
+                <!-- <div nz-col nzMd="8" nzLg="6" class="order-item-col">
+                  <div class="add-order-item">
+                    Add
+                  </div>
+                </div> -->
             </div>
         </nz-tab>
         <nz-tab nzTitle="Chia tiền">

@@ -1,5 +1,5 @@
 nz-layout {
-	background-color: #ffffff;
+	background-color: #F5F9FC;
 }
 
 nz-content {
@@ -11,9 +11,11 @@ nz-footer {
     text-align: center;
     font-size: 1rem;
     background: #fff;
-    border-top: 1px solid #ececec;
+    /* border-top: 1px solid #ececec; */
+	margin: 0 50px;
+
 	span {
-    	color: #FFC529;
+    	color: #F93C64;
 		font-weight: bold;
 	}
 }
@@ -23,6 +25,8 @@ nz-footer {
     padding: 24px;
     height: calc(97vh - 70px - 64px);
     overflow-y: auto;
+	border-top-left-radius: 20px;
+	border-top-right-radius: 20px;
 }
 
 .inner-content::-webkit-scrollbar-track {
