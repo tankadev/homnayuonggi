@@ -28,8 +28,12 @@
                       <span class="item-price">20.000 vnđ</span>
                     </div>
                     <div class="line-break"></div>
-                    <div class="users-order" nz-popover nzPopoverTitle="Danh sách người chọn món này" [nzPopoverContent]="contentUsersOrderTemplate">
-                      <span>Người đặt: </span>
+                    <div class="order-note" nzTooltipTitle="Cho thiệt là nhiều đá, tràng ra ngoài luôn cũng được nghe" nzTooltipPlacement="topLeft" nz-tooltip>
+                      Ghi chú: Cho thiệt là nhiều đá, tràng ra ngoài luôn cũng được nghe
+                    </div>
+                    <div class="line-break"></div>
+                    <div class="users-order" nz-popover nzPopoverTitle="Danh sách" [nzPopoverContent]="contentUsersOrderTemplate">
+                      <span>1 người đặt: </span>
                       <nz-avatar-group>
                         <nz-avatar style="background-color: rgb(249, 60, 100)" nzText="HN" [nzSize]="'small'"></nz-avatar>
                         <nz-avatar style="background-color: rgb(249, 60, 100)" nzText="SD" [nzSize]="'small'"></nz-avatar>
@@ -40,17 +44,48 @@
                     <ng-template #contentUsersOrderTemplate>
                       <ul>
                         <li>Hoai Van</li>
-                        <li>Khanh DUong</li>
+                        <li>Khanh Duong</li>
                       </ul>
                     </ng-template>
                   </div>
                 </div>
                 <!-- add item -->
-                <!-- <div nz-col nzMd="8" nzLg="6" class="order-item-col">
+                <div nz-col nzMd="8" nzLg="6" class="order-item-col">
                   <div class="add-order-item">
-                    Add
+                    <i nz-icon nzType="plus" nzTheme="outline"></i>
+                    <span>THÊM MÓN</span>
                   </div>
-                </div> -->
+                </div>
+                <div nz-col nzMd="8" nzLg="6" class="order-item-col">
+                  <div class="add-order-item-form">
+                    <div class="add-order-action-submit">
+                      <i nz-icon nzType="check" nzTheme="outline"></i>
+                    </div>
+                    <div class="add-order-action-cancel">
+                      <i nz-icon nzType="close" nzTheme="outline"></i>
+                    </div>
+                    <form nz-form [formGroup]="addOrderItemForm" (ngSubmit)="submitAddOrderItemForm()">
+                      <nz-form-item>
+                        <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="itemName">Tên</nz-form-label>
+                        <nz-form-control [nzSm]="14" [nzXs]="24">
+                          <input nz-input formControlName="itemName" id="itemName" />
+                        </nz-form-control>
+                      </nz-form-item>
+                      <nz-form-item>
+                        <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="itemPrice">Giá</nz-form-label>
+                        <nz-form-control [nzSm]="14" [nzXs]="24">
+                          <nz-slider [nzMin]="1000" [nzStep]="200" [nzMax]="50000" [nzTipFormatter]="formatter" formControlName="itemPrice" id="itemPrice"></nz-slider>
+                        </nz-form-control>
+                      </nz-form-item>
+                      <nz-form-item>
+                        <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="itemNote">Ghi chú</nz-form-label>
+                        <nz-form-control [nzSm]="14" [nzXs]="24">
+                          <input nz-input formControlName="itemNote" id="itemNote" />
+                        </nz-form-control>
+                      </nz-form-item>
+                    </form>
+                  </div>
+                </div>
             </div>
         </nz-tab>
         <nz-tab nzTitle="Chia tiền">

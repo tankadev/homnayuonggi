@@ -1,0 +1,18 @@
+<form nz-form [formGroup]="loginForm" (ngSubmit)="submitLoginForm()" class="login-form">
+    <p class="note">Chú ý: Nhập <b>Tài khoản</b> và <b>Tên hiển thị</b> để đăng nhập kể cả khi chưa có tài khoản!</p>
+    <nz-form-item>
+      <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="username">Tài khoản</nz-form-label>
+      <nz-form-control [nzSm]="14" [nzXs]="24" nzErrorTip="Nhập vào tài khoản. Ví dụ: tankadev">
+        <input nz-input formControlName="username" id="username" autocomplete="off"/>
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+      <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="displayName">Tên hiển thị</nz-form-label>
+      <nz-form-control [nzSm]="14" [nzXs]="24" nzErrorTip="Nhập vào tên hiển thị. Ví dụ: Dâu Kun">
+        <input nz-input formControlName="displayName" id="displayName" autocomplete="off"/>
+      </nz-form-control>
+    </nz-form-item>
+    <div class="footer-btn">
+        <button nz-button nzType="primary" [nzSize]="'default'" nzShape="round">Đăng nhập</button>
+    </div>
+</form>

@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { AngularFireModule } from '@angular/fire';
 import { BrowserModule } from '@angular/platform-browser';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { registerLocaleData } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -17,6 +17,8 @@ import { environment } from '../environments/environment';
 import { ZoroAntdModule } from './zoro.module';
 import { OrderContentComponent } from './components/order-content/order-content.component';
 import { HeaderComponent } from './components/header/header.component';
+import { LoginDialogComponent } from './components/dialogs/login-dialog/login-dialog.component';
+import { UserInfoDialogComponent } from './components/dialogs/user-info-dialog/user-info-dialog.component';
 
 registerLocaleData(en);
 
@@ -24,7 +26,9 @@ registerLocaleData(en);
   declarations: [
     AppComponent,
     OrderContentComponent,
-    HeaderComponent
+    HeaderComponent,
+    LoginDialogComponent,
+    UserInfoDialogComponent
   ],
   imports: [
     BrowserModule,
@@ -32,12 +36,14 @@ registerLocaleData(en);
     ZoroAntdModule,
     AngularFireModule.initializeApp(environment.firebase),
     FormsModule,
+    ReactiveFormsModule,
     HttpClientModule,
     BrowserAnimationsModule,
     NgxLinkPreviewModule,
     HttpClientModule
   ],
-  providers: [{ provide: NZ_I18N, useValue: en_US }],
+  providers: [
+    { provide: NZ_I18N, useValue: en_US }],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

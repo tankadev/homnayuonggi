@@ -61,7 +61,7 @@
 
                 .line-break {
                     width: 100%;
-                    margin: 1rem auto;
+                    margin: 0.4rem auto;
                     height: 1px;
                     background: #ececec;
                 }
@@ -76,6 +76,14 @@
                         color: #AAB1B6;
                         margin-right: 0.5rem;
                     }
+                }
+
+                .order-note {
+                    width: 100%;
+                    white-space: nowrap; 
+                    overflow: hidden;
+                    text-overflow: ellipsis; /* text-overflow: clip; */
+                    font-size: 0.8rem;
                 }
 
                 .check-order {display: none;}
@@ -103,7 +111,97 @@
             }
 
             .add-order-item {
-                
+                padding: 1rem;
+                width: 90%;
+                height: 100%;
+                margin: 0 auto;
+                border-radius: 5px;
+                border: 1px solid #ececec;
+                box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.1);
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                transition: all 0.3s ease 0s;
+
+                i {
+                    font-size: 1.5rem;
+                }
+
+                span {
+                    font-weight: bold;
+                    font-family: 'Dosis';
+                    font-size: 1.2rem;
+                }
+
+                &:hover {
+                    background-color: #F93C64;
+                    color: #ffffff;
+                }
+            }
+
+            .add-order-item-form {
+                padding: 1rem;
+                width: 90%;
+                height: 100%;
+                margin: 0 auto;
+                border-radius: 5px;
+                border: 1px solid #ececec;
+                box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.1);
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                position: relative;
+                overflow: hidden;
+
+                .add-order-action-submit {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    color: rgb(86,213,161);
+                    background-color: #E6F8F1;
+                    position: absolute;
+                    right: 0;
+                    top: 0;
+                    width: 40px;
+                    height: 30px;
+                    border-bottom: 1px solid #fff;
+                    transition: all 0.3s ease 0s;
+
+                    &:hover {
+                        opacity: 0.8;
+                    } 
+                }
+
+                .add-order-action-cancel {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    background-color: #F7E0E5;
+                    color: #C73050;
+                    position: absolute;
+                    right: 0;
+                    top: 30px;
+                    width: 40px;
+                    height: 30px;
+                    border-bottom-left-radius: 15px;
+                    transition: all 0.3s ease 0s;
+
+                    &:hover {
+                        opacity: 0.8;
+                    } 
+                }
+
+                form {
+                    width: 100%;
+                }
+
+                nz-form-item {
+                    margin-bottom: 0;
+                }
             }
         }
     }

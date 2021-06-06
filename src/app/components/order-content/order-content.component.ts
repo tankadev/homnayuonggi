@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 import { map } from 'rxjs/operators';
 
@@ -16,11 +16,14 @@ export class OrderContentComponent implements OnInit {
   listOrders: OrderRO[] = [];
   deadline = Date.now() + 1000 * 60 * 60 * 0.5;
   myApiRoute = 'https://www.now.vn/can-tho/nuoc-mia-my-tho-mt68';
-
+  addOrderItemForm: FormGroup;
+  
   constructor(
     private orderService: OrderService,
-    private http: HttpClient
-  ) { }
+    private fb: FormBuilder
+  ) {
+    this.initAddOrderItemForm();
+  }
 
   ngOnInit(): void {
     this.orderService.getAll().snapshotChanges().pipe(
@@ -53,5 +56,21 @@ export class OrderContentComponent implements OnInit {
 
   orderFinish(event) {
     console.log(event);
+  }
+
+  initAddOrderItemForm() {
+    this.addOrderItemForm = this.fb.group({
+      itemName: [null, [Validators.required]],
+      itemNote: [null],
+      itemPrice: [null, [Validators.required]]
+    });
+  }
+
+  submitAddOrderItemForm() {
+
+  }
+
+  formatter(value: number): string {
+    return `${value} vnđ`;
   }
 }

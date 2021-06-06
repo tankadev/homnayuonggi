@@ -41,6 +41,19 @@
     font-style: normal;
 }
 
+.ant-modal-header {
+    border-radius: 20px 20px 0 0 !important;
+    background: #F7E0E5 !important;
+
+    .ant-modal-title {
+        color: #C73050;
+    }
+}
+
+.ant-modal-content {
+    border-radius: 20px !important;
+}
+
 // body {
 // 	// font-family: "Dosis", -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
 // 	// 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',

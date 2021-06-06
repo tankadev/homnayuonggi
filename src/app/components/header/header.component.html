@@ -1,9 +1,14 @@
 <nz-header>
     <div class="logo">Today Uống Gì?</div>
     <div class="nick-name-box">
-        <div class="avatar">
-            <span>VN</span>
-        </div>
-        <span class="text">Hoài Văn</span>
+        <ng-container *ngIf="!userInfo; else userInfoContent">
+            <span class="text" (click)="openLoginDialog()">Đăng nhập</span>
+        </ng-container>
+        <ng-template #userInfoContent>
+            <div class="avatar">
+                <span>VN</span>
+            </div>
+            <span class="text">Hoài Văn</span>
+        </ng-template>
     </div>
 </nz-header>

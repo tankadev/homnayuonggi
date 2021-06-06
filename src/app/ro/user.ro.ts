@@ -1,4 +1,5 @@
 export class UserRO {
     key: string;
-    nickName: string;
+    username: string;
+    displayName: string;
 }
