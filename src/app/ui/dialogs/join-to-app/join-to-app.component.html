@@ -1,0 +1,60 @@
+<div class="login-form">
+  <div class="login-form__header">
+    <h1>Phương thức đăng nhập</h1>
+    <button class="btn-close-modal" (click)="closeModal()">Đóng</button>
+  </div>
+  <div class="login-note">
+    <div class="login-note__icon">
+      <i nz-icon nzType="info" nzTheme="outline"></i>
+    </div>
+    <div class="login-note__content">
+      Bạn chỉ cần nhập vào <b>Tài khoản</b> là có thể đăng nhập!
+    </div>
+  </div>
+  <form nz-form [formGroup]="joinAppForm" (ngSubmit)="submitLoginForm()">
+    <div class="form-content">
+      <nz-form-item>
+        <nz-form-control class="first-control" [nzXs]="24" [nzErrorTip]="errorUsernameTpl">
+          <input nz-input formControlName="username" id="username" autocomplete="off" placeholder="Tài khoản. Vd: vitkute" maxlength="15" />
+          <ng-template #errorUsernameTpl let-control>
+            <ng-container *ngIf="control.hasError('required')">
+              Vui lòng nhập tên tài khoản!
+            </ng-container>
+            <ng-container *ngIf="control.hasError('pattern')">
+              Tên tài khoản là chữ thường, viết liền từ a đến z
+            </ng-container>
+            <ng-container *ngIf="control.hasError('checkUsernameRegister')">
+              Tài khoản này đã tồn tại!
+            </ng-container>
+          </ng-template>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item *ngIf="isRegister">
+        <nz-form-control [nzXs]="24" nzErrorTip="Nhập vào tên hiển thị. Ví dụ: Dâu Kun">
+          <input nz-input formControlName="displayName" id="displayName" autocomplete="off" placeholder="Tên hiển thị. Vd: Thảo Nè" maxlength="30"/>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+    <div class="method-login">
+      <div class="method-login__item">
+        <i *ngIf="loginMethod === 'REGISTER'" nz-icon nzType="check-circle" nzTheme="fill"></i>
+        <div class="method-login__content" (click)="onChangeLoginType('REGISTER')">
+          <p [ngStyle]="{'color': loginMethod === 'REGISTER' ? '#0053FF' : '#2D3867'}">Đăng ký</p>
+          <p class="method-login__content__note">Bạn chưa có tài khoản ?</p>
+        </div>
+      </div>
+      <div class="method-login__item" (click)="onChangeLoginType('LOGIN')">
+        <i *ngIf="loginMethod === 'LOGIN'" nz-icon nzType="check-circle" nzTheme="fill"></i>
+        <div class="method-login__content">
+          <p [ngStyle]="{'color': loginMethod === 'LOGIN' ? '#0053FF' : '#2D3867'}">Đăng nhập</p>
+          <p class="method-login__content__note">Bạn đã có tài khoản rồi ?</p>
+        </div>
+      </div>
+    </div>
+    <button type="submit" class="btn-footer">
+      {{ (loginMethod === 'REGISTER' && !isRegister) ? 'Tiếp tục' : 'Xác nhận' }}
+      &nbsp;&nbsp;
+      <i *ngIf="(loginMethod === 'REGISTER' && !isRegister)" nz-icon nzType="arrow-right" nzTheme="outline"></i>
+    </button>
+  </form>
+</div>

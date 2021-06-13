@@ -1,0 +1,14 @@
+<nz-header>
+    <div class="logo">Today Uống Gì?</div>
+    <div class="nick-name-box" [ngStyle]="userInfo && {'padding': '0 1rem 0 0'}">
+        <ng-container *ngIf="!userInfo; else userInfoContent">
+            <p class="text" (click)="openLoginDialog()">Đăng nhập</p>
+        </ng-container>
+        <ng-template #userInfoContent>
+            <div class="avatar">
+                <span>{{ userInfo.displayName | formatNameTo2Char }}</span>
+            </div>
+            <span class="name">{{ userInfo.displayName }}</span>
+        </ng-template>
+    </div>
+</nz-header>

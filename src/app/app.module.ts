@@ -9,16 +9,17 @@ import en from '@angular/common/locales/en';
 
 import { NZ_I18N } from 'ng-zorro-antd/i18n';
 import { en_US } from 'ng-zorro-antd/i18n';
-import { NgxLinkPreviewModule } from 'ngx-link-preview';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { environment } from '../environments/environment';
 import { ZoroAntdModule } from './zoro.module';
 import { OrderContentComponent } from './components/order-content/order-content.component';
-import { HeaderComponent } from './components/header/header.component';
 import { LoginDialogComponent } from './components/dialogs/login-dialog/login-dialog.component';
 import { UserInfoDialogComponent } from './components/dialogs/user-info-dialog/user-info-dialog.component';
+import { HeaderComponent } from './ui/header/header.component';
+import { JoinToAppComponent } from './ui/dialogs/join-to-app/join-to-app.component';
+import { ShareModule } from './share/share.module';
 
 registerLocaleData(en);
 
@@ -28,7 +29,8 @@ registerLocaleData(en);
     OrderContentComponent,
     HeaderComponent,
     LoginDialogComponent,
-    UserInfoDialogComponent
+    UserInfoDialogComponent,
+    JoinToAppComponent
   ],
   imports: [
     BrowserModule,
@@ -39,8 +41,8 @@ registerLocaleData(en);
     ReactiveFormsModule,
     HttpClientModule,
     BrowserAnimationsModule,
-    NgxLinkPreviewModule,
-    HttpClientModule
+    HttpClientModule,
+    ShareModule
   ],
   providers: [
     { provide: NZ_I18N, useValue: en_US }],
