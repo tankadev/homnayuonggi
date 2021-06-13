@@ -6,9 +6,9 @@ import { Subscription } from 'rxjs';
 import { MessagingService } from './services/messaging.service';
 import { AppService } from './services/app.service';
 import { UserRO } from './ro/user.ro';
-import { LocalStorage } from './const/local-storage';
 import { DeliveryService } from './services/delivery.service';
 import { map } from 'rxjs/operators';
+import { LocalStorageService } from './services/localstorage.service';
 
 @Component({
   selector: 'app-root',
@@ -20,6 +20,7 @@ export class AppComponent implements OnInit, OnDestroy {
   isDeliveryStatus: boolean = false;
   isLoginIn: boolean = false;
   deliveryInfo: DeliveryRO = new DeliveryRO();
+  userInfo: UserRO = new UserRO();
 
   subDelivery$: Subscription;
   subLogin$: Subscription;
@@ -27,18 +28,19 @@ export class AppComponent implements OnInit, OnDestroy {
   constructor(
     private messagingService: MessagingService,
     private appService: AppService,
-    private deliveryService: DeliveryService
+    private deliveryService: DeliveryService,
+    private storage: LocalStorageService
   ) {
     this.subDelivery$ = this.appService.getDeliveryStatus().subscribe(status => {
-      console.log(status);
       this.isDeliveryStatus = status;
     });
 
     this.subLogin$ = this.appService.getLoginStatus().subscribe(status => {
       this.isLoginIn = status;
+      this.userInfo = this.storage.getUserInfo();
     });
-    const userInfo: UserRO = JSON.parse(localStorage.getItem(LocalStorage.USER_INFO));
-    this.isLoginIn = userInfo ? true : false;
+    this.userInfo = this.storage.getUserInfo();
+    this.isLoginIn = this.userInfo ? true : false;
   }
 
   ngOnInit(): void {
@@ -64,7 +66,7 @@ export class AppComponent implements OnInit, OnDestroy {
         ({ key: changes.payload.key, ...changes.payload.val() })
       )
     ).subscribe(data => {
-      console.log(data);
+      this.deliveryInfo = data;
     });
   }
 }

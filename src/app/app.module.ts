@@ -24,6 +24,7 @@ import { CreateDeliveryComponent } from './ui/create-delivery/create-delivery.co
 import { CreateDeliveryFormComponent } from './ui/create-delivery/create-delivery-form/create-delivery-form.component';
 import { NeedLoginComponent } from './ui/need-login/need-login.component';
 import { CatAnimateComponent } from './ui/cat-animate/cat-animate.component';
+import { PlaceOrderComponent } from './ui/place-order/place-order.component';
 
 registerLocaleData(en);
 
@@ -38,7 +39,8 @@ registerLocaleData(en);
     JoinToAppComponent,
     NeedLoginComponent,
     CreateDeliveryComponent,
-    CreateDeliveryFormComponent
+    CreateDeliveryFormComponent,
+    PlaceOrderComponent
   ],
   imports: [
     BrowserModule,

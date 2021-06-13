@@ -22,7 +22,13 @@
       justify-content: center;
 
       .other-user-create {
-        //
+        text-align: center;
+        font-family: 'Dosis';
+        font-size: 1.1rem;
+
+        span.current-user {
+          font-weight: bold;
+        }
       }
 
       button {

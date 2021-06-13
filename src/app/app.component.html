@@ -2,10 +2,10 @@
   <header></header>
   <ng-container *ngIf="isLoginIn; else showNeedLogin">
     <ng-container *ngIf="deliveryInfo && deliveryInfo.isCreate; else showCreateDelivery">
-
+      <place-order></place-order>
     </ng-container>
     <ng-template #showCreateDelivery>
-      <create-delivery [deliveryInfo]="deliveryInfo"></create-delivery>
+      <create-delivery [deliveryInfo]="deliveryInfo" [user]="userInfo"></create-delivery>
     </ng-template>
   </ng-container>
   <ng-template #showNeedLogin>

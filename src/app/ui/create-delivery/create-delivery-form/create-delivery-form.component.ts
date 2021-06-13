@@ -7,6 +7,9 @@ import { FormHelper } from 'src/app/helper/form.help';
 import { LocalStorage } from 'src/app/const/local-storage';
 import { UserRO } from 'src/app/ro/user.ro';
 import { DeliveryService } from './../../../services/delivery.service';
+import { DeliveryDetailNowAPI } from 'src/app/ro/delivery-detail-now-api.ro';
+import { DeliveryDTO } from 'src/app/dto/delivery.dto';
+import { LocalStorageService } from './../../../services/localstorage.service';
 
 @Component({
   selector: 'create-delivery-form',
@@ -24,7 +27,8 @@ export class CreateDeliveryFormComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private notification: NzNotificationService,
-    private deliveryService: DeliveryService
+    private deliveryService: DeliveryService,
+    private storage: LocalStorageService
   ) { }
 
   ngOnInit(): void {
@@ -37,13 +41,27 @@ export class CreateDeliveryFormComponent implements OnInit {
 
   public submitDeliveryForm = () => {
     if (this.createDeliveryForm.valid) {
-      console.log(this.createDeliveryForm.value);
       const { urlShop, minute, assignUser } = this.createDeliveryForm.value;
-      const getOnlyShopUrl = urlShop.replace('https', '').replace('http', '').replace('www.', '').replace('now.vn/', '');
+      const getOnlyShopUrl = urlShop.replace('https', '').replace('http', '').replace('://', '').replace('www.', '').replace('now.vn/', '');
       this.isShowSpinner = true;
       this.deliveryService.getDetailDeliveryFromNowApi(getOnlyShopUrl).subscribe(
-        (res) => {
-          console.log(res);
+        (res: DeliveryDetailNowAPI) => {
+          if (res.result === 'success') {
+            const deliveryUpdateDTO = new DeliveryDTO();
+            deliveryUpdateDTO.isEdit = false;
+            deliveryUpdateDTO.isCreate = true;
+            deliveryUpdateDTO.remainingTime = +minute;
+            deliveryUpdateDTO.createDateTime = new Date().toISOString();
+            deliveryUpdateDTO.assignUserId = this.storage.findUserByUserName(assignUser.replace('@', '').trim()).key;
+            deliveryUpdateDTO.delivery = res;
+            this.deliveryService.update(deliveryUpdateDTO);
+          } else {
+            this.notification.create(
+              'warning',
+              'Không lấy được dữ liệu',
+              'Vui lòng kiểm tra link quán của NOW!'
+            );
+          }
           this.isShowSpinner = false;
         }, () => {
           this.isShowSpinner = false;
@@ -54,7 +72,6 @@ export class CreateDeliveryFormComponent implements OnInit {
           );
         }
       );
-      console.log(getOnlyShopUrl);
     } else {
       FormHelper.validateAllFormFields(this.createDeliveryForm);
     }
@@ -64,7 +81,7 @@ export class CreateDeliveryFormComponent implements OnInit {
 
   private initForm = () => {
     this.createDeliveryForm = this.fb.group({
-      urlShop: [null, [Validators.required, Validators.pattern(/^[a-z0-9./-]*$/)]],
+      urlShop: [null, [Validators.required, Validators.pattern(/[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)?/gi)]],
       minute: [null, [Validators.required]],
       assignUser: [null, [Validators.required]]
     });
