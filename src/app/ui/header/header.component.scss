@@ -15,6 +15,11 @@ nz-header {
     color: #0053FF;
   }
 
+  .right-content {
+    display: flex;
+    align-items: center;
+  }
+
   .nick-name-box {
     display: flex;
     justify-content: center;
@@ -66,6 +71,25 @@ nz-header {
 
     &:hover {
       opacity: 0.8;
+    }
+  }
+
+  .btn-logout {
+    width: 35px;
+    height: 35px;
+    background-color: #EBF2FF;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 1rem;
+    border-radius: 50%;
+    border: 1px solid transparent;
+    color: #0053FF;
+    cursor: pointer;
+    transition: all .3s ease-in-out;
+
+    &:hover {
+      border-color: #0053FF;
     }
   }
 }

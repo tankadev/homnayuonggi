@@ -1,14 +1,14 @@
-import { Component, OnInit, ViewContainerRef } from '@angular/core';
+import { Component, Input, OnInit, ViewContainerRef } from '@angular/core';
 
 import { map } from 'rxjs/operators';
 
 import { NzModalService } from 'ng-zorro-antd/modal';
 
-import { LocalStorage } from 'src/app/const/local-storage';
 import { UserRO } from 'src/app/ro/user.ro';
 import { UserService } from 'src/app/services/user.service';
 import { JoinToAppComponent } from '../dialogs/join-to-app/join-to-app.component';
 import { AppService } from 'src/app/services/app.service';
+import { LocalStorageService } from 'src/app/services/localstorage.service';
 
 @Component({
   selector: 'header',
@@ -17,13 +17,14 @@ import { AppService } from 'src/app/services/app.service';
 })
 export class HeaderComponent implements OnInit {
 
-  userInfo: UserRO = JSON.parse(localStorage.getItem(LocalStorage.USER_INFO));
+  @Input() userInfo: UserRO;
 
   constructor(
     private modal: NzModalService,
     private viewContainerRef: ViewContainerRef,
     private userService: UserService,
-    private appService: AppService
+    private appService: AppService,
+    private storage: LocalStorageService
   ) { }
 
   ngOnInit(): void {
@@ -42,15 +43,18 @@ export class HeaderComponent implements OnInit {
     });
     modal.afterClose.subscribe(result => {
       if (result) {
-        const usersList: UserRO[] = JSON.parse(localStorage.getItem(LocalStorage.USER_LIST));
-        const findUser = usersList.find(user => user.username === result.username);
+        const findUser = this.storage.findUserByUserName(result.username);
         if (findUser) {
           this.userInfo = findUser;
-          localStorage.setItem(LocalStorage.USER_INFO, JSON.stringify(findUser));
+          this.storage.setUser(findUser);
           this.appService.loginChanged();
         }
       }
     });
+  }
+
+  public logOut = () => {
+    this.storage.removeAll();
   }
 
   private onListenUsersChangesFromFirebaseDB(): void {
@@ -63,12 +67,12 @@ export class HeaderComponent implements OnInit {
     ).subscribe(data => {
       if (data.length > 0) {
         const userList: UserRO[] = data;
-        localStorage.setItem(LocalStorage.USER_LIST, JSON.stringify(userList));
+        this.storage.setUserList(userList);
         if (this.userInfo) {
           const findUserLogin = userList.find(user => user.key === this.userInfo.key && user.username === this.userInfo.username);
           if (findUserLogin) {
             this.userInfo = findUserLogin;
-            localStorage.setItem(LocalStorage.USER_INFO, JSON.stringify(findUserLogin));
+            this.storage.setUser(findUserLogin);
           }
         }
       }

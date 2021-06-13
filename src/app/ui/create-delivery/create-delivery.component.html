@@ -3,7 +3,7 @@
     <div *ngIf="!isCreate; else createForm" class="create-delivery-content__item">
       <button *ngIf="deliveryInfo && (!deliveryInfo.isEdit || deliveryInfo.userCreate === user.key); else otherUserCreate" (click)="onCreateDelivery(true, true)">TẠO <br/>BÌNH <br/>CHỌN</button>
       <ng-template #otherUserCreate>
-        <p class="other-user-create">Đợi một tí nhé!<br/><span class="current-user">{{ user.displayName }}</span> đang tạo bình chọn nè!</p>
+        <p class="other-user-create">Đợi một tí nhé!<br/><span class="current-user">{{ deliveryInfo.userCreate | displayNameUser}}</span> đang tạo bình chọn nè!</p>
       </ng-template>
     </div>
     <ng-template #createForm>

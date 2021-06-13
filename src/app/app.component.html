@@ -1,5 +1,5 @@
 <div class="app-content-wrapper">
-  <header></header>
+  <header [userInfo]="userInfo"></header>
   <ng-container *ngIf="isLoginIn; else showNeedLogin">
     <ng-container *ngIf="deliveryInfo && deliveryInfo.isCreate; else showCreateDelivery">
       <place-order></place-order>
