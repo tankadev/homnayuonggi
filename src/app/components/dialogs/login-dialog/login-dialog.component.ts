@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NzModalRef } from 'ng-zorro-antd/modal';
-import { LocalStogare } from 'src/app/const/local-storage';
+import { LocalStorage } from 'src/app/const/local-storage';
 import { UserRO } from 'src/app/ro/user.ro';
 
 import { UserService } from 'src/app/services/user.service';
@@ -31,7 +31,7 @@ export class LoginDialogComponent implements OnInit {
   public submitLoginForm(): void {
     if (this.loginForm.valid) {
       const { username, displayName } = this.loginForm.value;
-      const usersList: UserRO[] = JSON.parse(localStorage.getItem(LocalStogare.USER_LIST));
+      const usersList: UserRO[] = JSON.parse(localStorage.getItem(LocalStorage.USER_LIST));
       if (usersList) {
         const findUser = usersList.find(user => user.username === username);
         if (findUser) {

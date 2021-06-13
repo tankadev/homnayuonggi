@@ -1,0 +1,18 @@
+<div class="create-delivery-container">
+  <div class="create-delivery-content">
+    <div *ngIf="!isCreate; else createForm" class="create-delivery-content__item">
+      <button *ngIf="deliveryInfo && !deliveryInfo.isEdit; else otherUserCreate" (click)="onCreateDelivery(true)">TẠO <br/>BÌNH <br/>CHỌN</button>
+      <ng-template #otherUserCreate>
+        <p class="other-user-create">Đợi một tí nhé!<br/>Hoài Văn đang tạo bình chọn nè!</p>
+      </ng-template>
+    </div>
+    <ng-template #createForm>
+      <create-delivery-form (onClose)="onCreateDelivery($event)"></create-delivery-form>
+    </ng-template>
+  </div>
+
+  <div class="footer">
+    <p class="version">Phiên bản 0.0.1</p>
+    <p class="copy">© Copyright 2021 TodayUongGi?. All rights reserved</p>
+  </div>
+</div>
