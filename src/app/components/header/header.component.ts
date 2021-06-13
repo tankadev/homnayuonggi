@@ -4,7 +4,7 @@ import { map } from 'rxjs/operators';
 
 import { NzModalService } from 'ng-zorro-antd/modal';
 
-import { LocalStogare } from 'src/app/const/local-storage';
+import { LocalStorage } from 'src/app/const/local-storage';
 import { UserRO } from 'src/app/ro/user.ro';
 import { UserService } from 'src/app/services/user.service';
 import { LoginDialogComponent } from '../dialogs/login-dialog/login-dialog.component';
@@ -16,7 +16,7 @@ import { LoginDialogComponent } from '../dialogs/login-dialog/login-dialog.compo
 })
 export class HeaderComponent implements OnInit {
 
-  userInfo: UserRO = JSON.parse(localStorage.getItem(LocalStogare.USER_INFO));
+  userInfo: UserRO = JSON.parse(localStorage.getItem(LocalStorage.USER_INFO));
 
   constructor(
     private modal: NzModalService,
@@ -36,15 +36,15 @@ export class HeaderComponent implements OnInit {
       nzFooter: null
     });
     modal.afterClose.subscribe(result => {
-      const usersList: UserRO[] = JSON.parse(localStorage.getItem(LocalStogare.USER_LIST));
+      const usersList: UserRO[] = JSON.parse(localStorage.getItem(LocalStorage.USER_LIST));
       const findUser = usersList.find(user => user.username === result.username);
       if (findUser) {
         this.userInfo = findUser;
-        localStorage.setItem(LocalStogare.USER_INFO, JSON.stringify(findUser));
+        localStorage.setItem(LocalStorage.USER_INFO, JSON.stringify(findUser));
       }
     });
   }
-  
+
   private onListenUsersChangesFromFirebaseDB(): void {
     this.userService.getAll().snapshotChanges().pipe(
       map(changes =>
@@ -55,12 +55,12 @@ export class HeaderComponent implements OnInit {
     ).subscribe(data => {
       if (data.length > 0) {
         const userList: UserRO[] = data;
-        localStorage.setItem(LocalStogare.USER_LIST, JSON.stringify(userList));
+        localStorage.setItem(LocalStorage.USER_LIST, JSON.stringify(userList));
         if (this.userInfo) {
           const findUserLogin = userList.find(user => user.key === this.userInfo.key && user.username === this.userInfo.username);
           if (findUserLogin) {
             this.userInfo = findUserLogin;
-            localStorage.setItem(LocalStogare.USER_INFO, JSON.stringify(findUserLogin));
+            localStorage.setItem(LocalStorage.USER_INFO, JSON.stringify(findUserLogin));
           }
         }
       }

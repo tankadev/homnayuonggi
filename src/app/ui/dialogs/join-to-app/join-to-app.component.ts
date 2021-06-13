@@ -4,7 +4,7 @@ import { AbstractControl, FormBuilder, FormControl, FormGroup, Validators } from
 import { NzModalRef } from 'ng-zorro-antd/modal';
 import { NzNotificationService } from 'ng-zorro-antd/notification';
 
-import { LocalStogare } from 'src/app/const/local-storage';
+import { LocalStorage } from 'src/app/const/local-storage';
 import { UserRO } from 'src/app/ro/user.ro';
 import { UserService } from 'src/app/services/user.service';
 import { FormHelper } from './../../../helper/form.help';
@@ -18,7 +18,7 @@ type LoginType = 'REGISTER' | 'LOGIN';
 })
 export class JoinToAppComponent implements OnInit {
 
-  usersList: UserRO[] = JSON.parse(localStorage.getItem(LocalStogare.USER_LIST));
+  usersList: UserRO[] = JSON.parse(localStorage.getItem(LocalStorage.USER_LIST));
 
   joinAppForm: FormGroup;
   loginMethod: LoginType = 'REGISTER';
@@ -38,7 +38,6 @@ export class JoinToAppComponent implements OnInit {
   }
 
   public submitLoginForm(): void {
-    console.log(this.joinAppForm);
     if (this.joinAppForm.valid) {
       if ((this.loginMethod === 'REGISTER' && !this.isRegister)) {
         const displayNameCtrl: AbstractControl = this.fb.control('', [Validators.required]);

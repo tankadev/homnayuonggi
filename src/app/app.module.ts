@@ -20,17 +20,25 @@ import { UserInfoDialogComponent } from './components/dialogs/user-info-dialog/u
 import { HeaderComponent } from './ui/header/header.component';
 import { JoinToAppComponent } from './ui/dialogs/join-to-app/join-to-app.component';
 import { ShareModule } from './share/share.module';
+import { CreateDeliveryComponent } from './ui/create-delivery/create-delivery.component';
+import { CreateDeliveryFormComponent } from './ui/create-delivery/create-delivery-form/create-delivery-form.component';
+import { NeedLoginComponent } from './ui/need-login/need-login.component';
+import { CatAnimateComponent } from './ui/cat-animate/cat-animate.component';
 
 registerLocaleData(en);
 
 @NgModule({
   declarations: [
     AppComponent,
+    CatAnimateComponent,
     OrderContentComponent,
     HeaderComponent,
     LoginDialogComponent,
     UserInfoDialogComponent,
-    JoinToAppComponent
+    JoinToAppComponent,
+    NeedLoginComponent,
+    CreateDeliveryComponent,
+    CreateDeliveryFormComponent
   ],
   imports: [
     BrowserModule,
@@ -45,7 +53,8 @@ registerLocaleData(en);
     ShareModule
   ],
   providers: [
-    { provide: NZ_I18N, useValue: en_US }],
+    { provide: NZ_I18N, useValue: en_US }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

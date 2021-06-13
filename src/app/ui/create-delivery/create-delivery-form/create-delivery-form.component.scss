@@ -1,0 +1,146 @@
+:host ::ng-deep .create-delivery-form {
+  box-shadow: 0px 1px 15px rgba(180, 191, 206, 0.1);
+  background-color: #ffffff;
+  animation-duration: 0.1s;
+  animation-name: showOut;
+  animation-timing-function: ease-in-out;
+  width: 40vw;
+  height: 60vh;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+
+  form {
+    width: 100%;
+
+    input {
+      padding: 0.7rem;
+      background-color: #F9FAFE;
+      border: 1px solid #ECF3FE;
+      transition: all .3s ease-in-out;
+      animation-duration: 0.1s;
+      animation-name: showOut;
+      animation-timing-function: ease-in-out;
+
+      &:hover {
+        border-color: rgba(0, 83, 255, 0.3);
+      }
+    }
+
+    nz-form-control.first-control {
+      margin-bottom: 0.7rem;
+    }
+
+    nz-form-control .ant-input-group-addon {
+      border: 1px solid #ECF3FE;
+      background-color: #F9FAFE;
+      border-radius: 2px;
+      color: #2D3867;
+    }
+
+    nz-form-item.ant-form-item-has-error {
+      input.ng-invalid {
+        border-color: #ff4d4f !important;
+      }
+    }
+
+    .btn-footer {
+      width: 100%;
+      border-radius: 5px;
+      border: 0;
+      background: #0053FF;
+      margin-top: 1.5rem;
+      padding: 0.9rem;
+      color: #ffffff;
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: all .3s ease-in-out;
+    }
+
+    .btn-cancel {
+      width: 100%;
+      border-radius: 5px;
+      border: 0;
+      background: #FF4154;
+      margin-top: 1.5rem;
+      padding: 0.9rem;
+      color: #ffffff;
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: all .3s ease-in-out;
+    }
+  }
+
+  .loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.45);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    .loading-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 15vw;
+      height: 15vw;
+      box-shadow: 0px 1px 15px rgba(180, 191, 206, 0.1);
+      background-color: #ffffff;
+      border-radius: 10px;
+      font-family: 'Dosis';
+
+      span {
+        text-align: center;
+        font-size: 1.1rem;
+      }
+    }
+
+    .spinner{
+      width: 40px;
+      height: 40px;
+      border: 4px solid #0053FF;
+      border-top: 4px solid white;
+      border-radius: 50%;
+      margin-bottom: 1rem;
+      -webkit-transition-property: -webkit-transform;
+      -webkit-transition-duration: 1.2s;
+      -webkit-animation-name: rotate;
+      -webkit-animation-iteration-count: infinite;
+      -webkit-animation-timing-function: linear;
+
+      -moz-transition-property: -moz-transform;
+      -moz-animation-name: rotate;
+      -moz-animation-duration: 1.2s;
+      -moz-animation-iteration-count: infinite;
+      -moz-animation-timing-function: linear;
+
+      transition-property: transform;
+      animation-name: rotate;
+      animation-duration: 1.2s;
+      animation-iteration-count: infinite;
+      animation-timing-function: linear;
+    }
+
+    @-webkit-keyframes rotate {
+        from {-webkit-transform: rotate(0deg);}
+        to {-webkit-transform: rotate(360deg);}
+    }
+
+    @-moz-keyframes rotate {
+        from {-moz-transform: rotate(0deg);}
+        to {-moz-transform: rotate(360deg);}
+    }
+
+    @keyframes rotate {
+        from {transform: rotate(0deg);}
+        to {transform: rotate(360deg);}
+    }
+  }
+}

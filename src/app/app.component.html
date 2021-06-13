@@ -1,4 +1,14 @@
 <div class="app-content-wrapper">
   <header></header>
-</div>
+  <ng-container *ngIf="isLoginIn; else showNeedLogin">
+    <ng-container *ngIf="deliveryInfo && deliveryInfo.isCreate; else showCreateDelivery">
 
+    </ng-container>
+    <ng-template #showCreateDelivery>
+      <create-delivery [deliveryInfo]="deliveryInfo"></create-delivery>
+    </ng-template>
+  </ng-container>
+  <ng-template #showNeedLogin>
+    <need-login></need-login>
+  </ng-template>
+</div>
