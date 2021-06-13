@@ -1,1 +1,25 @@
-<p>shop-info works!</p>
+<div class="shop-info-container">
+  <div class="shop-avatar">
+    <div class="image">
+      <img [src]="deliveryInfo.delivery.photos | displayImage" alt="{{deliveryInfo.delivery.name}}">
+    </div>
+    <p class="name">{{ deliveryInfo.delivery.name }}</p>
+  </div>
+  <div class="rating">
+    <nz-rate [ngModel]="deliveryInfo.delivery.rating" nzAllowHalf nzDisabled></nz-rate>
+  </div>
+  <div class="add-info">
+    <p>
+      <span class="head">Đánh giá: </span>
+      <span class="hightlight">{{ deliveryInfo.delivery.displayTotalReview }}</span> lượt đánh giá từ Now
+    </p>
+
+    <p>
+      <span class="head">Địa chỉ: </span> {{ deliveryInfo.delivery.address }}
+    </p>
+
+    <p>
+      <span class="head">URL: </span> <a [href]="deliveryInfo.delivery.url" target="_blank">{{ deliveryInfo.delivery.url }}</a>
+    </p>
+  </div>
+</div>

@@ -1,6 +1,12 @@
+import { DeliveryDetailNowAPI } from './delivery-detail-now-api.ro';
+
 export class DeliveryRO {
   key: string;
-  isEdit: boolean;
+  isEdit?: boolean;
   isCreate?: boolean;
-  userCreate: string;
+  userCreate?: string;
+  remainingTime?: number;
+  createDateTime?: string;
+  assignUserId?: string;
+  delivery?: DeliveryDetailNowAPI;
 }

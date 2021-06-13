@@ -25,6 +25,10 @@ import { CreateDeliveryFormComponent } from './ui/create-delivery/create-deliver
 import { NeedLoginComponent } from './ui/need-login/need-login.component';
 import { CatAnimateComponent } from './ui/cat-animate/cat-animate.component';
 import { PlaceOrderComponent } from './ui/place-order/place-order.component';
+import { ShopInfoComponent } from './ui/place-order/shop-info/shop-info.component';
+import { HistoryOrderComponent } from './ui/place-order/history-order/history-order.component';
+import { ListDishComponent } from './ui/place-order/list-dish/list-dish.component';
+import { ListOrderComponent } from './ui/place-order/list-order/list-order.component';
 
 registerLocaleData(en);
 
@@ -40,7 +44,11 @@ registerLocaleData(en);
     NeedLoginComponent,
     CreateDeliveryComponent,
     CreateDeliveryFormComponent,
-    PlaceOrderComponent
+    PlaceOrderComponent,
+    ShopInfoComponent,
+    HistoryOrderComponent,
+    ListDishComponent,
+    ListOrderComponent
   ],
   imports: [
     BrowserModule,

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
 @Component({
-  selector: 'app-list-order',
+  selector: 'list-order',
   templateUrl: './list-order.component.html',
   styleUrls: ['./list-order.component.scss']
 })

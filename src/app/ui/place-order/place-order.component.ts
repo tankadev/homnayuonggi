@@ -1,4 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
+
+import { DeliveryRO } from 'src/app/ro/delivery.ro';
 
 @Component({
   selector: 'place-order',
@@ -6,6 +8,8 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./place-order.component.scss']
 })
 export class PlaceOrderComponent implements OnInit {
+
+  @Input() deliveryInfo: DeliveryRO;
 
   constructor() { }
 

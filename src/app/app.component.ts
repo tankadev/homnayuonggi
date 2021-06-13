@@ -40,6 +40,7 @@ export class AppComponent implements OnInit, OnDestroy {
       this.userInfo = this.storage.getUserInfo();
     });
     this.userInfo = this.storage.getUserInfo();
+    this.deliveryInfo = this.storage.getDelivery();
     this.isLoginIn = this.userInfo ? true : false;
   }
 
@@ -66,6 +67,7 @@ export class AppComponent implements OnInit, OnDestroy {
         ({ key: changes.payload.key, ...changes.payload.val() })
       )
     ).subscribe(data => {
+      this.storage.setDelivery(data);
       this.deliveryInfo = data;
     });
   }
