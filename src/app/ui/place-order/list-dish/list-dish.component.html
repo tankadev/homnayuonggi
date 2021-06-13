@@ -1,3 +1,24 @@
 <div class="list-dish-container">
-
+  <div *ngFor="let menu of deliveryInfo.delivery.menus" class="menu">
+    <p class="title">{{ menu.name }}</p>
+    <div nz-row [nzGutter]="10">
+      <div *ngFor="let dish of menu.dishes" nz-col nzSpan="6" class="col-wrapper">
+        <div class="menu-item">
+          <div class="image">
+            <img [src]="dish.photos | displayImage:120" alt="{{ dish.name }}">
+            <button class="btn-add"><i nz-icon nzType="plus" nzTheme="outline"></i></button>
+            <button *ngIf="dish.totalLike > 0" class="btn-vote">{{ dish.totalLike }} vote</button>
+          </div>
+          <div class="content">
+            <p class="dish-name">{{ dish.name }}</p>
+            <div class="price">
+              <p class="active">{{ dish.price.text }}</p>
+              <p *ngIf="dish.discountPrice" class="discount">{{ dish.discountPrice.text }}</p>
+            </div>
+            <p *ngIf="dish.options && dish.options.length > 0" class="additional">Món này có thêm tùy chọn</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>

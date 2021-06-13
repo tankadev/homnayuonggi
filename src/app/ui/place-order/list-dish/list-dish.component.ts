@@ -1,4 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
+
+import { DeliveryRO } from 'src/app/ro/delivery.ro';
 
 @Component({
   selector: 'list-dish',
@@ -6,6 +8,8 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./list-dish.component.scss']
 })
 export class ListDishComponent implements OnInit {
+
+  @Input() deliveryInfo: DeliveryRO;
 
   constructor() { }
 
