@@ -12,8 +12,8 @@
             <span class="name">{{ userInfo.displayName }}</span>
         </ng-template>
       </div>
-      <button *ngIf="userInfo" class="btn-logout">
-        <i nz-icon nzType="logout" nzTheme="outline" (click)="logOut()"></i>
+      <button *ngIf="userInfo" class="btn-logout" (click)="logOut()">
+        <i nz-icon nzType="logout" nzTheme="outline"></i>
       </button>
     </div>
 </nz-header>
