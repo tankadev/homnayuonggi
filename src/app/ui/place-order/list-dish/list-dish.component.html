@@ -1,4 +1,15 @@
 <div class="list-dish-container">
+  <div *ngIf="deliveryInfo.delivery.voucher && deliveryInfo.delivery.voucher.length > 0" class="voucher-box">
+    <p class="title">Mã giảm giá</p>
+    <div class="voucher-wrapper">
+      <div *ngFor="let voucher of deliveryInfo.delivery.voucher" class="voucher-item" [ngStyle]="{'background-color': voucher.isPromotion ? '#EBF2FF' : '#FFE1E1'}">
+        <div class="icon">
+          <img [src]="voucher.icon" alt="{{ voucher.code }}">
+        </div>
+        <p class="content" [innerHtml]="voucher.content"></p>
+      </div>
+    </div>
+  </div>
   <div *ngFor="let menu of deliveryInfo.delivery.menus" class="dish-box">
     <p class="title">{{ menu.name }}</p>
     <div class="dish-wrapper">
@@ -7,9 +18,10 @@
           <img [src]="dish.photos | displayImage:120" alt="{{ dish.name }}">
         </div>
         <div class="other-info">
-          <p class="name">{{ dish.name }}</p>
+          <p class="name" [ngStyle]="dish.description && {'line-height': '0.9vw'}">{{ dish.name }}</p>
+          <p *ngIf="dish.description" class="description">{{ dish.description }}</p>
           <div class="highlight-info">
-            <p *ngIf="dish.totalLike > 0" class="vote">{{ dish.totalLike }} vote</p>
+            <p *ngIf="dish.totalLike > 0" class="vote" [ngStyle]="((dish.options && dish.options.length > 0)) && {'margin-right': '0.5vw'}">{{ dish.totalLike }} vote</p>
             <p *ngIf="dish.options && dish.options.length > 0" class="option">Tùy chọn: {{ dish.options | displayOption }}</p>
             <p *ngIf="!dish.isAvailable" class="out-of-stock" [ngStyle]="((dish.options && dish.options.length > 0) || (dish.totalLike > 0)) && {'margin-left': '0.5vw'}">Hết hàng</p>
           </div>
@@ -23,24 +35,5 @@
         </div>
       </div>
     </div>
-    <!-- <div nz-row [nzGutter]="10">
-      <div *ngFor="let dish of menu.dishes" nz-col nzSpan="6" class="col-wrapper">
-        <div class="menu-item">
-          <div class="image">
-            <img [src]="dish.photos | displayImage:120" alt="{{ dish.name }}">
-            <button class="btn-add"><i nz-icon nzType="plus" nzTheme="outline"></i></button>
-            <button *ngIf="dish.totalLike > 0" class="btn-vote">{{ dish.totalLike }} vote</button>
-          </div>
-          <div class="content">
-            <p class="dish-name">{{ dish.name }}</p>
-            <div class="price">
-              <p class="active">{{ dish.price.text }}</p>
-              <p *ngIf="dish.discountPrice" class="discount">{{ dish.discountPrice.text }}</p>
-            </div>
-            <p *ngIf="dish.options && dish.options.length > 0" class="additional">Món này có thêm tùy chọn</p>
-          </div>
-        </div>
-      </div>
-    </div> -->
   </div>
 </div>
