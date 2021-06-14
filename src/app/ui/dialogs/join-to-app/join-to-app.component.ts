@@ -45,7 +45,7 @@ export class JoinToAppComponent implements OnInit {
         this.isRegister = true;
         this.joinAppForm.controls.username.disable();
       } else {
-        const { username, displayName } = this.joinAppForm.value;
+        const { username, displayName } = this.joinAppForm.getRawValue();
         if (this.loginMethod === 'REGISTER') {
           this.userService.create({ username, displayName });
           this.modal.destroy({ username });

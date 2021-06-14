@@ -4,6 +4,13 @@
 
   </div>
   <div class="order-footer">
-
+    <p class="remaining-time">
+      Thời gian còn lại:
+      <nz-countdown [nzValue]="deadline" (nzCountdownFinish)="remainingTimeFinish($event)"></nz-countdown>
+    </p>
+    <div class="btn-group">
+      <button class="btn-cancel" (click)="cancelDelivery()">Hủy đơn</button>
+      <button class="btn-place-order">Chốt đơn</button>
+    </div>
   </div>
 </div>

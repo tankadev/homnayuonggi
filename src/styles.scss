@@ -84,3 +84,14 @@
     transform: scale(1);
   }
 }
+
+@keyframes moveIn {
+  from {
+    transform: translateX(70px);
+    opacity: 0.4;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}

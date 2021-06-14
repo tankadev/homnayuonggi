@@ -1,15 +1,15 @@
 :host ::ng-deep .history-order-container {
-  height: 50vh;
-  margin: 1rem 2rem;
+  height: calc(100vh - 30vh - 64px - 32px - 60px);
+  margin: 1rem 2rem 1rem 10%;
   box-shadow: 0px 1px 15px rgba(180, 191, 206, 0.1);
   background-color: #ffffff;
   border-radius: 30px;
-  padding: 1rem;
+  padding: 1vw 1.5vw;
 
   .title {
     font-family: "Dosis";
     font-weight: bold;
     color: #2D3867;
-    font-size: 1rem;
+    font-size: 1vw;
   }
 }

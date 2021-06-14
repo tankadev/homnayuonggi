@@ -1,7 +1,29 @@
 <div class="list-dish-container">
-  <div *ngFor="let menu of deliveryInfo.delivery.menus" class="menu">
+  <div *ngFor="let menu of deliveryInfo.delivery.menus" class="dish-box">
     <p class="title">{{ menu.name }}</p>
-    <div nz-row [nzGutter]="10">
+    <div class="dish-wrapper">
+      <div *ngFor="let dish of menu.dishes" class="dish-item">
+        <div class="image">
+          <img [src]="dish.photos | displayImage:120" alt="{{ dish.name }}">
+        </div>
+        <div class="other-info">
+          <p class="name">{{ dish.name }}</p>
+          <div class="highlight-info">
+            <p *ngIf="dish.totalLike > 0" class="vote">{{ dish.totalLike }} vote</p>
+            <p *ngIf="dish.options && dish.options.length > 0" class="option">Tùy chọn: {{ dish.options | displayOption }}</p>
+            <p *ngIf="!dish.isAvailable" class="out-of-stock" [ngStyle]="((dish.options && dish.options.length > 0) || (dish.totalLike > 0)) && {'margin-left': '0.5vw'}">Hết hàng</p>
+          </div>
+          <div class="price-wrapper">
+            <p class="price">{{ dish.discountPrice ? dish.discountPrice.text : dish.price.text }}</p>
+            <p *ngIf="dish.discountPrice" class="remove-price">{{ dish.price.text }}</p>
+          </div>
+        </div>
+        <div *ngIf="dish.isAvailable" class="btn-add-wrapper">
+          <button class="btn-add"><i nz-icon nzType="plus" nzTheme="outline"></i></button>
+        </div>
+      </div>
+    </div>
+    <!-- <div nz-row [nzGutter]="10">
       <div *ngFor="let dish of menu.dishes" nz-col nzSpan="6" class="col-wrapper">
         <div class="menu-item">
           <div class="image">
@@ -19,6 +41,6 @@
           </div>
         </div>
       </div>
-    </div>
+    </div> -->
   </div>
 </div>

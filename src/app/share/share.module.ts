@@ -3,12 +3,14 @@ import { CommonModule } from '@angular/common';
 import { FormatNameTo2CharPipe } from './format-name-to-2-char.pipe';
 import { DisplayNameUserPipe } from './display-name-user.pipe';
 import { DisplayImagePipe } from './display-image.pipe';
+import { DisplayOptionPipe } from './display-option.pipe';
 
 @NgModule({
   declarations: [
     FormatNameTo2CharPipe,
     DisplayNameUserPipe,
-    DisplayImagePipe
+    DisplayImagePipe,
+    DisplayOptionPipe
   ],
   imports: [
     CommonModule
@@ -16,7 +18,8 @@ import { DisplayImagePipe } from './display-image.pipe';
   exports: [
     FormatNameTo2CharPipe,
     DisplayNameUserPipe,
-    DisplayImagePipe
+    DisplayImagePipe,
+    DisplayOptionPipe
   ]
 })
 export class ShareModule { }

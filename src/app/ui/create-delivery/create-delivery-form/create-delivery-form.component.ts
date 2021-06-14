@@ -36,6 +36,7 @@ export class CreateDeliveryFormComponent implements OnInit {
   }
 
   public onBtnCancelClick = () => {
+    this.deliveryService.remove();
     this.onClose.emit(false);
   }
 

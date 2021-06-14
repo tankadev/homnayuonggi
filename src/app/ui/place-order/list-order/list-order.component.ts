@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
+import { DeliveryService } from 'src/app/services/delivery.service';
+
 @Component({
   selector: 'list-order',
   templateUrl: './list-order.component.html',
@@ -7,9 +9,21 @@ import { Component, OnInit } from '@angular/core';
 })
 export class ListOrderComponent implements OnInit {
 
-  constructor() { }
+  deadline = Date.now() + 1000 * 60 * 60 * 0.5;
+
+  constructor(
+    private deliveryService: DeliveryService
+  ) { }
 
   ngOnInit(): void {
+  }
+
+  public cancelDelivery = (): void => {
+    this.deliveryService.remove();
+  }
+
+  public remainingTimeFinish = (value: any) => {
+    //
   }
 
 }
