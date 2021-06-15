@@ -4,13 +4,15 @@ import { FormatNameTo2CharPipe } from './format-name-to-2-char.pipe';
 import { DisplayNameUserPipe } from './display-name-user.pipe';
 import { DisplayImagePipe } from './display-image.pipe';
 import { DisplayOptionPipe } from './display-option.pipe';
+import { ProcessTimePipe } from './process-time.pipe';
 
 @NgModule({
   declarations: [
     FormatNameTo2CharPipe,
     DisplayNameUserPipe,
     DisplayImagePipe,
-    DisplayOptionPipe
+    DisplayOptionPipe,
+    ProcessTimePipe
   ],
   imports: [
     CommonModule
@@ -19,7 +21,8 @@ import { DisplayOptionPipe } from './display-option.pipe';
     FormatNameTo2CharPipe,
     DisplayNameUserPipe,
     DisplayImagePipe,
-    DisplayOptionPipe
+    DisplayOptionPipe,
+    ProcessTimePipe
   ]
 })
 export class ShareModule { }

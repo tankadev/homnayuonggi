@@ -14,9 +14,6 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { environment } from '../environments/environment';
 import { ZoroAntdModule } from './zoro.module';
-import { OrderContentComponent } from './components/order-content/order-content.component';
-import { LoginDialogComponent } from './components/dialogs/login-dialog/login-dialog.component';
-import { UserInfoDialogComponent } from './components/dialogs/user-info-dialog/user-info-dialog.component';
 import { HeaderComponent } from './ui/header/header.component';
 import { JoinToAppComponent } from './ui/dialogs/join-to-app/join-to-app.component';
 import { ShareModule } from './share/share.module';
@@ -29,6 +26,8 @@ import { ShopInfoComponent } from './ui/place-order/shop-info/shop-info.componen
 import { HistoryOrderComponent } from './ui/place-order/history-order/history-order.component';
 import { ListDishComponent } from './ui/place-order/list-dish/list-dish.component';
 import { ListOrderComponent } from './ui/place-order/list-order/list-order.component';
+import { ConfirmDialogComponent } from './ui/dialogs/confirm-dialog/confirm-dialog.component';
+import { PlaceOrderDialogComponent } from './ui/dialogs/place-order-dialog/place-order-dialog.component';
 
 registerLocaleData(en);
 
@@ -36,10 +35,7 @@ registerLocaleData(en);
   declarations: [
     AppComponent,
     CatAnimateComponent,
-    OrderContentComponent,
     HeaderComponent,
-    LoginDialogComponent,
-    UserInfoDialogComponent,
     JoinToAppComponent,
     NeedLoginComponent,
     CreateDeliveryComponent,
@@ -48,7 +44,9 @@ registerLocaleData(en);
     ShopInfoComponent,
     HistoryOrderComponent,
     ListDishComponent,
-    ListOrderComponent
+    ListOrderComponent,
+    ConfirmDialogComponent,
+    PlaceOrderDialogComponent
   ],
   imports: [
     BrowserModule,

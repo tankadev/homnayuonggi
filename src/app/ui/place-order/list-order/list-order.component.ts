@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
 
 import { DeliveryService } from 'src/app/services/delivery.service';
 
@@ -9,10 +9,14 @@ import { DeliveryService } from 'src/app/services/delivery.service';
 })
 export class ListOrderComponent implements OnInit {
 
-  deadline = Date.now() + 1000 * 60 * 60 * 0.5;
+  @Input() remainingTime: number;
+  @Input() createDate: string;
+
+  timeout: boolean = false;
 
   constructor(
-    private deliveryService: DeliveryService
+    private deliveryService: DeliveryService,
+    private cdr: ChangeDetectorRef
   ) { }
 
   ngOnInit(): void {
@@ -22,8 +26,10 @@ export class ListOrderComponent implements OnInit {
     this.deliveryService.remove();
   }
 
-  public remainingTimeFinish = (value: any) => {
-    //
+  public remainingTimeFinish = () => {
+    this.timeout = true;
+    this.cdr.detectChanges();
+    console.log('finish');
   }
 
 }

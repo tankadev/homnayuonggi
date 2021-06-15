@@ -5,8 +5,14 @@
   </div>
   <div class="order-footer">
     <p class="remaining-time">
-      Thời gian còn lại:
-      <nz-countdown [nzValue]="deadline" (nzCountdownFinish)="remainingTimeFinish($event)"></nz-countdown>
+      Thời gian bình chọn:
+      <nz-countdown *ngIf="(remainingTime | processTime:createDate) && !timeout; else timeOut"
+        [nzValue]="(remainingTime | processTime:createDate)"
+        (nzCountdownFinish)="remainingTimeFinish()"
+      ></nz-countdown>
+      <ng-template #timeOut>
+        <span class="time-out">Hết giờ</span>
+      </ng-template>
     </p>
     <div class="btn-group">
       <button class="btn-cancel" (click)="cancelDelivery()">Hủy đơn</button>

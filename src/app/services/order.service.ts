@@ -1,7 +1,9 @@
 import { Injectable } from '@angular/core';
 
-import { AngularFireDatabase, AngularFireList } from '@angular/fire/database';
+import { AngularFireDatabase, AngularFireList, AngularFireObject } from '@angular/fire/database';
+import { OrderDetailDTO } from '../dto/order-detail.dto';
 import { OrderDTO } from '../dto/order.dto';
+import { OrderDetailRO } from '../ro/order-detail.ro';
 import { OrderRO } from '../ro/order.ro';
 
 @Injectable({
@@ -9,33 +11,53 @@ import { OrderRO } from '../ro/order.ro';
 })
 export class OrderService {
 
-  private dbPath = '/orders';
+  private dbOrdersPath = '/orders';
+  private dbOrderDetailPath = '/orderDetail';
 
   ordersRef: AngularFireList<OrderRO | OrderDTO> = null;
+  orderDetailRef: AngularFireObject<OrderDetailRO | OrderDetailDTO> = null;
   constructor(
     private db: AngularFireDatabase
   ) {
-    this.ordersRef = db.list(this.dbPath);
+    this.ordersRef = db.list(this.dbOrdersPath);
+    this.orderDetailRef = db.object(this.dbOrderDetailPath);
   }
 
-  getAll(): AngularFireList<OrderRO> {
+  getListOrders(): AngularFireList<OrderRO> {
     return this.ordersRef as AngularFireList<OrderRO>;
   }
 
-  create(tutorial: OrderDTO): any {
-    return this.ordersRef.push(tutorial);
+  addOrder(order: OrderDTO): any {
+    return this.ordersRef.push(order);
   }
 
-  update(key: string, value: OrderDTO): Promise<void> {
+  updateOrder(key: string, value: OrderDTO): Promise<void> {
     return this.ordersRef.update(key, value);
   }
 
-  delete(key: string): Promise<void> {
+  deleteOrder(key: string): Promise<void> {
     return this.ordersRef.remove(key);
   }
 
-  deleteAll(): Promise<void> {
+  deleteAllListOrders(): Promise<void> {
     return this.ordersRef.remove();
+  }
+
+  // order detail
+  getOrderDetail(): AngularFireObject<OrderDetailRO> {
+    return this.orderDetailRef as AngularFireObject<OrderDetailRO>;
+  }
+
+  createOrderDetail(order: OrderDetailDTO): any {
+    return this.orderDetailRef.set(order);
+  }
+
+  updateOrderDetail(order: OrderDetailDTO): Promise<void> {
+    return this.orderDetailRef.update(order);
+  }
+
+  removeOrderDetail(): Promise<void> {
+    return this.orderDetailRef.remove();
   }
 
 }

@@ -12,7 +12,10 @@
       <list-dish [deliveryInfo]="deliveryInfo"></list-dish>
     </div>
     <div nz-col nzSpan="7">
-      <list-order></list-order>
+      <list-order
+        [remainingTime]="deliveryInfo.remainingTime"
+        [createDate]="deliveryInfo.createDateTime"
+      ></list-order>
     </div>
   </div>
 </div>

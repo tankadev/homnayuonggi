@@ -18,7 +18,7 @@
           <img [src]="dish.photos | displayImage:120" alt="{{ dish.name }}">
         </div>
         <div class="other-info">
-          <p class="name" [ngStyle]="dish.description && {'line-height': '0.9vw'}">{{ dish.name }}</p>
+          <p class="name" [ngStyle]="dish.description && {'line-height': '1.1vw'}">{{ dish.name }}</p>
           <p *ngIf="dish.description" class="description">{{ dish.description }}</p>
           <div class="highlight-info">
             <p *ngIf="dish.totalLike > 0" class="vote" [ngStyle]="((dish.options && dish.options.length > 0)) && {'margin-right': '0.5vw'}">{{ dish.totalLike }} vote</p>
