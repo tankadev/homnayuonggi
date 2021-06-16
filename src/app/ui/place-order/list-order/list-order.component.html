@@ -1,7 +1,18 @@
 <div class="list-order-container">
   <p class="title">Danh sách món đã chọn</p>
   <div class="order-content">
-
+    <div *ngFor="let order of listOrders; trackBy:trackByIndex" class="order-item">
+      <div class="image">
+        <img [src]="order.dish.photos | displayImage:120" alt="{{ order.dish.name }}">
+      </div>
+      <div class="other-info">
+        <p class="name" [ngStyle]="order.dish.description && {'line-height': '1.1vw'}">{{ order.dish.name }}</p>
+        <div class="price-wrapper">
+          <p class="price">{{ order.dish.discountPrice ? order.dish.discountPrice.text : order.dish.price.text }}</p>
+          <p *ngIf="order.dish.discountPrice" class="remove-price">{{ order.dish.price.text }}</p>
+        </div>
+      </div>
+    </div>
   </div>
   <div class="order-footer">
     <p class="remaining-time">

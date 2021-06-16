@@ -1,7 +1,9 @@
 import { UserNote } from '../dto/order.dto';
 import { Dish } from './delivery-detail-now-api.ro';
 
-export class OrderRO extends Dish {
+export class OrderRO {
+  key: string;
   userNotes: UserNote[];
   quantity: number;
+  dish: Dish;
 }

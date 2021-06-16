@@ -31,7 +31,9 @@
           </div>
         </div>
         <div *ngIf="dish.isAvailable" class="btn-add-wrapper">
-          <button class="btn-add"><i nz-icon nzType="plus" nzTheme="outline"></i></button>
+          <button class="btn-add" (click)="onAddDish(dish)">
+            <i nz-icon nzType="plus" nzTheme="outline"></i>
+          </button>
         </div>
       </div>
     </div>

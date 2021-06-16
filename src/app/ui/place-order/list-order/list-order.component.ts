@@ -1,6 +1,10 @@
 import { ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
+import { map } from 'rxjs/operators';
 
 import { DeliveryService } from 'src/app/services/delivery.service';
+import { LocalStorageService } from 'src/app/services/localstorage.service';
+import { OrderService } from './../../../services/order.service';
+import { OrderRO } from './../../../ro/order.ro';
 
 @Component({
   selector: 'list-order',
@@ -13,13 +17,19 @@ export class ListOrderComponent implements OnInit {
   @Input() createDate: string;
 
   timeout: boolean = false;
+  listOrders: OrderRO[] = [];
 
   constructor(
     private deliveryService: DeliveryService,
+    private orderService: OrderService,
+    private localStorage: LocalStorageService,
     private cdr: ChangeDetectorRef
-  ) { }
+  ) {
+    this.listOrders = this.localStorage.getOrdersList();
+  }
 
   ngOnInit(): void {
+    this.onListenListOrdersChangesFromFirebaseDB();
   }
 
   public cancelDelivery = (): void => {
@@ -30,6 +40,23 @@ export class ListOrderComponent implements OnInit {
     this.timeout = true;
     this.cdr.detectChanges();
     console.log('finish');
+  }
+
+  public trackByIndex = (index: number): number => {
+    return index;
+  }
+
+  private onListenListOrdersChangesFromFirebaseDB(): void {
+    this.orderService.getListOrders().snapshotChanges().pipe(
+      map(changes =>
+        changes.map(c =>
+          ({ key: c.payload.key, ...c.payload.val() })
+        )
+      )
+    ).subscribe(data => {
+      this.localStorage.setOrdersList(data);
+      this.listOrders = data;
+    });
   }
 
 }

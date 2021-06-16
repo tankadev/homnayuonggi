@@ -4,6 +4,7 @@ import { Injectable } from '@angular/core';
 import { LocalStorage } from '../const/local-storage';
 import { UserRO } from '../ro/user.ro';
 import { AppService } from './app.service';
+import { OrderRO } from '../ro/order.ro';
 
 @Injectable({
   providedIn: 'root'
@@ -29,6 +30,11 @@ export class LocalStorageService {
     return delivery;
   }
 
+  getOrdersList(): OrderRO[] {
+    const orders: OrderRO[] = JSON.parse(localStorage.getItem(LocalStorage.ORDERS_LIST));
+    return orders;
+  }
+
   setUser = (user: UserRO) => {
     localStorage.setItem(LocalStorage.USER_INFO, JSON.stringify(user));
   }
@@ -39,6 +45,10 @@ export class LocalStorageService {
 
   setDelivery = (delivery: DeliveryRO) => {
     localStorage.setItem(LocalStorage.DELIVERY_INFO, JSON.stringify(delivery));
+  }
+
+  setOrdersList = (orders: OrderRO[]) => {
+    localStorage.setItem(LocalStorage.ORDERS_LIST, JSON.stringify(orders));
   }
 
   findUserByUserName(username: string): UserRO {
