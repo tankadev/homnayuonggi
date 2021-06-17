@@ -13,6 +13,7 @@
     color: #2D3867;
     font-size: 1.1vw;
     text-align: center;
+    margin: 0.5vw 0;
   }
 
   .order-content {
@@ -23,11 +24,13 @@
     &::-webkit-scrollbar {
       background: transparent;
       width: 5px;
+      display: none;
     }
 
     &::-webkit-scrollbar-thumb {
       background: rgba(214, 214, 214, 0.4);
       border-radius: 10px;
+      display: none;
     }
 
     &::-webkit-resizer,
@@ -35,68 +38,176 @@
     &::-webkit-scrollbar-corner { display: none; }
 
     .order-item {
-      border-bottom: 1px solid #EBF2FF;
-      padding: 0.5vw 1.5vw;
+      border-bottom: 5px solid #EBF2FF;
+      padding: 0.5vw 1.5vw 0 1.5vw;
       display: flex;
+      flex-direction: column;
       align-items: flex-start;
       justify-content: flex-start;
       animation-duration: 0.1s;
       animation-name: moveIn;
       animation-timing-function: ease-in-out;
 
-      .image {
-        width: 2.5vw;
-        height: 2.5vw;
-        overflow: hidden;
-        border: 1px solid #ffffff;
-        border-radius: 5px;
+      &__main-content {
+        display: flex;
+        align-items: flex-start;
+        justify-content: flex-start;
+        position: relative;
+        width: 100%;
 
-        img {
-          width: 100%;
+        .image {
+          width: 2.5vw;
+          height: 2.5vw;
+          overflow: hidden;
+          border: 1px solid #ffffff;
+          border-radius: 5px;
+
+          img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+          }
+        }
+
+        .other-info {
+          display: flex;
+          flex-direction: column;
+          justify-content: flex-start;
+          align-items: flex-start;
+          margin-left: 0.4vw;
+          width: 60%;
+
+          .name {
+            width: 100%;
+            color: #2D3867;
+            font-size: 0.7vw;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            white-space: nowrap;
+            margin: 0;
+            font-weight: bold;
+          }
+
+          .price-wrapper {
+            display: flex;
+            justify-content: flex-start;
+            align-items: flex-end;
+
+            .price {
+              color: #0053FF;
+              padding: 0 0.2rem;
+              border-radius: 5px;
+              font-size: 0.6vw;
+              margin-right: 0.3vw;
+              margin-bottom: 0;
+            }
+
+            .remove-price {
+              text-decoration: line-through;
+              color: #B4BFCE;
+              font-size: 0.6vw;
+              margin-bottom: 0;
+            }
+          }
+        }
+
+        .total-quantity {
+          position: absolute;
+          width: 30%;
           height: 100%;
-          object-fit: cover;
+          top: 0;
+          right: 0;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+
+          span {
+            color: #0053FF;
+            background-color: #EBF2FF;
+            padding: 0.1vw 0.8vw;
+            font-size: 0.6vw;
+            border-radius: 10px;
+          }
         }
       }
 
-      .other-info {
-        display: flex;
-        flex-direction: column;
-        justify-content: flex-start;
-        align-items: flex-start;
-        margin-left: 0.4vw;
-        width: 60%;
+      &__order-by-each-user {
+        width: 100%;
 
-        .name {
-          width: 100%;
-          font-family: "Dosis";
+        &__title {
           color: #2D3867;
           font-size: 0.7vw;
-          text-overflow: ellipsis;
-          overflow: hidden;
-          white-space: nowrap;
-          margin: 0;
-          font-weight: bold;
+          margin: 0.3vw 0;
+          font-style: italic;
         }
 
-        .price-wrapper {
+        &__info {
           display: flex;
-          justify-content: flex-start;
-          align-items: flex-end;
+          justify-content: space-between;
+          align-items: center;
+          width: 100%;
+          padding: 0.3vw 0;
+          border-top: 1px solid #EBF2FF;
 
-          .price {
-            color: #0053FF;
-            padding: 0 0.2rem;
-            border-radius: 5px;
-            font-size: 0.6vw;
-            margin-right: 0.3vw;
-            margin-bottom: 0;
+          .main-content {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
+            width: 70%;
+            p {
+              font-size: 0.7vw;
+              font-family: "Dosis";
+              color: #2D3867;
+              margin-bottom: 0;
+              font-style: italic;
+            }
+
+            .username {
+              font-weight: bold;
+            }
           }
 
-          .remove-price {
-            text-decoration: line-through;
-            color: #B4BFCE;
-            font-size: 0.5vw;
-            margin-bottom: 0;
+          .action-content {
+            width: 30%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            .btn-change-quantity {
+              display: flex;
+              flex-direction: row;
+              align-items: center;
+              padding: 0.1vw 0.3vw;
+              border-radius: 5px;
+              width: 5vw;
+
+              .btn-change-add, .btn-change-remove {
+                background-color: #ffffff;
+                font-weight: bold;
+                padding: 0.1vw 0.3vw;
+                border-radius: 5px;
+                cursor: pointer;
+                transition: all .3s ease-in-out;
+
+                &:hover {
+                  opacity: 0.6;
+                }
+              }
+
+              .btn-change-add {
+                padding: 0 0.3vw;
+              }
+
+              .btn-change-remove {
+                padding: 0 0.4vw;
+              }
+
+              span {
+                font-size: 0.6vw;
+                color: #2D3867;
+              }
+            }
           }
         }
       }

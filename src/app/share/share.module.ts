@@ -5,6 +5,9 @@ import { DisplayNameUserPipe } from './display-name-user.pipe';
 import { DisplayImagePipe } from './display-image.pipe';
 import { DisplayOptionPipe } from './display-option.pipe';
 import { ProcessTimePipe } from './process-time.pipe';
+import { IsAllowDirective } from './is-allow.directive';
+import { DishTotalQuantityPipe } from './dish-total-quantity.pipe';
+import { IsAllowPipe } from './is-allow.pipe';
 
 @NgModule({
   declarations: [
@@ -12,7 +15,10 @@ import { ProcessTimePipe } from './process-time.pipe';
     DisplayNameUserPipe,
     DisplayImagePipe,
     DisplayOptionPipe,
-    ProcessTimePipe
+    ProcessTimePipe,
+    IsAllowDirective,
+    DishTotalQuantityPipe,
+    IsAllowPipe
   ],
   imports: [
     CommonModule
@@ -22,7 +28,10 @@ import { ProcessTimePipe } from './process-time.pipe';
     DisplayNameUserPipe,
     DisplayImagePipe,
     DisplayOptionPipe,
-    ProcessTimePipe
+    ProcessTimePipe,
+    DishTotalQuantityPipe,
+    IsAllowDirective,
+    IsAllowPipe
   ]
 })
 export class ShareModule { }

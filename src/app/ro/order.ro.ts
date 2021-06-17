@@ -4,6 +4,5 @@ import { Dish } from './delivery-detail-now-api.ro';
 export class OrderRO {
   key: string;
   userNotes: UserNote[];
-  quantity: number;
   dish: Dish;
 }

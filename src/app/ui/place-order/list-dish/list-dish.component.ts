@@ -25,35 +25,56 @@ export class ListDishComponent implements OnInit {
   }
 
   public onAddDish = (dish: Dish) => {
-
     // check dish exist
     const listOrdersLocal: OrderRO[] = this.localStorage.getOrdersList();
     const userId: string = this.localStorage.getUserInfo().key;
     const findDish = listOrdersLocal ? listOrdersLocal.find(order => order.dish.id === dish.id) : null;
     if (listOrdersLocal && listOrdersLocal.length > 0 && findDish) {
       const orderDto: OrderDTO = new OrderDTO();
-      orderDto.quantity = findDish.quantity + 1;
-      if (!(findDish.userNotes.find(note => note.userId === userId))) {
+      const userNoteIndex = findDish.userNotes.findIndex(note => note.userId === userId);
+      if (userNoteIndex === -1) {
         orderDto.userNotes = [
           ...findDish.userNotes,
           {
             userId,
-            content: ''
+            content: '',
+            quantity: 1
           }
         ];
+      } else {
+        orderDto.userNotes = findDish.userNotes.map(
+          (note, index) => {
+            if (index === userNoteIndex) {
+              return {
+                userId,
+                content: '',
+                quantity: note.quantity + 1
+              };
+            }
+            return note;
+          }
+        );
       }
-      this.orderService.updateOrder(findDish.key, orderDto);
+      this.orderService.updateOrder(findDish.key, orderDto).then(
+        () => {
+          console.log('update success');
+        }
+      );
     } else {
       const orderDto: OrderDTO = new OrderDTO();
       orderDto.dish = dish;
-      orderDto.quantity = 1;
       orderDto.userNotes = [
         {
           userId,
-          content: ''
+          content: '',
+          quantity: 1
         }
       ];
-      this.orderService.addOrder(orderDto);
+      this.orderService.addOrder(orderDto).then(
+        () => {
+          console.log('create success');
+        }
+      );
     }
   }
 
