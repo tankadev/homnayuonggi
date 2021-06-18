@@ -20,7 +20,6 @@ export class IsAllowDirective implements OnDestroy {
   ) { }
 
   @Input() set isAllow(userId: string) {
-    console.log(userId);
     const isAllowed: boolean = this.storage.getUserInfo().key === userId;
     if (isAllowed && !this.isVisible) {
       this.viewContainer.createEmbeddedView(this.templateRef);

@@ -17,7 +17,7 @@
       </div>
       <div class="order-item__order-by-each-user">
         <p class="order-item__order-by-each-user__title">Thông tin người đặt</p>
-        <div *ngFor="let note of order.userNotes" class="order-item__order-by-each-user__info">
+        <div *ngFor="let note of order.userNotes; let i = index" class="order-item__order-by-each-user__info">
           <div class="main-content">
             <p class="username">{{ note.userId | displayNameUser }}</p>
             <p class="note-content">Ghi chú: {{ note.content }}</p>
@@ -26,9 +26,9 @@
             <div class="btn-change-quantity"
               [ngStyle]="{'justify-content': (note.userId | isAllow) ? 'space-between' : 'center', 'background-color': (note.userId | isAllow) ? '#EAFBF3' : '#ffffff' }"
               >
-              <span *isAllow="note.userId" class="btn-change-add">+</span>
+              <span *isAllow="note.userId" class="btn-change-remove" (click)="onRemoveDish(order, note.userId, i)">-</span>
               <span>{{ note.quantity }}</span>
-              <span *isAllow="note.userId" class="btn-change-remove">-</span>
+              <span *isAllow="note.userId" class="btn-change-add" (click)="onAddDish(order, note.userId, i)">+</span>
             </div>
           </div>
         </div>
