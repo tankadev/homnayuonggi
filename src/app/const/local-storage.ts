@@ -4,4 +4,5 @@ export class LocalStorage {
     static DELIVERY_INFO = 'delivery_info';
     static ORDER_INFO = 'order_info';
     static ORDERS_LIST = 'orders_list';
+    static ORDERS_HISTORY = 'orders_history';
 }

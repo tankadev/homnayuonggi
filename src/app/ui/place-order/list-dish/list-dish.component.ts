@@ -1,3 +1,4 @@
+import { OrderHistoryDTO } from './../../../dto/order-history.dto';
 import { Component, Input, OnInit } from '@angular/core';
 
 import { DeliveryRO } from 'src/app/ro/delivery.ro';
@@ -6,6 +7,7 @@ import { OrderDTO } from './../../../dto/order.dto';
 import { LocalStorageService } from 'src/app/services/localstorage.service';
 import { OrderService } from 'src/app/services/order.service';
 import { OrderRO } from 'src/app/ro/order.ro';
+import { OrderHistoryService } from 'src/app/services/order-history.service';
 
 @Component({
   selector: 'list-dish',
@@ -18,6 +20,7 @@ export class ListDishComponent implements OnInit {
 
   constructor(
     private orderService: OrderService,
+    private orderHistoryService: OrderHistoryService,
     private localStorage: LocalStorageService
   ) { }
 
@@ -76,6 +79,13 @@ export class ListDishComponent implements OnInit {
         }
       );
     }
+
+    const orderHistory = new OrderHistoryDTO();
+    orderHistory.action = 0;
+    orderHistory.userId = userId;
+    orderHistory.dishName = dish.name;
+    orderHistory.createAt = new Date().toISOString();
+    this.orderHistoryService.create(orderHistory);
   }
 
 }

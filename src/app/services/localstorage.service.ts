@@ -5,6 +5,7 @@ import { LocalStorage } from '../const/local-storage';
 import { UserRO } from '../ro/user.ro';
 import { AppService } from './app.service';
 import { OrderRO } from '../ro/order.ro';
+import { OrderHistoryRO } from '../ro/order-history.ro';
 
 @Injectable({
   providedIn: 'root'
@@ -35,6 +36,11 @@ export class LocalStorageService {
     return orders;
   }
 
+  getOrdersHistory(): OrderHistoryRO[] {
+    const histories: OrderHistoryRO[] = JSON.parse(localStorage.getItem(LocalStorage.ORDERS_HISTORY));
+    return histories;
+  }
+
   setUser = (user: UserRO) => {
     localStorage.setItem(LocalStorage.USER_INFO, JSON.stringify(user));
   }
@@ -49,6 +55,10 @@ export class LocalStorageService {
 
   setOrdersList = (orders: OrderRO[]) => {
     localStorage.setItem(LocalStorage.ORDERS_LIST, JSON.stringify(orders));
+  }
+
+  setOrdersHistory = (histories: OrderHistoryRO[]) => {
+    localStorage.setItem(LocalStorage.ORDERS_HISTORY, JSON.stringify(histories));
   }
 
   findUserByUserName(username: string): UserRO {

@@ -6,6 +6,8 @@ import { LocalStorageService } from 'src/app/services/localstorage.service';
 import { OrderService } from './../../../services/order.service';
 import { OrderRO } from './../../../ro/order.ro';
 import { OrderDTO, UserNote } from './../../../dto/order.dto';
+import { OrderHistoryDTO } from 'src/app/dto/order-history.dto';
+import { OrderHistoryService } from 'src/app/services/order-history.service';
 
 @Component({
   selector: 'list-order',
@@ -24,6 +26,7 @@ export class ListOrderComponent implements OnInit {
     private deliveryService: DeliveryService,
     private orderService: OrderService,
     private localStorage: LocalStorageService,
+    private orderHistoryService: OrderHistoryService,
     private cdr: ChangeDetectorRef
   ) {
     this.listOrders = this.localStorage.getOrdersList();
@@ -63,6 +66,13 @@ export class ListOrderComponent implements OnInit {
       return item;
     });
     this.orderService.updateOrder(order.key, orderDTO);
+
+    const orderHistory = new OrderHistoryDTO();
+    orderHistory.action = 0;
+    orderHistory.userId = userId;
+    orderHistory.dishName = order.dish.name;
+    orderHistory.createAt = new Date().toISOString();
+    this.orderHistoryService.create(orderHistory);
   }
 
   public onRemoveDish(order: OrderRO, userId: string, position: number): void {
@@ -93,6 +103,12 @@ export class ListOrderComponent implements OnInit {
       this.orderService.deleteOrder(order.key);
     }
 
+    const orderHistory = new OrderHistoryDTO();
+    orderHistory.action = 1;
+    orderHistory.userId = userId;
+    orderHistory.dishName = order.dish.name;
+    orderHistory.createAt = new Date().toISOString();
+    this.orderHistoryService.create(orderHistory);
   }
 
   private onListenListOrdersChangesFromFirebaseDB(): void {

@@ -1,3 +1,28 @@
 <div class="history-order-container">
   <p class="title">Lịch sử chọn món</p>
+  <div class="histories-content">
+    <div *ngFor="let history of histories" class="history-item">
+      <div *ngIf="history.action === 0; else removeContent" class="icon-box icon-add">
+        <i nz-icon nzType="arrow-right" nzTheme="outline"></i>
+      </div>
+      <ng-template #removeContent>
+        <div class="icon-box icon-remove">
+          <i nz-icon nzType="arrow-left" nzTheme="outline"></i>
+        </div>
+      </ng-template>
+      <p class="action">
+        [{{ history.createAt | date: 'HH:mm' }}]
+        <span class="name">{{ history.userId | displayNameUser }}</span>
+        <ng-container *ngIf="history.action === 0; else actionRemoveContent">
+          vừa lựa chọn
+          <span class="dish dish-add">{{ history.dishName }}</span>
+        </ng-container>
+        <ng-template #actionRemoveContent>
+          đã bỏ chọn
+          <span class="dish dish-remove">{{ history.dishName }}</span>
+        </ng-template>
+      </p>
+    </div>
+  </div>
+  <div class="bottom-shadow"></div>
 </div>
