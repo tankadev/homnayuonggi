@@ -18,7 +18,10 @@ export class HistoryOrderComponent implements OnInit {
     private orderHistoryService: OrderHistoryService,
     private storage: LocalStorageService
   ) {
-    this.histories = this.storage.getOrdersHistory().reverse() ?? [];
+    const histories = this.storage.getOrdersHistory();
+    if (histories) {
+      this.histories = histories;
+    }
   }
 
   ngOnInit(): void {
@@ -33,8 +36,10 @@ export class HistoryOrderComponent implements OnInit {
         )
       )
     ).subscribe(data => {
-      this.storage.setOrdersHistory(data);
-      this.histories = data.reverse();
+      if (data.length > 0) {
+        this.storage.setOrdersHistory(data);
+        this.histories = data.reverse();
+      }
     });
   }
 
