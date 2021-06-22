@@ -20,7 +20,12 @@
         <div *ngFor="let note of order.userNotes; let i = index" class="order-item__order-by-each-user__info">
           <div class="main-content">
             <p class="username">{{ note.userId | displayNameUser }}</p>
-            <p class="note-content">Ghi chú: {{ note.content }}</p>
+            <p *ngIf="(note.userId | isAllow); else noEditNote" class="note-content-cursor" (click)="addNote(order, note.userId, i, note.content)">
+              Ghi chú: {{ note.content ? note.content : 'nhập ghi chú ...' }}
+            </p>
+            <ng-template #noEditNote>
+              <p>Ghi chú: {{ note.content }}</p>
+            </ng-template>
           </div>
           <div class="action-content">
             <div class="btn-change-quantity"
@@ -47,8 +52,8 @@
       </ng-template>
     </p>
     <div class="btn-group">
-      <button class="btn-cancel" (click)="cancelDelivery()">Hủy đơn</button>
-      <button class="btn-place-order">Chốt đơn</button>
+      <button *ngIf="(createUserId | isUserPermission:assignUserId)" class="btn-cancel" (click)="cancelDelivery()">Hủy đơn</button>
+      <button *ngIf="(createUserId | isUserPermission:assignUserId:false)"class="btn-place-order">Chốt đơn</button>
     </div>
   </div>
 </div>

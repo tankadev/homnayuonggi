@@ -21,7 +21,7 @@ export class JoinToAppComponent implements OnInit {
   usersList: UserRO[] = JSON.parse(localStorage.getItem(LocalStorage.USER_LIST));
 
   joinAppForm: FormGroup;
-  loginMethod: LoginType = 'REGISTER';
+  loginMethod: LoginType = 'LOGIN';
   isRegister: boolean = false;
 
   constructor(
@@ -33,7 +33,7 @@ export class JoinToAppComponent implements OnInit {
 
   ngOnInit(): void {
     this.joinAppForm = this.fb.group({
-      username: [null, [Validators.required, Validators.pattern(/^[a-z]*$/), this.checkUsernameWhenRegister]]
+      username: [null, [Validators.required, Validators.pattern(/^[a-z]*$/)]]
     });
   }
 

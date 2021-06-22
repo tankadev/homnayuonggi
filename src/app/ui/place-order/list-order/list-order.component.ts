@@ -1,5 +1,8 @@
-import { ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, Input, OnInit, ViewContainerRef } from '@angular/core';
+
 import { map } from 'rxjs/operators';
+
+import { NzModalService } from 'ng-zorro-antd/modal';
 
 import { DeliveryService } from 'src/app/services/delivery.service';
 import { LocalStorageService } from 'src/app/services/localstorage.service';
@@ -8,6 +11,7 @@ import { OrderRO } from './../../../ro/order.ro';
 import { OrderDTO, UserNote } from './../../../dto/order.dto';
 import { OrderHistoryDTO } from 'src/app/dto/order-history.dto';
 import { OrderHistoryService } from 'src/app/services/order-history.service';
+import { NoteDialogComponent } from '../../dialogs/note-dialog/note-dialog.component';
 
 @Component({
   selector: 'list-order',
@@ -18,11 +22,15 @@ export class ListOrderComponent implements OnInit {
 
   @Input() remainingTime: number;
   @Input() createDate: string;
+  @Input() createUserId: string;
+  @Input() assignUserId: string;
 
   timeout: boolean = false;
   listOrders: OrderRO[] = [];
 
   constructor(
+    private modal: NzModalService,
+    private viewContainerRef: ViewContainerRef,
     private deliveryService: DeliveryService,
     private orderService: OrderService,
     private localStorage: LocalStorageService,
@@ -39,6 +47,7 @@ export class ListOrderComponent implements OnInit {
   public cancelDelivery = (): void => {
     this.deliveryService.remove();
     this.orderService.deleteAllListOrders();
+    this.orderHistoryService.removeAll();
   }
 
   public remainingTimeFinish = () => {
@@ -109,6 +118,40 @@ export class ListOrderComponent implements OnInit {
     orderHistory.dishName = order.dish.name;
     orderHistory.createAt = new Date().toISOString();
     this.orderHistoryService.create(orderHistory);
+  }
+
+  public addNote(order: OrderRO, userId: string, position: number, noteContent: string) {
+    const modal = this.modal.create({
+      nzTitle: null,
+      nzContent: NoteDialogComponent,
+      nzViewContainerRef: this.viewContainerRef,
+      nzFooter: null,
+      nzClosable: false,
+      nzAutofocus: null,
+      nzMaskClosable: false,
+      nzComponentParams: {
+        note: noteContent
+      }
+    });
+    modal.afterClose.subscribe(data => {
+      if (data) {
+        console.log(data.noteContent);
+        const orderDTO: OrderDTO = new OrderDTO();
+        orderDTO.dish = order.dish;
+        orderDTO.userNotes = order.userNotes.map((item, index) => {
+          if (index === position && item.userId === userId) {
+            const note: UserNote = new UserNote();
+            note.userId = item.userId;
+            note.content = data.noteContent === 'empty' ? '' : data.noteContent;
+            note.quantity = item.quantity;
+            return note;
+          }
+          return item;
+        });
+
+        this.orderService.updateOrder(order.key, orderDTO);
+      }
+    });
   }
 
   private onListenListOrdersChangesFromFirebaseDB(): void {

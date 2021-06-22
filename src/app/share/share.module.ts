@@ -8,6 +8,7 @@ import { ProcessTimePipe } from './process-time.pipe';
 import { IsAllowDirective } from './is-allow.directive';
 import { DishTotalQuantityPipe } from './dish-total-quantity.pipe';
 import { IsAllowPipe } from './is-allow.pipe';
+import { IsUserPermissionPipe } from './is-user-permission.pipe';
 
 @NgModule({
   declarations: [
@@ -18,7 +19,8 @@ import { IsAllowPipe } from './is-allow.pipe';
     ProcessTimePipe,
     IsAllowDirective,
     DishTotalQuantityPipe,
-    IsAllowPipe
+    IsAllowPipe,
+    IsUserPermissionPipe
   ],
   imports: [
     CommonModule
@@ -31,7 +33,8 @@ import { IsAllowPipe } from './is-allow.pipe';
     ProcessTimePipe,
     DishTotalQuantityPipe,
     IsAllowDirective,
-    IsAllowPipe
+    IsAllowPipe,
+    IsUserPermissionPipe
   ]
 })
 export class ShareModule { }

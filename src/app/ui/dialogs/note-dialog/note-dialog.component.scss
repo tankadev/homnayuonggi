@@ -1,0 +1,89 @@
+:host ::ng-deep .note-form {
+    background-color: #F9FAFE;
+    padding: 24px;
+    border-radius: 10px;
+  
+    &__header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1rem;
+  
+      .btn-close-modal {
+        color: #B4BFCE;
+        background-color: rgb(236, 243, 254);
+        padding: 0.2rem 1.5rem;
+        border: 0;
+        border-top-right-radius: 4px;
+        border-bottom-right-radius: 4px;
+        border-top-left-radius: 30px;
+        border-bottom-left-radius: 30px;
+        font-size: 0.8rem;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all .3s ease-in-out;
+  
+        &:active, &:focus {
+          outline: none;
+          border: 0;
+        }
+  
+        &:hover {
+          color: #2D3867;
+          background-color: rgba(236, 243, 254, 0.7);
+        }
+      }
+  
+      h1 {
+        margin: 0;
+      }
+    }
+  
+    form {
+      .form-content {
+        margin-top: 2rem;
+        background-color: #ffffff;
+        border-radius: 5px;
+        box-shadow: 0px 1px 15px rgba(180, 191, 206, 0.1);
+        padding: 2.2rem 2rem 0.5rem 2rem;
+  
+        input {
+          padding: 0.7rem;
+          background-color: #F9FAFE;
+          border: 1px solid #ECF3FE;
+          transition: all .3s ease-in-out;
+          animation-duration: 0.1s;
+          animation-name: showOut;
+          animation-timing-function: ease-in-out;
+  
+          &:hover {
+            border-color: rgba(0, 83, 255, 0.3);
+          }
+        }
+  
+        nz-form-control.first-control {
+          margin-bottom: 0.7rem;
+        }
+  
+        nz-form-item.ant-form-item-has-error {
+          input.ng-invalid {
+            border-color: #ff4d4f !important;
+          }
+        }
+      }
+  
+      .btn-footer {
+        width: 100%;
+        border-radius: 5px;
+        border: 0;
+        background: #0053FF;
+        margin-top: 1.5rem;
+        padding: 0.9rem;
+        color: #ffffff;
+        font-size: 1.1rem;
+        cursor: pointer;
+        transition: all .3s ease-in-out;
+      }
+    }
+  }
+  

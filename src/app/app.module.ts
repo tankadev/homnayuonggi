@@ -27,6 +27,7 @@ import { HistoryOrderComponent } from './ui/place-order/history-order/history-or
 import { ListDishComponent } from './ui/place-order/list-dish/list-dish.component';
 import { ListOrderComponent } from './ui/place-order/list-order/list-order.component';
 import { ConfirmDialogComponent } from './ui/dialogs/confirm-dialog/confirm-dialog.component';
+import { NoteDialogComponent } from './ui/dialogs/note-dialog/note-dialog.component';
 import { PlaceOrderDialogComponent } from './ui/dialogs/place-order-dialog/place-order-dialog.component';
 
 registerLocaleData(en);
@@ -46,7 +47,8 @@ registerLocaleData(en);
     ListDishComponent,
     ListOrderComponent,
     ConfirmDialogComponent,
-    PlaceOrderDialogComponent
+    PlaceOrderDialogComponent,
+    NoteDialogComponent
   ],
   imports: [
     BrowserModule,

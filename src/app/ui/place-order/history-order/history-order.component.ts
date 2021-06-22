@@ -36,9 +36,11 @@ export class HistoryOrderComponent implements OnInit {
         )
       )
     ).subscribe(data => {
+      this.storage.setOrdersHistory(data);
       if (data.length > 0) {
-        this.storage.setOrdersHistory(data);
         this.histories = data.reverse();
+      } else {
+        this.histories = [];
       }
     });
   }
