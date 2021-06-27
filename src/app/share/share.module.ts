@@ -9,6 +9,7 @@ import { IsAllowDirective } from './is-allow.directive';
 import { DishTotalQuantityPipe } from './dish-total-quantity.pipe';
 import { IsAllowPipe } from './is-allow.pipe';
 import { IsUserPermissionPipe } from './is-user-permission.pipe';
+import { DisplayUserOrderPipe } from './display-user-order.pipe';
 
 @NgModule({
   declarations: [
@@ -20,7 +21,8 @@ import { IsUserPermissionPipe } from './is-user-permission.pipe';
     IsAllowDirective,
     DishTotalQuantityPipe,
     IsAllowPipe,
-    IsUserPermissionPipe
+    IsUserPermissionPipe,
+    DisplayUserOrderPipe
   ],
   imports: [
     CommonModule
@@ -34,7 +36,9 @@ import { IsUserPermissionPipe } from './is-user-permission.pipe';
     DishTotalQuantityPipe,
     IsAllowDirective,
     IsAllowPipe,
-    IsUserPermissionPipe
-  ]
+    IsUserPermissionPipe,
+    DisplayUserOrderPipe
+  ],
+  providers: [ DisplayNameUserPipe ]
 })
 export class ShareModule { }

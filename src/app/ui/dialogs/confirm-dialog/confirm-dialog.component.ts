@@ -1,4 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
+
+import { NzModalRef } from 'ng-zorro-antd/modal';
 
 @Component({
   selector: 'confirm-dialog',
@@ -7,9 +9,17 @@ import { Component, OnInit } from '@angular/core';
 })
 export class ConfirmDialogComponent implements OnInit {
 
-  constructor() { }
+  @Input() body: string;
+
+  constructor(
+    private modal: NzModalRef
+  ) { }
 
   ngOnInit(): void {
+  }
+
+  public closeModal(value: boolean): void {
+    this.modal.destroy(value);
   }
 
 }

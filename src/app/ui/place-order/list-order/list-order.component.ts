@@ -12,6 +12,7 @@ import { OrderDTO, UserNote } from './../../../dto/order.dto';
 import { OrderHistoryDTO } from 'src/app/dto/order-history.dto';
 import { OrderHistoryService } from 'src/app/services/order-history.service';
 import { NoteDialogComponent } from '../../dialogs/note-dialog/note-dialog.component';
+import { ConfirmDialogComponent } from '../../dialogs/confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'list-order',
@@ -45,9 +46,25 @@ export class ListOrderComponent implements OnInit {
   }
 
   public cancelDelivery = (): void => {
-    this.deliveryService.remove();
-    this.orderService.deleteAllListOrders();
-    this.orderHistoryService.removeAll();
+    const modal = this.modal.create({
+      nzTitle: null,
+      nzContent: ConfirmDialogComponent,
+      nzViewContainerRef: this.viewContainerRef,
+      nzFooter: null,
+      nzClosable: false,
+      nzAutofocus: null,
+      nzMaskClosable: false,
+      nzComponentParams: {
+        body: 'Bạn có đồng ý hủy bình chọn quán này ?'
+      }
+    });
+    modal.afterClose.subscribe(isAccept => {
+      if (isAccept) {
+        this.deliveryService.remove();
+        this.orderService.deleteAllListOrders();
+        this.orderHistoryService.removeAll();
+      }
+    });
   }
 
   public remainingTimeFinish = () => {

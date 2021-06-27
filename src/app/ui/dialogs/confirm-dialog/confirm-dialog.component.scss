@@ -1,0 +1,80 @@
+:host ::ng-deep .confirm-box {
+    background-color: #F9FAFE;
+    padding: 24px;
+    border-radius: 10px;
+
+    &__header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 1rem;
+    
+        .btn-close-modal {
+          color: #B4BFCE;
+          background-color: rgb(236, 243, 254);
+          padding: 0.2rem 1.5rem;
+          border: 0;
+          border-top-right-radius: 4px;
+          border-bottom-right-radius: 4px;
+          border-top-left-radius: 30px;
+          border-bottom-left-radius: 30px;
+          font-size: 0.8rem;
+          font-weight: bold;
+          cursor: pointer;
+          transition: all .3s ease-in-out;
+    
+          &:active, &:focus {
+            outline: none;
+            border: 0;
+          }
+    
+          &:hover {
+            color: #2D3867;
+            background-color: rgba(236, 243, 254, 0.7);
+          }
+        }
+    
+        h1 {
+          margin: 0;
+        }
+    }
+
+    &__content {
+        background-color: #ffffff;
+        border-radius: 5px;
+        box-shadow: 0px 1px 15px rgb(180 191 206 / 10%);
+        padding: 2rem 1rem 2rem 1rem;
+
+        p {
+            margin: 0;
+        }
+    }
+
+    &__group-btn {
+
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+
+        .btn-footer {
+            width: 46%;
+            border-radius: 5px;
+            border: 0;
+            margin-top: 1.5rem;
+            padding: 0.9rem;
+            color: #ffffff;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all .3s ease-in-out;
+        }
+
+        .btn-reject {
+            background: #FF4154;
+        }
+
+        .btn-accept {
+            background: #0053FF;
+        }
+    }
+}

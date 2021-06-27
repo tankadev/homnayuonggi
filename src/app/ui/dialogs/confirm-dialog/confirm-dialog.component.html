@@ -1,1 +1,14 @@
-<p>confirm-dialog works!</p>
+<div class="confirm-box">
+    <div class="confirm-box__header">
+      <h1>Xác nhận hành động</h1>
+      <button class="btn-close-modal" (click)="closeModal(false)">Đóng</button>
+    </div>
+    <div class="confirm-box__content">
+      <p>{{ body }}</p>
+    </div>
+    <div class="confirm-box__group-btn">
+      <button type="button" class="btn-footer btn-reject" (click)="closeModal(false)">Từ chối</button>
+      <button type="button" class="btn-footer btn-accept" (click)="closeModal(true)">Đồng ý</button>
+    </div>
+</div>
+  

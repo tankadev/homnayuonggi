@@ -50,6 +50,11 @@
       <ng-template #timeOut>
         <span class="time-out">Hết giờ</span>
       </ng-template>
+      <br>
+      <span *ngIf="(listOrders | displayUserOrder:'countUser') && (listOrders | displayUserOrder:'countDish')"
+        nzTooltipTitle="{{ listOrders | displayUserOrder }}" nzTooltipPlacement="topLeft" nz-tooltip>
+        <span class="count-user-order">{{ listOrders | displayUserOrder:'countUser' }}</span> / {{ listOrders | displayUserOrder:'countDish' }}
+      </span>
     </p>
     <div class="btn-group">
       <button *ngIf="(createUserId | isUserPermission:assignUserId)" class="btn-cancel" (click)="cancelDelivery()">Hủy đơn</button>
