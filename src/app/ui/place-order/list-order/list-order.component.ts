@@ -13,6 +13,7 @@ import { OrderHistoryDTO } from 'src/app/dto/order-history.dto';
 import { OrderHistoryService } from 'src/app/services/order-history.service';
 import { NoteDialogComponent } from '../../dialogs/note-dialog/note-dialog.component';
 import { ConfirmDialogComponent } from '../../dialogs/confirm-dialog/confirm-dialog.component';
+import { PlaceOrderDialogComponent } from '../../dialogs/place-order-dialog/place-order-dialog.component';
 
 @Component({
   selector: 'list-order',
@@ -55,7 +56,7 @@ export class ListOrderComponent implements OnInit {
       nzAutofocus: null,
       nzMaskClosable: false,
       nzComponentParams: {
-        body: 'Bạn có đồng ý hủy bình chọn quán này ?'
+        body: 'Tất cả thông tin đặt món sẽ bị xóa, bạn có chắc chắn muốn hủy bình chọn quán này ?'
       }
     });
     modal.afterClose.subscribe(isAccept => {
@@ -167,6 +168,23 @@ export class ListOrderComponent implements OnInit {
         });
 
         this.orderService.updateOrder(order.key, orderDTO);
+      }
+    });
+  }
+
+  public onPlaceOrders = () => {
+    const modal = this.modal.create({
+      nzTitle: null,
+      nzContent: PlaceOrderDialogComponent,
+      nzViewContainerRef: this.viewContainerRef,
+      nzFooter: null,
+      nzClosable: false,
+      nzAutofocus: null,
+      nzMaskClosable: false
+    });
+    modal.afterClose.subscribe(isConfirm => {
+      if (isConfirm) {
+        
       }
     });
   }

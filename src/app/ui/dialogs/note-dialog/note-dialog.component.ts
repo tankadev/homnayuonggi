@@ -28,7 +28,7 @@ export class NoteDialogComponent implements OnInit {
     }
   }
 
-  public submitLoginForm(): void {
+  public submitNoteForm(): void {
     this.closeModal(this.noteForm.value.note ? this.noteForm.value.note : 'empty');
   }
 

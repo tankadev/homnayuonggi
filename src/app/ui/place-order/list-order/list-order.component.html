@@ -57,8 +57,8 @@
       </span>
     </p>
     <div class="btn-group">
-      <button *ngIf="(createUserId | isUserPermission:assignUserId)" class="btn-cancel" (click)="cancelDelivery()">Hủy đơn</button>
-      <button *ngIf="(createUserId | isUserPermission:assignUserId:false)"class="btn-place-order">Chốt đơn</button>
+      <button class="btn-cancel" (click)="cancelDelivery()">Hủy đơn</button>
+      <button *ngIf="(createUserId | isUserPermission:assignUserId:false)"class="btn-place-order" (click)="onPlaceOrders()">Chốt đơn</button>
     </div>
   </div>
 </div>

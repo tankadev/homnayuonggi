@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DecimalPipe } from '@angular/common';
 import { FormatNameTo2CharPipe } from './format-name-to-2-char.pipe';
 import { DisplayNameUserPipe } from './display-name-user.pipe';
 import { DisplayImagePipe } from './display-image.pipe';
@@ -10,6 +10,7 @@ import { DishTotalQuantityPipe } from './dish-total-quantity.pipe';
 import { IsAllowPipe } from './is-allow.pipe';
 import { IsUserPermissionPipe } from './is-user-permission.pipe';
 import { DisplayUserOrderPipe } from './display-user-order.pipe';
+import { TotalOrderPipe } from './total-order.pipe';
 
 @NgModule({
   declarations: [
@@ -22,7 +23,8 @@ import { DisplayUserOrderPipe } from './display-user-order.pipe';
     DishTotalQuantityPipe,
     IsAllowPipe,
     IsUserPermissionPipe,
-    DisplayUserOrderPipe
+    DisplayUserOrderPipe,
+    TotalOrderPipe
   ],
   imports: [
     CommonModule
@@ -37,8 +39,9 @@ import { DisplayUserOrderPipe } from './display-user-order.pipe';
     IsAllowDirective,
     IsAllowPipe,
     IsUserPermissionPipe,
-    DisplayUserOrderPipe
+    DisplayUserOrderPipe,
+    TotalOrderPipe
   ],
-  providers: [ DisplayNameUserPipe ]
+  providers: [ DisplayNameUserPipe, DishTotalQuantityPipe, DecimalPipe ]
 })
 export class ShareModule { }

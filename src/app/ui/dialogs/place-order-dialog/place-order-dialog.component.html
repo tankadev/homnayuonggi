@@ -1,1 +1,27 @@
-<p>place-order-dialog works!</p>
+<div class="place-order-form">
+    <div class="place-order-form__header">
+      <h1>Cập nhật giá trị đơn hàng</h1>
+      <button class="btn-close-modal" (click)="closeModal()">Đóng</button>
+    </div>
+    <form nz-form [formGroup]="placeOrderForm" (ngSubmit)="submitPlaceOrderForm()">
+      <div class="form-content">
+        <p>Giá trị đơn hàng dự kiến: <b>{{ 'vnđ' | totalOrder }}</b></p>
+        <nz-form-item>
+          <nz-form-control [nzXs]="24" nzErrorTip="Nhập vào giá sau khi đã sử dụng mã giảm giá">
+            <nz-input-number
+                formControlName="lastPrice"
+                id="lastPrice"
+                [nzPlaceHolder]="'Giá sau khi đã trừ khuyến mãi'"
+                [nzMin]="0"
+                [nzMax]="500000"
+                [nzStep]="500"
+                [nzFormatter]="formatterPrice"
+                [nzParser]="parserPrice"
+                ></nz-input-number>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <button type="submit" class="btn-footer">Xác nhận</button>
+    </form>
+</div>
+  
