@@ -83,6 +83,7 @@ export class PlaceOrderDialogComponent implements OnInit {
       this.deliveryUpdateDTO.serviceFee = serviceFee;
       this.deliveryUpdateDTO.sponsorPrice = sponsorPrice;
       this.deliveryUpdateDTO.splitMoney = splitMoney;
+      this.deliveryUpdateDTO.deliveryStatus = 1;
 
       this.currentStep = 1;
     } else {

@@ -14,4 +14,5 @@ export class DeliveryDTO {
   serviceFee?: number;
   sponsorPrice? : number;
   splitMoney?: SplitMoneyDeliveryModel;
+  deliveryStatus?: number; // 1: delivering, 2: received
 }

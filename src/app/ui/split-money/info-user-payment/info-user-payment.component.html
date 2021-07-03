@@ -1,0 +1,23 @@
+<div class="info-user-payment-container">
+    <p class="title">Thông tin người đặt</p>
+    <div class="line-break"></div>
+    <div class="user-info">
+        <div class="avatar">
+            <span>{{ deliveryInfo.assignUserId | displayNameUser | formatNameTo2Char }}</span>
+        </div>
+        <p>{{ deliveryInfo.assignUserId | displayNameUser }}</p>
+    </div>
+    <p class="main-sub">Số điện thoại</p>
+    <p class="content-sub">{{ deliveryInfo.assignUserId | displayUserInfo:'phone' }}</p>
+    <p class="main-sub">Chấp nhận thanh toán</p>
+    <p class="content-sub image-format">
+        <span
+            *ngFor="let item of (deliveryInfo.assignUserId | displayUserInfo:'payment'); let last = last"
+            [class.cash]="item.value === 'cash'"
+            [class.momo]="item.value === 'momo'"
+            [class.shopee]="item.value === 'shopee'"
+        >
+            {{ item.label }}
+        </span>
+    </p>
+</div>

@@ -11,6 +11,7 @@ import { IsAllowPipe } from './is-allow.pipe';
 import { IsUserPermissionPipe } from './is-user-permission.pipe';
 import { DisplayUserOrderPipe } from './display-user-order.pipe';
 import { TotalOrderPipe } from './total-order.pipe';
+import { DisplayUserInfoPipe } from './display-user-info.pipe';
 
 @NgModule({
   declarations: [
@@ -24,7 +25,8 @@ import { TotalOrderPipe } from './total-order.pipe';
     IsAllowPipe,
     IsUserPermissionPipe,
     DisplayUserOrderPipe,
-    TotalOrderPipe
+    TotalOrderPipe,
+    DisplayUserInfoPipe
   ],
   imports: [
     CommonModule
@@ -40,7 +42,8 @@ import { TotalOrderPipe } from './total-order.pipe';
     IsAllowPipe,
     IsUserPermissionPipe,
     DisplayUserOrderPipe,
-    TotalOrderPipe
+    TotalOrderPipe,
+    DisplayUserInfoPipe
   ],
   providers: [ DisplayNameUserPipe, DishTotalQuantityPipe, DecimalPipe ]
 })

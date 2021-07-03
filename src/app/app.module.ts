@@ -29,6 +29,9 @@ import { ListOrderComponent } from './ui/place-order/list-order/list-order.compo
 import { ConfirmDialogComponent } from './ui/dialogs/confirm-dialog/confirm-dialog.component';
 import { NoteDialogComponent } from './ui/dialogs/note-dialog/note-dialog.component';
 import { PlaceOrderDialogComponent } from './ui/dialogs/place-order-dialog/place-order-dialog.component';
+import { SplitMoneyComponent } from './ui/split-money/split-money.component';
+import { InfoOrderComponent } from './ui/split-money/info-order/info-order.component';
+import { InfoUserPaymentComponent } from './ui/split-money/info-user-payment/info-user-payment.component';
 
 registerLocaleData(en);
 
@@ -48,7 +51,10 @@ registerLocaleData(en);
     ListOrderComponent,
     ConfirmDialogComponent,
     PlaceOrderDialogComponent,
-    NoteDialogComponent
+    NoteDialogComponent,
+    SplitMoneyComponent,
+    InfoOrderComponent,
+    InfoUserPaymentComponent
   ],
   imports: [
     BrowserModule,
