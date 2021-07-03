@@ -1,23 +1,65 @@
 <div class="place-order-form">
     <div class="place-order-form__header">
-      <h1>Cập nhật giá trị đơn hàng</h1>
+      <h1>Hoàn thành đơn hàng</h1>
       <button class="btn-close-modal" (click)="closeModal()">Đóng</button>
     </div>
     <form nz-form [formGroup]="placeOrderForm" (ngSubmit)="submitPlaceOrderForm()">
       <div class="form-content">
-        <p>Giá trị đơn hàng dự kiến: <b>{{ 'vnđ' | totalOrder }}</b></p>
+        <p>Giá trị đơn hàng tạm tính: <b>{{ 'vnđ' | totalOrder }}</b></p>
         <nz-form-item>
-          <nz-form-control [nzXs]="24" nzErrorTip="Nhập vào giá sau khi đã sử dụng mã giảm giá">
+          <nz-form-control [nzXs]="24">
             <nz-input-number
-                formControlName="lastPrice"
-                id="lastPrice"
-                [nzPlaceHolder]="'Giá sau khi đã trừ khuyến mãi'"
+                formControlName="shippingFee"
+                id="shippingFee"
+                [nzPlaceHolder]="'Phí giao hàng'"
+                [nzMin]="0"
+                [nzMax]="50000"
+                [nzStep]="1000"
+                [nzFormatter]="formatterPrice"
+                [nzParser]="parserPrice"
+                ></nz-input-number>
+          </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+          <nz-form-control [nzXs]="24">
+            <nz-input-number
+                formControlName="serviceFee"
+                id="serviceFee"
+                [nzPlaceHolder]="'Phí dịch vụ'"
+                [nzMin]="0"
+                [nzMax]="50000"
+                [nzStep]="1000"
+                [nzFormatter]="formatterPrice"
+                [nzParser]="parserPrice"
+                ></nz-input-number>
+          </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+          <nz-form-control [nzXs]="24" nzErrorTip="Nhập vào số tiền được giảm">
+            <nz-input-number
+                formControlName="sponsorPrice"
+                id="sponsorPrice"
+                [nzPlaceHolder]="'Số tiền được giảm (*)'"
                 [nzMin]="0"
                 [nzMax]="500000"
                 [nzStep]="500"
                 [nzFormatter]="formatterPrice"
                 [nzParser]="parserPrice"
                 ></nz-input-number>
+          </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+          <nz-form-control [nzXs]="24" nzErrorTip="Vui lòng chọn hình thức chia tiền">
+            <nz-select nzShowSearch nzAllowClear nzPlaceHolder="Chọn hình thức chia tiền (*)" formControlName="splitMoneyType" (ngModelChange)="onSplitMoneyTypeChange($event)">
+              <nz-option *ngFor="let option of splitMoneyOptions" [nzLabel]="option.content" [nzValue]="option.type" [nzDisabled]="option.disable"></nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+        <nz-form-item *ngIf="_isSponsor">
+          <nz-form-control [nzXs]="24" nzErrorTip="Vui lòng chọn một người trong danh sách">
+            <nz-select nzShowSearch nzAllowClear nzPlaceHolder="Chọn người tài trợ (*)" formControlName="sponsorUser">
+              <nz-option *ngFor="let user of userList" nzLabel="{{user.displayName}} ({{user.username}})" [nzValue]="user.key"></nz-option>
+            </nz-select>
           </nz-form-control>
         </nz-form-item>
       </div>

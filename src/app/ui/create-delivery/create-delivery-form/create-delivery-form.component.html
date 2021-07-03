@@ -3,7 +3,7 @@
     <div class="form-content">
       <nz-form-item>
         <nz-form-control class="first-control" [nzXs]="24" [nzErrorTip]="errorUsernameTpl">
-          <input nz-input formControlName="urlShop" id="urlShop" autocomplete="off" placeholder="URL quán. Vd: https://www.now.vn/can-tho/nuoc-mia-my-tho-mt68" maxlength="255" />
+          <input nz-input formControlName="urlShop" id="urlShop" autocomplete="off" placeholder="URL quán (*). Vd: https://www.now.vn/can-tho/nuoc-mia-my-tho-mt68" maxlength="255" />
           <ng-template #errorUsernameTpl let-control>
             <ng-container *ngIf="control.hasError('required')">
               Vui lòng nhập link của quán!
@@ -17,20 +17,15 @@
       <nz-form-item>
         <nz-form-control class="first-control" [nzXs]="24" nzErrorTip="Vui lòng nhập thời gian bình chọn!">
           <nz-input-group nzAddOnAfter="Phút">
-            <input nz-input formControlName="minute" id="minute" autocomplete="off" placeholder="Thời gian bình chọn. Vd: 10" maxlength="30"/>
+            <input nz-input formControlName="minute" id="minute" autocomplete="off" placeholder="Thời gian bình chọn (*). Vd: 10" maxlength="30"/>
           </nz-input-group>
         </nz-form-control>
       </nz-form-item>
       <nz-form-item>
         <nz-form-control [nzXs]="24" nzErrorTip="Vui lòng chọn một người trong danh sách">
-          <nz-mention [nzSuggestions]="userList" [nzValueWith]="valueWith">
-            <input placeholder="Gõ @ để chọn người đặt hàng và trả tiền" nzMentionTrigger nz-input formControlName="assignUser" />
-            <ng-container *nzMentionSuggestion="let user">
-              <nz-avatar nzSize="small" [nzText]="(user.displayName | formatNameTo2Char)"></nz-avatar>
-              &nbsp;
-              <span>{{ user.username }}({{ user.displayName }})</span>
-            </ng-container>
-          </nz-mention>
+          <nz-select nzShowSearch nzAllowClear nzPlaceHolder="Chọn người đặt hàng (*)" formControlName="assignUser">
+            <nz-option *ngFor="let user of userList" nzLabel="{{user.displayName}} ({{user.username}})" [nzValue]="user.username"></nz-option>
+          </nz-select>
         </nz-form-control>
       </nz-form-item>
     </div>

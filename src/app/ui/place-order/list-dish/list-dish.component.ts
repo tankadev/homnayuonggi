@@ -60,7 +60,7 @@ export class ListDishComponent implements OnInit {
       }
       this.orderService.updateOrder(findDish.key, orderDto).then(
         () => {
-          console.log('update success');
+          // console.log('update success');
         }
       );
     } else {
@@ -75,7 +75,7 @@ export class ListDishComponent implements OnInit {
       ];
       this.orderService.addOrder(orderDto).then(
         () => {
-          console.log('create success');
+          // console.log('create success');
         }
       );
     }

@@ -51,10 +51,15 @@ export class CreateDeliveryFormComponent implements OnInit {
             const deliveryUpdateDTO = new DeliveryDTO();
             deliveryUpdateDTO.isEdit = false;
             deliveryUpdateDTO.isCreate = true;
+            deliveryUpdateDTO.isCompleted = false;
             deliveryUpdateDTO.remainingTime = +minute;
             deliveryUpdateDTO.createDateTime = new Date().toISOString();
-            deliveryUpdateDTO.assignUserId = this.storage.findUserByUserName(assignUser.replace('@', '').trim()).key;
+            deliveryUpdateDTO.assignUserId = this.storage.findUserByUserName(assignUser).key;
             deliveryUpdateDTO.delivery = res;
+            deliveryUpdateDTO.shippingFee = 0;
+            deliveryUpdateDTO.serviceFee = 0;
+            deliveryUpdateDTO.sponsorPrice = 0;
+            deliveryUpdateDTO.splitMoney = null;
             this.deliveryService.update(deliveryUpdateDTO);
           } else {
             this.notification.create(
@@ -77,8 +82,6 @@ export class CreateDeliveryFormComponent implements OnInit {
       FormHelper.validateAllFormFields(this.createDeliveryForm);
     }
   }
-
-  public valueWith = (data: UserRO) => `${data.username}`;
 
   private initForm = () => {
     this.createDeliveryForm = this.fb.group({

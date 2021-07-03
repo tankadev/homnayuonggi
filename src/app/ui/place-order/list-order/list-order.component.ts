@@ -180,7 +180,10 @@ export class ListOrderComponent implements OnInit {
       nzFooter: null,
       nzClosable: false,
       nzAutofocus: null,
-      nzMaskClosable: false
+      nzMaskClosable: false,
+      nzComponentParams: {
+        isSponsor: false
+      }
     });
     modal.afterClose.subscribe(isConfirm => {
       if (isConfirm) {

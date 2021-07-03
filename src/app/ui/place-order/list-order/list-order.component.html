@@ -58,7 +58,7 @@
     </p>
     <div class="btn-group">
       <button class="btn-cancel" (click)="cancelDelivery()">Hủy đơn</button>
-      <button *ngIf="(createUserId | isUserPermission:assignUserId:false)"class="btn-place-order" (click)="onPlaceOrders()">Chốt đơn</button>
+      <button *ngIf="(createUserId | isUserPermission:assignUserId:false)"class="btn-place-order" (click)="onPlaceOrders()" [disabled]="('vnđ' | totalOrder:listOrders) === '0 vnđ'">Chốt đơn</button>
     </div>
   </div>
 </div>

@@ -2,7 +2,10 @@
   <header [userInfo]="userInfo"></header>
   <ng-container *ngIf="isLoginIn; else showNeedLogin">
     <ng-container *ngIf="deliveryInfo && deliveryInfo.isCreate; else showCreateDelivery">
-      <place-order [deliveryInfo]="deliveryInfo"></place-order>
+      <place-order *ngIf="!deliveryInfo.isCompleted; else splitMoneyInformation" [deliveryInfo]="deliveryInfo"></place-order>
+      <ng-template #splitMoneyInformation>
+        <split-money></split-money>
+      </ng-template>
     </ng-container>
     <ng-template #showCreateDelivery>
       <create-delivery [deliveryInfo]="deliveryInfo" [user]="userInfo"></create-delivery>

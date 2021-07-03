@@ -58,6 +58,23 @@
     border-radius: 20px !important;
 }
 
+nz-select .ant-select-selector {
+  height: auto !important;
+  padding: 0.5rem 0.5rem 0.5rem 1rem !important;
+  background-color: #F9FAFE !important;
+  border: 1px solid #ECF3FE !important;
+  transition: all 0.3s ease-in-out !important;
+  animation-duration: 0.1s !important;
+  animation-name: showOut !important;
+  animation-timing-function: ease-in-out !important;
+
+  &:hover {
+    border-color: rgba(0, 83, 255, 0.3) !important;
+  }
+
+  input { height: 100% !important; }
+}
+
 // body {
 // 	// font-family: "Dosis", -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
 // 	// 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
