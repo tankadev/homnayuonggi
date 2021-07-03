@@ -1,9 +1,14 @@
 <div class="place-order-form">
     <div class="place-order-form__header">
       <h1>Hoàn thành đơn hàng</h1>
-      <button class="btn-close-modal" (click)="closeModal()">Đóng</button>
+      <button class="btn-close-modal" (click)="currentStep === 0 ? closeModal() : currentStep = 0">{{ currentStep === 0 ? 'Đóng' : 'Quay lại' }}</button>
     </div>
-    <form nz-form [formGroup]="placeOrderForm" (ngSubmit)="submitPlaceOrderForm()">
+    <nz-steps [nzCurrent]="currentStep" (nzIndexChange)="onIndexChange($event)">
+      <nz-step nzTitle="Đơn hàng"></nz-step>
+      <nz-step nzTitle="Thông tin thanh toán"></nz-step>
+    </nz-steps>
+    
+    <form nz-form [formGroup]="placeOrderForm" (ngSubmit)="submitPlaceOrderForm()" [hidden]="currentStep === 0 ? false : true">
       <div class="form-content">
         <p>Giá trị đơn hàng tạm tính: <b>{{ 'vnđ' | totalOrder }}</b></p>
         <nz-form-item>
@@ -63,7 +68,27 @@
           </nz-form-control>
         </nz-form-item>
       </div>
+      <button type="submit" class="btn-footer">Tiếp theo</button>
+    </form>
+    <form nz-form [formGroup]="paymentForm" (ngSubmit)="submitPaymentForm()" [hidden]="currentStep === 1 ? false : true">
+      <div class="form-content">
+        <nz-form-item>
+          <nz-form-control [nzXs]="24" [nzErrorTip]="errorUsernameTpl">
+            <input class="custom-control" nz-input formControlName="phone" id="phone" autocomplete="off" placeholder="Số điện thoại nhận thanh toán" maxlength="12" />
+            <ng-template #errorUsernameTpl let-control>
+              <ng-container *ngIf="control.hasError('required')">
+                Vui lòng nhập số điện thoại
+              </ng-container>
+              <ng-container *ngIf="control.hasError('pattern')">
+                Xin vui lòng nhập đúng định dạng số điện thoại [0*********]
+              </ng-container>
+            </ng-template>
+          </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+          <nz-checkbox-group formControlName="paymentTypeGroup"></nz-checkbox-group>
+        </nz-form-item>
+      </div>
       <button type="submit" class="btn-footer">Xác nhận</button>
     </form>
 </div>
-  

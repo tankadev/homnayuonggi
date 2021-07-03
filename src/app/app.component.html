@@ -4,7 +4,7 @@
     <ng-container *ngIf="deliveryInfo && deliveryInfo.isCreate; else showCreateDelivery">
       <place-order *ngIf="!deliveryInfo.isCompleted; else splitMoneyInformation" [deliveryInfo]="deliveryInfo"></place-order>
       <ng-template #splitMoneyInformation>
-        <split-money></split-money>
+        <split-money [deliveryInfo]="deliveryInfo"></split-money>
       </ng-template>
     </ng-container>
     <ng-template #showCreateDelivery>

@@ -5,10 +5,14 @@ import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/fo
 import { NzModalRef } from 'ng-zorro-antd/modal';
 import { LocalStorage } from 'src/app/const/local-storage';
 import { DeliveryDTO } from 'src/app/dto/delivery.dto';
+import { UserDTO } from 'src/app/dto/user.dto';
 import { FormHelper } from 'src/app/helper/form.help';
 import { SplitMoneyDeliveryModel, SplitMoneyModel } from 'src/app/models/split-money.model';
+import { UserPaymentModel } from 'src/app/models/user-payment.model';
 import { UserRO } from 'src/app/ro/user.ro';
 import { DeliveryService } from 'src/app/services/delivery.service';
+import { LocalStorageService } from 'src/app/services/localstorage.service';
+import { UserService } from 'src/app/services/user.service';
 
 @Component({
   selector: 'place-order-dialog',
@@ -17,12 +21,17 @@ import { DeliveryService } from 'src/app/services/delivery.service';
 })
 export class PlaceOrderDialogComponent implements OnInit {
 
+  @Input() assignUserId?: string;
   @Input() set isSponsor(value: boolean) {
     this._isSponsor = value;
   };
 
   _isSponsor: boolean = false;
+
+  currentStep: number = 0;
+  deliveryUpdateDTO: DeliveryDTO = new DeliveryDTO();
   placeOrderForm: FormGroup;
+  paymentForm: FormGroup;
   userList: UserRO[] = JSON.parse(localStorage.getItem(LocalStorage.USER_LIST));
   splitMoneyOptions: SplitMoneyModel[] = [
     {
@@ -51,16 +60,14 @@ export class PlaceOrderDialogComponent implements OnInit {
     private modal: NzModalRef,
     private fb: FormBuilder,
     private decimalPipe: DecimalPipe,
-    private deliveryService: DeliveryService
+    private deliveryService: DeliveryService,
+    private userService: UserService,
+    private storage: LocalStorageService
   ) { }
 
   ngOnInit(): void {
-    this.placeOrderForm = this.fb.group({
-      shippingFee: [0],
-      serviceFee: [0],
-      sponsorPrice: [0, [Validators.required]],
-      splitMoneyType: [null, [Validators.required]]
-    });
+    this.initPlaceOrderForm();
+    this.initPaymentForm();
   }
 
   public submitPlaceOrderForm(): void {
@@ -71,20 +78,43 @@ export class PlaceOrderDialogComponent implements OnInit {
       splitMoney.type = splitMoneyType;
       splitMoney.sponsorUserId = this._isSponsor ? sponsorUser : null;
 
-      const deliveryUpdateDTO = new DeliveryDTO();
-      deliveryUpdateDTO.isCompleted = true;
-      deliveryUpdateDTO.shippingFee = shippingFee;
-      deliveryUpdateDTO.serviceFee = serviceFee;
-      deliveryUpdateDTO.sponsorPrice = sponsorPrice;
-      deliveryUpdateDTO.splitMoney = splitMoney;
+      this.deliveryUpdateDTO.isCompleted = true;
+      this.deliveryUpdateDTO.shippingFee = shippingFee;
+      this.deliveryUpdateDTO.serviceFee = serviceFee;
+      this.deliveryUpdateDTO.sponsorPrice = sponsorPrice;
+      this.deliveryUpdateDTO.splitMoney = splitMoney;
 
-      this.deliveryService.update(deliveryUpdateDTO).then(
-        () => {
-          this.modal.destroy();
-        }
-      );
+      this.currentStep = 1;
     } else {
       FormHelper.validateAllFormFields(this.placeOrderForm);
+    }
+  }
+
+  public submitPaymentForm(): void {
+    if (this.paymentForm.valid) {
+      const userPaymentId: string = this.storage.getDelivery().assignUserId;
+      const userPaymentInfo: UserRO = this.storage.findUserByUserId(userPaymentId);
+      const { phone, paymentTypeGroup } = this.paymentForm.value;
+
+      const userDTO = new UserDTO();
+      userDTO.username = userPaymentInfo.username;
+      userDTO.displayName = userPaymentInfo.displayName;
+      userDTO.phone = phone;
+      userDTO.payment = paymentTypeGroup;
+
+      this.deliveryService.update(this.deliveryUpdateDTO).then();
+      this.userService.update(userPaymentId, userDTO).then();
+      this.modal.destroy();
+    }
+  }
+
+  public onIndexChange(index: number): void {
+    if (index === 1) {
+      if (this.placeOrderForm.valid && this.placeOrderForm.value.sponsorPrice > 0) {
+        this.currentStep = index;
+      }
+    } else {
+      this.currentStep = index;
     }
   }
 
@@ -105,6 +135,41 @@ export class PlaceOrderDialogComponent implements OnInit {
       this.placeOrderForm.removeControl('sponsorUser');
       this._isSponsor = false;
     }
+  }
+
+  private initPlaceOrderForm(): void {
+    this.placeOrderForm = this.fb.group({
+      shippingFee: [0],
+      serviceFee: [0],
+      sponsorPrice: [0, [Validators.required]],
+      splitMoneyType: [null, [Validators.required]]
+    });
+
+    if (this._isSponsor) {
+      const sponsorUserCtrl: AbstractControl = this.fb.control(null, [Validators.required]);
+      this.placeOrderForm.addControl('sponsorUser', sponsorUserCtrl);
+      this.placeOrderForm.controls.sponsorUser.setValue(this.assignUserId);
+    }
+  }
+
+  private initPaymentForm(): void {
+    const userPaymentId: string = this.storage.getDelivery().assignUserId;
+    const userPaymentInfo: UserRO = this.storage.findUserByUserId(userPaymentId);
+    const phone = userPaymentInfo.phone ?? null;
+    let paymentType: UserPaymentModel[] = [];
+    if (userPaymentInfo.payment && userPaymentInfo.payment.length > 0) {
+      paymentType = userPaymentInfo.payment;
+    } else {
+      paymentType = [
+        { label: 'Tiền mặt', value: 'cash', disabled: true, checked: true },
+        { label: 'Momo', value: 'momo'},
+        { label: 'ShopeePay', value: 'shopee' }
+      ];
+    }
+    this.paymentForm = this.fb.group({
+      phone: [phone, [Validators.required, Validators.pattern('[- +()0-9]+')]],
+      paymentTypeGroup: [paymentType]
+    });
   }
 
 }

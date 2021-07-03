@@ -182,7 +182,8 @@ export class ListOrderComponent implements OnInit {
       nzAutofocus: null,
       nzMaskClosable: false,
       nzComponentParams: {
-        isSponsor: false
+        isSponsor: false,
+        assignUserId: this.assignUserId
       }
     });
     modal.afterClose.subscribe(isConfirm => {

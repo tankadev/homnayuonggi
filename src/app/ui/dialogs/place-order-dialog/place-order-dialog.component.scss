@@ -46,6 +46,20 @@
         border-radius: 5px;
         box-shadow: 0px 1px 15px rgba(180, 191, 206, 0.1);
         padding: 2.2rem 2rem 0.5rem 2rem;
+
+        input.custom-control {
+          padding: 0.7rem;
+            background-color: #F9FAFE;
+            border: 1px solid #ECF3FE;
+            transition: all .3s ease-in-out;
+            animation-duration: 0.1s;
+            animation-name: showOut;
+            animation-timing-function: ease-in-out;
+    
+            &:hover {
+              border-color: rgba(0, 83, 255, 0.3);
+            }
+        }
   
         nz-input-number {
             width: 100%;
@@ -90,6 +104,11 @@
         cursor: pointer;
         transition: all .3s ease-in-out;
       }
+    }
+
+    .ant-steps {
+      width: 80%;
+      margin: 0 auto;
     }
   }
   
