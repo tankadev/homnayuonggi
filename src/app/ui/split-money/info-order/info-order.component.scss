@@ -6,4 +6,31 @@
     border-radius: 30px;
     padding: 0.7vw 1.5vw 0.3vw 1.5vw;
     position: relative;
+
+    .line-break {
+        background-color: #EBF2FF;
+        width: 100%;
+        height: 1px;
+    }
+
+    .title {
+        font-family: "Dosis";
+        font-weight: bold;
+        color: #2D3867;
+        font-size: 1.1vw;
+        margin-bottom: 0.5vw;
+    }
+
+    .main-sub {
+        font-weight: bold;
+        color: #2D3867;
+        font-size: 0.8vw;
+        margin-bottom: 0;
+    }
+
+    .content-sub {
+        color: #2D3867;
+        font-size: 0.6vw;
+        margin-bottom: 0.3vw;
+    }
 }

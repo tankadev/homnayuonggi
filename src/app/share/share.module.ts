@@ -45,6 +45,6 @@ import { DisplayUserInfoPipe } from './display-user-info.pipe';
     TotalOrderPipe,
     DisplayUserInfoPipe
   ],
-  providers: [ DisplayNameUserPipe, DishTotalQuantityPipe, DecimalPipe ]
+  providers: [ DisplayNameUserPipe, DishTotalQuantityPipe, DecimalPipe, DisplayImagePipe, DisplayUserOrderPipe ]
 })
 export class ShareModule { }

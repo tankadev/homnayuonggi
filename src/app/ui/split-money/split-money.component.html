@@ -2,17 +2,21 @@
     <div nz-row>
       <div nz-col nzSpan="7">
         <info-user-payment [deliveryInfo]="deliveryInfo"></info-user-payment>
-        <info-order></info-order>
+        <info-order [deliveryInfo]="deliveryInfo"></info-order>
         <div class="version-box">
             <p class="name">Phiên bản 0.0.1</p>
             <p class="copy">© Copyright 2021 TodayUongGi?. All rights reserved</p>
         </div>
       </div>
       <div nz-col nzSpan="10">
-        dasdasd
+        <info-payment
+          [deliveryInfo]="deliveryInfo"
+          [createUserId]="deliveryInfo.userCreate"
+          [assignUserId]="deliveryInfo.assignUserId"
+        ></info-payment>
       </div>
       <div nz-col nzSpan="7">
-        dsadasd
+        <list-split-money></list-split-money>
       </div>
     </div>
 </div>

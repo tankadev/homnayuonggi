@@ -1,6 +1,9 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { map } from 'rxjs/operators';
 
 import { DeliveryRO } from 'src/app/ro/delivery.ro';
+import { UserRO } from 'src/app/ro/user.ro';
+import { UserService } from 'src/app/services/user.service';
 
 @Component({
   selector: 'info-user-payment',
@@ -10,10 +13,28 @@ import { DeliveryRO } from 'src/app/ro/delivery.ro';
 export class InfoUserPaymentComponent implements OnInit {
 
   @Input() deliveryInfo: DeliveryRO;
+  userList: UserRO[] = [];
 
-  constructor() { }
+  constructor(
+    private userService: UserService
+  ) { }
 
   ngOnInit(): void {
+    this.onListenUsersChangesFromFirebaseDB();
+  }
+
+  private onListenUsersChangesFromFirebaseDB(): void {
+    this.userService.getAll().snapshotChanges().pipe(
+      map(changes =>
+        changes.map(c =>
+          ({ key: c.payload.key, ...c.payload.val() })
+        )
+      )
+    ).subscribe(data => {
+      if (data.length > 0) {
+        this.userList = data;
+      }
+    });
   }
 
 }

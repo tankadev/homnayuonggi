@@ -42,12 +42,12 @@ export class PlaceOrderDialogComponent implements OnInit {
     {
       type: 1,
       content: 'Chia theo % món trên giá trị đơn hàng',
-      disable: false
+      disable: true
     },
     {
       type: 2,
       content: 'Ai đó tài trợ 100% luôn',
-      disable: false
+      disable: true
     },
     {
       type: 3,

@@ -1,3 +1,20 @@
 <div class="info-order-container">
-
+    <p class="title">Thông tin đơn hàng</p>
+    <div class="line-break"></div>
+    <p class="main-sub">Giá trị đơn hàng tạm tính</p>
+    <p class="content-sub">{{ 'vnđ' | totalOrder }}</p>
+    <p class="main-sub">Phí vận chuyển</p>
+    <p class="content-sub">{{ (deliveryInfo.shippingFee ? '+' + deliveryInfo.shippingFee : 0) | number }} vnđ</p>
+    <p class="main-sub">Phí dịch vụ</p>
+    <p class="content-sub">{{ (deliveryInfo.serviceFee ? '+' + deliveryInfo.serviceFee : 0) | number }} vnđ</p>
+    <p class="main-sub">Giảm giá</p>
+    <p class="content-sub">{{ (deliveryInfo.sponsorPrice ? '-' + deliveryInfo.sponsorPrice : 0) | number }} vnđ</p>
+    <div class="line-break"></div>
+    <p class="main-sub">Tổng cộng</p>
+    <p class="content-sub">
+        {{ (('none' | totalOrder) + (deliveryInfo.shippingFee) + (deliveryInfo.serviceFee) - (deliveryInfo.sponsorPrice)) | number }} vnđ
+    </p>
+    <div class="line-break"></div>
+    <p class="main-sub">Hình thức chia tiền</p>
+    <p class="content-sub">Chia đều cho tất cả</p>
 </div>

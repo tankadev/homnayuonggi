@@ -1,0 +1,134 @@
+:host ::ng-deep .info-payment-container {
+    overflow-y: auto;
+    margin: 1rem 0rem;
+    height: calc(100vh - 64px - 35px);
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+    border-radius: 30px;
+    background-color: #ffffff;
+    padding: 1vw 1.5vw;
+  
+    &::-webkit-scrollbar {
+      display: none;
+    }
+
+    .line-break {
+        background-color: #EBF2FF;
+        width: 100%;
+        height: 1px;
+    }
+
+    .price-content {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: flex-end;
+    }
+
+    .payment-other-info {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.5vw 0;
+
+        .group-info {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            justify-content: center;
+            p {
+                margin: 0;
+                font-size: 0.9vw;
+            }
+        }
+
+        .btn-group {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+
+            .btn-cancel {
+                border-radius: 20px;
+                border: 0;
+                background: #FFE1E1;
+                color: #FF4154;
+                font-size: 0.8vw;
+                padding: 0.3vw 0.6vw;
+                cursor: pointer;
+                margin-right: 1vw;
+                font-family: "Dosis";
+              }
+        
+            .btn-complete {
+                border-radius: 20px;
+                border: 0;
+                background: #EBF2FF;
+                color: #0053FF;
+                font-size: 0.8vw;
+                padding: 0.3vw 0.6vw;
+                cursor: pointer;
+                font-family: "Dosis";
+        
+                &:disabled {
+                    background: #e6e6e6;
+                    color: #525252;
+                    cursor: not-allowed;
+                }
+            }
+        }
+    }
+
+    .title {
+        font-family: "Dosis";
+        font-weight: bold;
+        color: #2D3867;
+        font-size: 1.1vw;
+        margin-bottom: 0.5vw;
+    }
+
+    .payment-price {
+        font-size: 0.8vw;
+        color: #B4BFCE;
+        span {
+            font-size: 1vw;
+            line-height: 1vw;
+            font-weight: bold;
+            color: #2D3867;
+        }
+    }
+
+    table {
+        width: 100%;
+        border: 1px solid #EBF2FF;
+
+        th, td {
+            border: 1px solid #B4BFCE;
+            padding: 0.2vw 0.3vw;
+        }
+
+        th {
+            color: #2D3867;
+            font-size: 0.8vw;
+        }
+
+        td {
+            font-size: 0.8vw; 
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .text-right {
+            text-align: right;
+        }
+
+        .total-payment {
+            td {
+                background-color: #EBF2FF;
+                font-weight: bold;
+            }
+        }
+    }
+}

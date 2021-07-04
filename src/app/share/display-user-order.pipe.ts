@@ -13,7 +13,7 @@ export class DisplayUserOrderPipe implements PipeTransform {
     private displayUsernamePipe: DisplayNameUserPipe
   ) {}
 
-  transform(listOrders: OrderRO[], displayType: 'userName' | 'countUser' | 'countDish' = 'userName'): string {
+  transform(listOrders: OrderRO[], displayType: 'userName' | 'countUser' | 'countDish' = 'userName', isNumber: boolean = false): string | number {
 
     let totalUserNotes: UserNote[] = [];
     listOrders.forEach(item => {
@@ -42,7 +42,7 @@ export class DisplayUserOrderPipe implements PipeTransform {
       totalUserNotes.forEach(item => {
         count = count + item.quantity;
       });
-      return  count ? `${count} phần` : '';
+      return  count ? (isNumber ? count : `${count} phần`) : '';
     }
 
     if (displayType === 'countUser') {

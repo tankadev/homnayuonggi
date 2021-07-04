@@ -32,6 +32,8 @@ import { PlaceOrderDialogComponent } from './ui/dialogs/place-order-dialog/place
 import { SplitMoneyComponent } from './ui/split-money/split-money.component';
 import { InfoOrderComponent } from './ui/split-money/info-order/info-order.component';
 import { InfoUserPaymentComponent } from './ui/split-money/info-user-payment/info-user-payment.component';
+import { InfoPaymentComponent } from './ui/split-money/info-payment/info-payment.component';
+import { ListSplitMoneyComponent } from './ui/split-money/list-split-money/list-split-money.component';
 
 registerLocaleData(en);
 
@@ -54,7 +56,9 @@ registerLocaleData(en);
     NoteDialogComponent,
     SplitMoneyComponent,
     InfoOrderComponent,
-    InfoUserPaymentComponent
+    InfoUserPaymentComponent,
+    InfoPaymentComponent,
+    ListSplitMoneyComponent
   ],
   imports: [
     BrowserModule,

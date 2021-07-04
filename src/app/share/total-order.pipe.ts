@@ -16,14 +16,14 @@ export class TotalOrderPipe implements PipeTransform {
     private totalQuantityPipe: DishTotalQuantityPipe
   ) {}
 
-  transform(currency: string, listOrders?: OrderRO[]): string {
+  transform(currency: string, listOrders?: OrderRO[]): string | number {
     let totalPrice = 0;
     const orders = listOrders ? listOrders : this.storage.getOrdersList();
     orders.forEach(order => {
       const price = order.dish.discountPrice ? order.dish.discountPrice.value : order.dish.price.value;
       totalPrice += (Number(price) * Number(this.totalQuantityPipe.transform(order.userNotes)));
     });
-    return `${this.decimalPipe.transform(totalPrice)} ${currency}`;
+    return currency === 'vnđ' ? `${this.decimalPipe.transform(totalPrice)} ${currency}` : Number(totalPrice);
   }
 
 }

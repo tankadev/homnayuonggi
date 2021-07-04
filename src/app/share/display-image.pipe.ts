@@ -6,7 +6,7 @@ import { Photo } from '../ro/delivery-detail-now-api.ro';
 })
 export class DisplayImagePipe implements PipeTransform {
 
-  transform(value: Photo[], width: number = 160): unknown {
+  transform(value: Photo[], width: number = 160): string {
     const photo = value.find(image => image.width === width);
     return photo.value;
   }
