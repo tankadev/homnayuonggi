@@ -20,7 +20,14 @@
         </div>
         <div class="btn-group">
             <button *ngIf="deliveryInfo.deliveryStatus === 2" class="btn-cancel" (click)="renewDelivery()">Tạo bình chọn mới</button>
-            <button *ngIf="(createUserId | isUserPermission:assignUserId:false) && deliveryInfo.deliveryStatus === 1" class="btn-complete" (click)="completeDelivery()">Thông báo đã nhận hàng</button>
+            <button *ngIf="(createUserId | isUserPermission:assignUserId:false) && deliveryInfo.deliveryStatus === 1" class="btn-complete" (click)="completeDelivery()"
+                [ngStyle]="isSendMessage && {'width': '80px'}"
+            >
+                <span *ngIf="!isSendMessage; else sendingMsg">Gửi thông báo đã nhận hàng</span>
+                <ng-template #sendingMsg>
+                    <div class="dot-flashing"></div>
+                </ng-template>
+            </button>
         </div>
     </div>
     <p class="title">Thông tin thêm</p>

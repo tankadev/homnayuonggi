@@ -1,12 +1,15 @@
 import { Component, Input, OnChanges, OnInit, SimpleChanges, ViewContainerRef } from '@angular/core';
 
 import { NzModalService } from 'ng-zorro-antd/modal';
+import { NzNotificationService } from 'ng-zorro-antd/notification';
 import { DeliveryDTO } from 'src/app/dto/delivery.dto';
+import { UserNote } from 'src/app/dto/order.dto';
 
 import { DeliveryRO } from 'src/app/ro/delivery.ro';
 import { OrderRO } from 'src/app/ro/order.ro';
 import { UserRO } from 'src/app/ro/user.ro';
 import { DeliveryService } from 'src/app/services/delivery.service';
+import { FcmService } from 'src/app/services/fcm.service';
 import { LocalStorageService } from 'src/app/services/localstorage.service';
 import { OrderHistoryService } from 'src/app/services/order-history.service';
 import { OrderService } from 'src/app/services/order.service';
@@ -39,6 +42,7 @@ export class InfoPaymentComponent implements OnInit, OnChanges {
   totalPayment: number = 0;
   totalDish: number = 0;
   downPrice: number = 0;
+  isSendMessage: boolean = false;
 
   constructor(
     private modal: NzModalService,
@@ -48,7 +52,9 @@ export class InfoPaymentComponent implements OnInit, OnChanges {
     private storage: LocalStorageService,
     private orderHistoryService: OrderHistoryService,
     private displayImagePipe: DisplayImagePipe,
-    private displayUserOrderPipe: DisplayUserOrderPipe
+    private displayUserOrderPipe: DisplayUserOrderPipe,
+    private fcmService: FcmService,
+    private notification: NzNotificationService
   ) { }
 
   ngOnInit(): void { }
@@ -96,10 +102,25 @@ export class InfoPaymentComponent implements OnInit, OnChanges {
     });
     modal.afterClose.subscribe(isAccept => {
       if (isAccept) {
-        const deliveryUpdateDTO: DeliveryDTO = new DeliveryDTO();
-        deliveryUpdateDTO.deliveryStatus = 2;
+        this.isSendMessage = true;
+        this.fcmService.sendNotificationWhenDeliverySuccess(this.getListFcmTokenByUserOrder()).subscribe(
+          () => {
+            this.isSendMessage = false;
+          },
+          () => {
+            this.isSendMessage = false;
+            this.notification.create(
+              'error',
+              'Lỗi xảy ra',
+              'Không thể gửi thông báo đến mọi người'
+            );
+          }, () => {
+            const deliveryUpdateDTO: DeliveryDTO = new DeliveryDTO();
+            deliveryUpdateDTO.deliveryStatus = 2;
 
-        this.deliveryService.update(deliveryUpdateDTO).then();
+            this.deliveryService.update(deliveryUpdateDTO).then();
+          }
+        )
       }
     });
   }
@@ -147,6 +168,27 @@ export class InfoPaymentComponent implements OnInit, OnChanges {
         this.paymentDishByUser.push(paymentOrder);
       }
     });
+  }
+
+  private getListFcmTokenByUserOrder = (): string[] => {
+    const listFcmToken: string[] = [];
+    let totalUserNotes: UserNote[] = [];
+    const orderList: OrderRO[] = this.storage.getOrdersList();
+    orderList.forEach(item => {
+      totalUserNotes = totalUserNotes.concat(item.userNotes);
+    });
+    if (totalUserNotes.length > 0) {
+      totalUserNotes.forEach(user => {
+        if (user.userId !== this.assignUserId) {
+          const findUser = this.storage.findUserByUserId(user.userId);
+          if (findUser && findUser.fcmToken) {
+            listFcmToken.push(findUser.fcmToken);
+          }
+        }
+      });
+    }
+    
+    return listFcmToken;
   }
 
 }

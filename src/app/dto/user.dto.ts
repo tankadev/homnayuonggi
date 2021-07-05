@@ -5,4 +5,5 @@ export class UserDTO {
     displayName: string;
     phone?: string;
     payment?: UserPaymentModel[];
+    fcmToken?: string;
 }

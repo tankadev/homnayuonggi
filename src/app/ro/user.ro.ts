@@ -6,4 +6,5 @@ export class UserRO {
     displayName: string;
     phone?: string;
     payment?: UserPaymentModel[];
+    fcmToken?: string;
 }
