@@ -173,14 +173,24 @@ export class InfoPaymentComponent implements OnInit, OnChanges {
   private getListFcmTokenByUserOrder = (): string[] => {
     const listFcmToken: string[] = [];
     let totalUserNotes: UserNote[] = [];
+    const unique = [];
+    const distinctUser = [];
     const orderList: OrderRO[] = this.storage.getOrdersList();
     orderList.forEach(item => {
       totalUserNotes = totalUserNotes.concat(item.userNotes);
     });
     if (totalUserNotes.length > 0) {
-      totalUserNotes.forEach(user => {
-        if (user.userId !== this.assignUserId) {
-          const findUser = this.storage.findUserByUserId(user.userId);
+      for( let i = 0; i < totalUserNotes.length; i++ ){
+        if( !unique[totalUserNotes[i].userId]){
+          distinctUser.push(totalUserNotes[i].userId);
+          unique[totalUserNotes[i].userId] = 1;
+        }
+      }
+    }
+    if (distinctUser.length > 0) {
+      distinctUser.forEach(userId => {
+        if (userId !== this.assignUserId) {
+          const findUser = this.storage.findUserByUserId(userId);
           if (findUser && findUser.fcmToken) {
             listFcmToken.push(findUser.fcmToken);
           }
