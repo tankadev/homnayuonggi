@@ -6,6 +6,7 @@ import { NzNotificationService } from 'ng-zorro-antd/notification';
 
 import { LocalStorage } from 'src/app/const/local-storage';
 import { UserRO } from 'src/app/ro/user.ro';
+import { LocalStorageService } from 'src/app/services/localstorage.service';
 import { UserService } from 'src/app/services/user.service';
 import { FormHelper } from './../../../helper/form.help';
 
@@ -28,7 +29,8 @@ export class JoinToAppComponent implements OnInit {
     private modal: NzModalRef,
     private fb: FormBuilder,
     private notification: NzNotificationService,
-    private userService: UserService
+    private userService: UserService,
+    private storage: LocalStorageService
   ) { }
 
   ngOnInit(): void {
@@ -47,7 +49,8 @@ export class JoinToAppComponent implements OnInit {
       } else {
         const { username, displayName } = this.joinAppForm.getRawValue();
         if (this.loginMethod === 'REGISTER') {
-          this.userService.create({ username, displayName });
+          const token = this.storage.getFcmToken();
+          this.userService.create({ username, displayName, fcmToken: token ? token : null });
           this.modal.destroy({ username });
         } else {
           const findUser = this.usersList.find(user => user.username === username);
@@ -58,6 +61,8 @@ export class JoinToAppComponent implements OnInit {
               'Tài khoản này chưa tồn tại trong hệ thống'
             );
           } else {
+            const token = this.storage.getFcmToken();
+            this.userService.update(findUser.key, { fcmToken: token ? token : null });
             this.modal.destroy({ username });
           }
         }

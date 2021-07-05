@@ -23,8 +23,8 @@ export class UserService {
     return this.usersRef as AngularFireList<UserRO>;
   }
 
-  create(tutorial: UserDTO): any {
-    return this.usersRef.push(tutorial);
+  create(userDTO: UserDTO): any {
+    return this.usersRef.push(userDTO);
   }
 
   update(key: string, value: UserDTO): Promise<void> {

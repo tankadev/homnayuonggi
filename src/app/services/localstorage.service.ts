@@ -41,6 +41,11 @@ export class LocalStorageService {
     return histories;
   }
 
+  getFcmToken(): string {
+    const token: string = localStorage.getItem(LocalStorage.FCM_TOKEN);
+    return token;
+  }
+
   setUser = (user: UserRO) => {
     localStorage.setItem(LocalStorage.USER_INFO, JSON.stringify(user));
   }
@@ -59,6 +64,10 @@ export class LocalStorageService {
 
   setOrdersHistory = (histories: OrderHistoryRO[]) => {
     localStorage.setItem(LocalStorage.ORDERS_HISTORY, JSON.stringify(histories));
+  }
+
+  setFcmToken = (token: string) => {
+    localStorage.setItem(LocalStorage.FCM_TOKEN, token);
   }
 
   findUserByUserName(username: string): UserRO {

@@ -31,6 +31,9 @@ export class MessagingService {
   requestPermission() {
     this.angularFireMessaging.requestToken.subscribe(
       (token) => {
+        if (token) {
+          this.storage.setFcmToken(token);
+        }
         const currentUser = this.storage.getUserInfo();
         if (currentUser && token) {
           const currentFcmToken = currentUser.fcmToken;
