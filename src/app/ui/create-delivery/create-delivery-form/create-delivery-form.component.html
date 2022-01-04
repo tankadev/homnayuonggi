@@ -3,7 +3,7 @@
     <div class="form-content">
       <nz-form-item>
         <nz-form-control class="first-control" [nzXs]="24" [nzErrorTip]="errorUsernameTpl">
-          <input nz-input formControlName="urlShop" id="urlShop" autocomplete="off" placeholder="URL quán (*). Vd: https://www.now.vn/can-tho/nuoc-mia-my-tho-mt68" maxlength="255" />
+          <input nz-input formControlName="urlShop" id="urlShop" autocomplete="off" placeholder="URL quán (*). Vd: https://shopeefood.vn/can-tho/nuoc-mia-my-tho-mt68" maxlength="255" />
           <ng-template #errorUsernameTpl let-control>
             <ng-container *ngIf="control.hasError('required')">
               Vui lòng nhập link của quán!

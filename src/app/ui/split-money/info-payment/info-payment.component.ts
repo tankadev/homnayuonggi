@@ -37,7 +37,7 @@ export class InfoPaymentComponent implements OnInit, OnChanges {
   @Input() deliveryInfo: DeliveryRO;
   @Input() createUserId: string;
   @Input() assignUserId: string;
-  
+
   paymentDishByUser: PaymentOrder[] = [];
   totalPayment: number = 0;
   totalDish: number = 0;
@@ -102,25 +102,27 @@ export class InfoPaymentComponent implements OnInit, OnChanges {
     });
     modal.afterClose.subscribe(isAccept => {
       if (isAccept) {
-        this.isSendMessage = true;
-        this.fcmService.sendNotificationWhenDeliverySuccess(this.getListFcmTokenByUserOrder()).subscribe(
-          () => {
-            this.isSendMessage = false;
-          },
-          () => {
-            this.isSendMessage = false;
-            this.notification.create(
-              'error',
-              'Lỗi xảy ra',
-              'Không thể gửi thông báo đến mọi người'
-            );
-          }, () => {
-            const deliveryUpdateDTO: DeliveryDTO = new DeliveryDTO();
-            deliveryUpdateDTO.deliveryStatus = 2;
-
-            this.deliveryService.update(deliveryUpdateDTO).then();
-          }
-        )
+        const listTokenFcm = this.getListFcmTokenByUserOrder();
+        if (listTokenFcm.length > 0) {
+          this.isSendMessage = true;
+          this.fcmService.sendNotificationWhenDeliverySuccess(listTokenFcm).subscribe(
+            () => {
+              this.isSendMessage = false;
+            },
+            () => {
+              this.isSendMessage = false;
+              this.notification.create(
+                'error',
+                'Lỗi xảy ra',
+                'Không thể gửi thông báo đến mọi người'
+              );
+            }, () => {
+              this.completePayment();
+            }
+          );
+        } else {
+          this.completePayment();
+        }
       }
     });
   }
@@ -138,8 +140,6 @@ export class InfoPaymentComponent implements OnInit, OnChanges {
         this.equallyDivided(userLogin, orderList);
         break;
     }
-
-    
   }
 
   private equallyDivided = (userLogin: UserRO, orderList: OrderRO[]) => {
@@ -197,8 +197,15 @@ export class InfoPaymentComponent implements OnInit, OnChanges {
         }
       });
     }
-    
+
     return listFcmToken;
+  }
+
+  private completePayment = () => {
+    const deliveryUpdateDTO: DeliveryDTO = new DeliveryDTO();
+    deliveryUpdateDTO.deliveryStatus = 2;
+
+    this.deliveryService.update(deliveryUpdateDTO).then();
   }
 
 }

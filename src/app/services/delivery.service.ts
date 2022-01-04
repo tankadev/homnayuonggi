@@ -3,6 +3,9 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 
 import { AngularFireDatabase, AngularFireObject } from '@angular/fire/database';
+
+import { environment } from 'src/environments/environment';
+
 import { DeliveryDTO } from '../dto/delivery.dto';
 import { DeliveryRO } from '../ro/delivery.ro';
 
@@ -21,8 +24,8 @@ export class DeliveryService {
     this.deliveryRef = db.object(this.dbPath);
   }
 
-  getDetailDeliveryFromNowApi(param: string): Observable<any> {
-    return this.http.get(`https://todayuonggi-be.herokuapp.com/get-detail?url=${param}`);
+  getDetailDeliveryFromShopeeFoodApi(param: string): Observable<any> {
+    return this.http.get(`${environment.apiURL}/get-detail?url=${param}`);
   }
 
   getDetail(): AngularFireObject<DeliveryRO> {

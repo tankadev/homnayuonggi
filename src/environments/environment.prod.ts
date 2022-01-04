@@ -9,5 +9,6 @@ export const environment = {
     messagingSenderId: "405891226420",
     appId: "1:405891226420:web:d5679ea5c12d9beca2a361",
     measurementId: "G-VHZJ2DCT10"
-  }
+  },
+  apiURL: 'https://todayuonggi-be.herokuapp.com'
 };

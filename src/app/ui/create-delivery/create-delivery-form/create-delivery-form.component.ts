@@ -43,9 +43,10 @@ export class CreateDeliveryFormComponent implements OnInit {
   public submitDeliveryForm = () => {
     if (this.createDeliveryForm.valid) {
       const { urlShop, minute, assignUser } = this.createDeliveryForm.value;
-      const getOnlyShopUrl = urlShop.replace('https', '').replace('http', '').replace('://', '').replace('www.', '').replace('now.vn/', '');
+      const getOnlyShopUrl = urlShop.replace('https', '').replace('http', '')
+            .replace('://', '').replace('www.', '').replace('now.vn/', '').replace('shopeefood.vn/', '');
       this.isShowSpinner = true;
-      this.deliveryService.getDetailDeliveryFromNowApi(getOnlyShopUrl).subscribe(
+      this.deliveryService.getDetailDeliveryFromShopeeFoodApi(getOnlyShopUrl).subscribe(
         (res: DeliveryDetailNowAPI) => {
           if (res.result === 'success') {
             const deliveryUpdateDTO = new DeliveryDTO();
