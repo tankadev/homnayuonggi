@@ -1,5 +1,8 @@
 <nz-header>
     <div class="logo">Today Uống Gì?</div>
+    <div *ngIf="room" class="room-name">
+      {{ room.name }}
+    </div>
     <div class="right-content">
       <div class="nick-name-box" [ngStyle]="userInfo && {'padding': '0 1rem 0 0'}">
         <ng-container *ngIf="!userInfo; else userInfoContent">
@@ -12,6 +15,9 @@
             <span class="name">{{ userInfo.displayName }}</span>
         </ng-template>
       </div>
+      <button *ngIf="userInfo && room" class="btn-quit-room" (click)="quitRoom()">
+        Thoát phòng
+      </button>
       <button *ngIf="userInfo" class="btn-logout" (click)="logOut()">
         <i nz-icon nzType="logout" nzTheme="outline"></i>
       </button>

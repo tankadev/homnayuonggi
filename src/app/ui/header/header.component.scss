@@ -15,6 +15,17 @@ nz-header {
     color: #0053FF;
   }
 
+  .room-name {
+    font-weight: bold;
+    font-size: 25px;
+    font-family: 'Dosis';
+    color: #2D3867;
+    max-width: 20vw;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+  }
+
   .right-content {
     display: flex;
     align-items: center;
@@ -77,18 +88,39 @@ nz-header {
   .btn-logout {
     width: 35px;
     height: 35px;
-    background-color: #EBF2FF;
+    background-color: rgba(255, 65, 84, 0.1);
     display: flex;
     align-items: center;
     justify-content: center;
     margin-left: 1rem;
     border-radius: 50%;
     border: 1px solid transparent;
-    color: #0053FF;
+    color: #FF4154;
     cursor: pointer;
     transition: all .3s ease-in-out;
 
     &:hover {
+      border-color: #FF4154;
+    }
+  }
+
+  .btn-quit-room {
+    width: auto;
+    height: 35px;
+    background-color: #EBF2FF;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 1rem;
+    border-radius: 20px;
+    border: 1px solid transparent;
+    color: #2D3867;
+    cursor: pointer;
+    font-weight: bold;
+    transition: all .3s ease-in-out;
+
+    &:hover {
+      color: #0053FF;
       border-color: #0053FF;
     }
   }

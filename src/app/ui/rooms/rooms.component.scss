@@ -1,0 +1,72 @@
+:host ::ng-deep .room-container {
+    height: calc(100vh - 64px);
+
+    .room-content {
+        height: calc(100vh - 64px - 50px);
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        .room-item {
+            width: 10vw;
+            height: 10vw;
+            border-radius: 10px;
+            margin: 0 1vw;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0px 1px 15px rgba(180, 191, 206, 0.1);
+            background-color: #ffffff;
+            border: 1px solid white;
+            text-align: center;
+            transition: all .3s ease-in-out;
+
+            i {
+                font-size: 1.4vw;
+                font-weight: bold;
+                color: #2D3867;
+                transition: all .3s ease-in-out;
+            }
+
+            &:hover {
+                border-color: #0053FF;
+                cursor: pointer;
+
+                i, .room-content {
+                    color: #0053FF;
+                }
+            }
+        }
+
+        .room-content {
+            font-size: 1vw;
+            height: 1.3vw;
+            font-weight: bold;
+            margin: 0;
+            color: #2D3867;
+            transition: all .3s ease-in-out;
+        }
+    }
+
+    .footer {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+
+        p {
+            margin-bottom: 0.2rem;
+        }
+
+        .version {
+            font-weight: bold;
+            font-size: 1rem;
+        }
+
+        .copy {
+            font-size: 0.7rem;
+        }
+    }
+}

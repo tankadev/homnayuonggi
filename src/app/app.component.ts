@@ -1,14 +1,15 @@
-import { DeliveryRO } from './ro/delivery.ro';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 
 import { Subscription } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 import { MessagingService } from './services/messaging.service';
 import { AppService } from './services/app.service';
 import { UserRO } from './ro/user.ro';
 import { DeliveryService } from './services/delivery.service';
-import { map } from 'rxjs/operators';
 import { LocalStorageService } from './services/localstorage.service';
+import { RoomRO } from './ro/room.ro';
+import { DeliveryRO } from './ro/delivery.ro';
 
 @Component({
   selector: 'app-root',
@@ -19,11 +20,14 @@ export class AppComponent implements OnInit, OnDestroy {
 
   isDeliveryStatus: boolean = false;
   isLoginIn: boolean = false;
+  isSelectedRoom: boolean = false;
   deliveryInfo: DeliveryRO = new DeliveryRO();
   userInfo: UserRO = new UserRO();
+  room: RoomRO = new RoomRO();
 
   subDelivery$: Subscription;
   subLogin$: Subscription;
+  subSelectedRoom$: Subscription;
 
   constructor(
     private messagingService: MessagingService,
@@ -39,9 +43,17 @@ export class AppComponent implements OnInit, OnDestroy {
       this.isLoginIn = status;
       this.userInfo = this.storage.getUserInfo();
     });
+
+    this.subSelectedRoom$ = this.appService.getSelectedRoomStatus().subscribe(status => {
+      this.isSelectedRoom = status;
+      this.room = this.storage.getSelectedRoom();
+    });
+
     this.userInfo = this.storage.getUserInfo();
     this.deliveryInfo = this.storage.getDelivery();
+    this.room = this.storage.getSelectedRoom();
     this.isLoginIn = this.userInfo ? true : false;
+    this.isSelectedRoom = this.room ? true : false;
   }
 
   ngOnInit(): void {
@@ -59,6 +71,7 @@ export class AppComponent implements OnInit, OnDestroy {
     // unsubscribe to ensure no memory leaks
     this.subDelivery$.unsubscribe();
     this.subLogin$.unsubscribe();
+    this.subSelectedRoom$.unsubscribe();
   }
 
   private onListenDeliveryChangesFromFirebaseDB(): void {

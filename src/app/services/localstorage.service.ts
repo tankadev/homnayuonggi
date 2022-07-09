@@ -6,6 +6,7 @@ import { UserRO } from '../ro/user.ro';
 import { AppService } from './app.service';
 import { OrderRO } from '../ro/order.ro';
 import { OrderHistoryRO } from '../ro/order-history.ro';
+import { RoomRO } from '../ro/room.ro';
 
 @Injectable({
   providedIn: 'root'
@@ -29,6 +30,16 @@ export class LocalStorageService {
   getDelivery(): DeliveryRO {
     const delivery: DeliveryRO = JSON.parse(localStorage.getItem(LocalStorage.DELIVERY_INFO));
     return delivery;
+  }
+
+  getSelectedRoom(): RoomRO {
+    const room: RoomRO = JSON.parse(localStorage.getItem(LocalStorage.SELECTED_ROOM));
+    return room;
+  }
+
+  getRoomsList = () => {
+    const rooms: RoomRO[] = JSON.parse(localStorage.getItem(LocalStorage.ROOMS_LIST));
+    return rooms;
   }
 
   getOrdersList(): OrderRO[] {
@@ -58,8 +69,16 @@ export class LocalStorageService {
     localStorage.setItem(LocalStorage.DELIVERY_INFO, JSON.stringify(delivery));
   }
 
+  setSelectedRoom = (room: RoomRO) => {
+    localStorage.setItem(LocalStorage.SELECTED_ROOM, JSON.stringify(room));
+  }
+
   setOrdersList = (orders: OrderRO[]) => {
     localStorage.setItem(LocalStorage.ORDERS_LIST, JSON.stringify(orders));
+  }
+
+  setRoomsList = (rooms: RoomRO[]) => {
+    localStorage.setItem(LocalStorage.ROOMS_LIST, JSON.stringify(rooms));
   }
 
   setOrdersHistory = (histories: OrderHistoryRO[]) => {
@@ -84,7 +103,14 @@ export class LocalStorageService {
 
   removeAll = () => {
     localStorage.removeItem(LocalStorage.USER_INFO);
+    localStorage.removeItem(LocalStorage.SELECTED_ROOM);
     this.appService.loginChanged();
+    this.appService.changeSelectedRoom();
+  }
+
+  quitRoom = () => {
+    localStorage.removeItem(LocalStorage.SELECTED_ROOM);
+    this.appService.changeSelectedRoom();
   }
 
 }

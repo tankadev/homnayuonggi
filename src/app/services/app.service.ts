@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
+
 import { LocalStorage } from '../const/local-storage';
+import { RoomRO } from '../ro/room.ro';
 import { UserRO } from '../ro/user.ro';
 
 @Injectable({
@@ -10,6 +12,7 @@ export class AppService {
 
   private deliveryCreateSuccess = new Subject<boolean>();
   private isLogin = new Subject<any>();
+  private isSelectedRoom = new Subject<any>();
 
   changeStatusDelivery = (status: boolean) => {
     this.deliveryCreateSuccess.next(status);
@@ -20,12 +23,21 @@ export class AppService {
   }
 
   loginChanged = () => {
-    const userInfo: UserRO = JSON.parse(localStorage.getItem(LocalStorage.USER_INFO));
+    const userInfo = localStorage.getItem(LocalStorage.USER_INFO);
     this.isLogin.next(userInfo ? true : false);
   }
 
   getLoginStatus(): Observable<any> {
     return this.isLogin.asObservable();
+  }
+
+  changeSelectedRoom = () => {
+    const room = localStorage.getItem(LocalStorage.SELECTED_ROOM);
+    this.isSelectedRoom.next(room ? true : false);
+  }
+
+  getSelectedRoomStatus(): Observable<any> {
+    return this.isSelectedRoom.asObservable();
   }
 
 }

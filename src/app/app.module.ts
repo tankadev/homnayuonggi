@@ -34,6 +34,8 @@ import { InfoOrderComponent } from './ui/split-money/info-order/info-order.compo
 import { InfoUserPaymentComponent } from './ui/split-money/info-user-payment/info-user-payment.component';
 import { InfoPaymentComponent } from './ui/split-money/info-payment/info-payment.component';
 import { ListSplitMoneyComponent } from './ui/split-money/list-split-money/list-split-money.component';
+import { RoomsComponent } from './ui/rooms/rooms.component';
+import { CreateRoomComponent } from './ui/dialogs/create-room/create-room.component';
 
 registerLocaleData(en);
 
@@ -58,7 +60,9 @@ registerLocaleData(en);
     InfoOrderComponent,
     InfoUserPaymentComponent,
     InfoPaymentComponent,
-    ListSplitMoneyComponent
+    ListSplitMoneyComponent,
+    RoomsComponent,
+    CreateRoomComponent
   ],
   imports: [
     BrowserModule,

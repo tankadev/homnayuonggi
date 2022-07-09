@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, ViewContainerRef } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit, ViewContainerRef } from '@angular/core';
 
 import { map } from 'rxjs/operators';
 
@@ -9,26 +9,44 @@ import { UserService } from 'src/app/services/user.service';
 import { JoinToAppComponent } from '../dialogs/join-to-app/join-to-app.component';
 import { AppService } from 'src/app/services/app.service';
 import { LocalStorageService } from 'src/app/services/localstorage.service';
+import { RoomRO } from 'src/app/ro/room.ro';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'header',
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss']
 })
-export class HeaderComponent implements OnInit {
+export class HeaderComponent implements OnInit, OnDestroy {
 
   @Input() userInfo: UserRO;
 
+  room: RoomRO = new RoomRO();
+  subSelectedRoom$: Subscription;
+  
   constructor(
     private modal: NzModalService,
     private viewContainerRef: ViewContainerRef,
     private userService: UserService,
     private appService: AppService,
     private storage: LocalStorageService
-  ) { }
+  ) {
+    this.subSelectedRoom$ = this.appService.getSelectedRoomStatus().subscribe(status => {
+      if (status) {
+        this.room = this.storage.getSelectedRoom();
+      } else {
+        this.room = null;
+      }
+    });
+    this.room = this.storage.getSelectedRoom();
+  }
 
   ngOnInit(): void {
     this.onListenUsersChangesFromFirebaseDB();
+  }
+
+  ngOnDestroy(): void {
+    this.subSelectedRoom$.unsubscribe();
   }
 
   public openLoginDialog(): void {
@@ -55,6 +73,10 @@ export class HeaderComponent implements OnInit {
 
   public logOut = () => {
     this.storage.removeAll();
+  }
+
+  public quitRoom = () => {
+    this.storage.quitRoom();
   }
 
   private onListenUsersChangesFromFirebaseDB(): void {

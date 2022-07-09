@@ -66,7 +66,7 @@ export class CreateDeliveryFormComponent implements OnInit {
             this.notification.create(
               'warning',
               'Không lấy được dữ liệu',
-              'Vui lòng kiểm tra link quán của NOW!'
+              'Vui lòng kiểm tra link quán của ShopeeFood!'
             );
           }
           this.isShowSpinner = false;
