@@ -161,7 +161,9 @@ export class InfoPaymentComponent implements OnInit, OnChanges {
       paymentOrder.price = order.dish.price.value;
       paymentOrder.discountPrice = order.dish.discountPrice ? order.dish.discountPrice.value : null;
 
-      order.userNotes.forEach(userNote => {
+      const orderUserNote: UserNote[] = JSON.parse(JSON.stringify(order.userNotes));
+
+      orderUserNote.forEach(userNote => {
         paymentOrder.quantity = userNote.quantity;
 
         const totalDish = this.displayUserOrderPipe.transform(orderList, 'countDish', true);
@@ -177,12 +179,12 @@ export class InfoPaymentComponent implements OnInit, OnChanges {
           this.totalPayment += paymentOrder.totalPrice;
           this.totalDish = +totalDish;
           this.downPrice = minusPrice - plusPrice;
-          this.paymentDishByUser.push(paymentOrder);
+          this.paymentDishByUser.push(JSON.parse(JSON.stringify(paymentOrder)));
         } else {
           this.totalPaymentOther += paymentOrder.totalPrice;
           this.totalDishOther = +totalDish;
           this.downPriceOther = minusPrice - plusPrice;
-          this.paymentDishByOtherUser.push(paymentOrder);
+          this.paymentDishByOtherUser.push(JSON.parse(JSON.stringify(paymentOrder)));
         }
       });
     });
