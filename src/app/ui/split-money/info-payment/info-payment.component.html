@@ -30,7 +30,7 @@
             </button>
         </div>
     </div>
-    <p class="title">Thông tin thêm</p>
+    <p class="title">Thông tin món của bạn</p>
     <table>
         <tr>
             <th class="text-center">STT</th>
@@ -51,6 +51,33 @@
         <tr class="total-payment">
             <td class="text-right" colspan="5">Tổng tiền phải trả</td>
             <td class="text-right">{{ this.totalPayment | number }}</td>
+        </tr>
+    </table>
+
+    <br>
+    <p class="title">Thông tin món người khác</p>
+    <table>
+        <tr>
+            <th class="text-center">STT</th>
+            <th class="text-center">Người đặt</th>
+            <th class="text-center">Thông tin món</th>
+            <th class="text-center">Số lượng</th>
+            <th class="text-center">Giá món (đ)</th>
+            <th class="text-center">Giá được giảm (đ)</th>
+            <th class="text-center">Tổng cộng (đ)</th>
+        </tr>
+        <tr *ngFor="let item of paymentDishByOtherUser; let i = index">
+            <td class="text-center">{{ i + 1 }}</td>
+            <td>{{ item.userKey | displayNameUser }}</td>
+            <td>{{ item.dishName }}</td>
+            <td class="text-center">{{ item.quantity }}</td>
+            <td class="text-right">{{ (item.discountPrice ? item.discountPrice : item.price) | number }}</td>
+            <td class="text-right">{{ item.sponsorPrice | number }}</td>
+            <td class="text-right">{{ item.totalPrice | number }}</td>
+        </tr>
+        <tr class="total-payment">
+            <td class="text-right" colspan="6">Tổng tiền phải trả</td>
+            <td class="text-right">{{ this.totalPaymentOther | number }}</td>
         </tr>
     </table>
 </div>

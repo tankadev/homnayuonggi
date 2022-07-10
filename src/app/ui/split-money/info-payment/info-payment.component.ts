@@ -26,6 +26,7 @@ class PaymentOrder {
   quantity: number;
   sponsorPrice: number;
   totalPrice: number;
+  userKey: string;
 }
 
 @Component({
@@ -40,9 +41,13 @@ export class InfoPaymentComponent implements OnInit, OnChanges {
   @Input() assignUserId: string;
 
   paymentDishByUser: PaymentOrder[] = [];
+  paymentDishByOtherUser: PaymentOrder[] = [];
   totalPayment: number = 0;
   totalDish: number = 0;
   downPrice: number = 0;
+  totalPaymentOther: number = 0;
+  totalDishOther: number = 0;
+  downPriceOther: number = 0;
   isSendMessage: boolean = false;
   room: RoomRO = this.storage.getSelectedRoom();
 
@@ -131,9 +136,13 @@ export class InfoPaymentComponent implements OnInit, OnChanges {
 
   private generatePaymentInfoForUser = (): void => {
     this.paymentDishByUser = [];
+    this.paymentDishByOtherUser = [];
     this.totalPayment = 0;
     this.totalDish = 0;
     this.downPrice = 0;
+    this.totalPaymentOther = 0;
+    this.totalDishOther = 0;
+    this.downPriceOther = 0;
     const userLogin: UserRO = this.storage.getUserInfo();
     const orderList: OrderRO[] = this.storage.getOrdersList().filter(i => i.roomKey === this.room.key);
     const splitMoney = this.deliveryInfo.splitMoney;
@@ -152,9 +161,8 @@ export class InfoPaymentComponent implements OnInit, OnChanges {
       paymentOrder.price = order.dish.price.value;
       paymentOrder.discountPrice = order.dish.discountPrice ? order.dish.discountPrice.value : null;
 
-      const findUserNote = order.userNotes.find(item => item.userId === userLogin.key);
-      if (findUserNote) {
-        paymentOrder.quantity = findUserNote.quantity;
+      order.userNotes.forEach(userNote => {
+        paymentOrder.quantity = userNote.quantity;
 
         const totalDish = this.displayUserOrderPipe.transform(orderList, 'countDish', true);
         const dishPrice = order.dish.discountPrice ? order.dish.discountPrice.value : order.dish.price.value;
@@ -162,13 +170,21 @@ export class InfoPaymentComponent implements OnInit, OnChanges {
         const minusPrice = this.deliveryInfo.sponsorPrice;
 
         paymentOrder.sponsorPrice = Math.floor(((minusPrice - plusPrice) / +totalDish));
-        paymentOrder.totalPrice = findUserNote.quantity * (dishPrice - paymentOrder.sponsorPrice);
+        paymentOrder.totalPrice = userNote.quantity * (dishPrice - paymentOrder.sponsorPrice);
+        paymentOrder.userKey = userNote.userId;
 
-        this.totalPayment += paymentOrder.totalPrice;
-        this.totalDish = +totalDish;
-        this.downPrice = minusPrice - plusPrice;
-        this.paymentDishByUser.push(paymentOrder);
-      }
+        if (userNote.userId === userLogin.key) {
+          this.totalPayment += paymentOrder.totalPrice;
+          this.totalDish = +totalDish;
+          this.downPrice = minusPrice - plusPrice;
+          this.paymentDishByUser.push(paymentOrder);
+        } else {
+          this.totalPaymentOther += paymentOrder.totalPrice;
+          this.totalDishOther = +totalDish;
+          this.downPriceOther = minusPrice - plusPrice;
+          this.paymentDishByOtherUser.push(paymentOrder);
+        }
+      });
     });
   }
 

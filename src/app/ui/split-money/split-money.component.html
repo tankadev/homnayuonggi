@@ -4,8 +4,8 @@
         <info-user-payment [deliveryInfo]="deliveryInfo"></info-user-payment>
         <info-order [deliveryInfo]="deliveryInfo"></info-order>
         <div class="version-box">
-            <p class="name">Phiên bản 0.0.1</p>
-            <p class="copy">© Copyright 2021 TodayUongGi?. All rights reserved</p>
+            <p class="name">Phiên bản 1.0.0</p>
+            <p class="copy">© Copyright 2022 TodayUongGi?. All rights reserved</p>
         </div>
       </div>
       <div nz-col nzSpan="10">
@@ -16,7 +16,7 @@
         ></info-payment>
       </div>
       <div nz-col nzSpan="7">
-        <list-split-money></list-split-money>
+        <list-split-money [deliveryInfo]="deliveryInfo" [createUserId]="deliveryInfo.userCreate"></list-split-money>
       </div>
     </div>
 </div>

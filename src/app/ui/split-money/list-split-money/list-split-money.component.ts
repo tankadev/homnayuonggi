@@ -1,4 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
+import { DeliveryRO } from 'src/app/ro/delivery.ro';
+import { OrderRO } from 'src/app/ro/order.ro';
+import { RoomRO } from 'src/app/ro/room.ro';
+import { LocalStorageService } from 'src/app/services/localstorage.service';
 
 @Component({
   selector: 'list-split-money',
@@ -7,7 +11,17 @@ import { Component, OnInit } from '@angular/core';
 })
 export class ListSplitMoneyComponent implements OnInit {
 
-  constructor() { }
+  @Input() deliveryInfo: DeliveryRO;
+  @Input() createUserId: string;
+
+  listOrders: OrderRO[] = [];
+  room: RoomRO = this.localStorage.getSelectedRoom();
+
+  constructor(
+    private localStorage: LocalStorageService,
+  ) {
+    this.listOrders = this.localStorage.getOrdersList().filter(i => i.roomKey === this.room.key);
+  }
 
   ngOnInit(): void {
   }

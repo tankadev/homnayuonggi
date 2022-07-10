@@ -48,12 +48,12 @@ export class PlaceOrderDialogComponent implements OnInit {
     },
     {
       type: 2,
-      content: 'Ai đó tài trợ 100% luôn',
+      content: 'Tài trợ 100% luôn',
       disable: true
     },
     {
       type: 3,
-      content: 'Ai đó tài trợ chút đỉnh thôi',
+      content: 'Tài trợ chút đỉnh thôi',
       disable: true
     }
   ];
