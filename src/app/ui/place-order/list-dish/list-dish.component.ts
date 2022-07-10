@@ -8,6 +8,7 @@ import { LocalStorageService } from 'src/app/services/localstorage.service';
 import { OrderService } from 'src/app/services/order.service';
 import { OrderRO } from 'src/app/ro/order.ro';
 import { OrderHistoryService } from 'src/app/services/order-history.service';
+import { RoomRO } from 'src/app/ro/room.ro';
 
 @Component({
   selector: 'list-dish',
@@ -17,6 +18,8 @@ import { OrderHistoryService } from 'src/app/services/order-history.service';
 export class ListDishComponent implements OnInit {
 
   @Input() deliveryInfo: DeliveryRO;
+
+  room: RoomRO = this.localStorage.getSelectedRoom();
 
   constructor(
     private orderService: OrderService,
@@ -58,6 +61,7 @@ export class ListDishComponent implements OnInit {
           }
         );
       }
+      orderDto.roomKey = this.room.key;
       this.orderService.updateOrder(findDish.key, orderDto).then(
         () => {
           // console.log('update success');
@@ -73,6 +77,7 @@ export class ListDishComponent implements OnInit {
           quantity: 1
         }
       ];
+      orderDto.roomKey = this.room.key;
       this.orderService.addOrder(orderDto).then(
         () => {
           // console.log('create success');
@@ -85,6 +90,7 @@ export class ListDishComponent implements OnInit {
     orderHistory.userId = userId;
     orderHistory.dishName = dish.name;
     orderHistory.createAt = new Date().toISOString();
+    orderHistory.roomKey = this.room.key;
     this.orderHistoryService.create(orderHistory);
   }
 

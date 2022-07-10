@@ -15,6 +15,7 @@ import { NoteDialogComponent } from '../../dialogs/note-dialog/note-dialog.compo
 import { ConfirmDialogComponent } from '../../dialogs/confirm-dialog/confirm-dialog.component';
 import { PlaceOrderDialogComponent } from '../../dialogs/place-order-dialog/place-order-dialog.component';
 import { DeliveryRO } from 'src/app/ro/delivery.ro';
+import { RoomRO } from 'src/app/ro/room.ro';
 
 @Component({
   selector: 'list-order',
@@ -31,7 +32,8 @@ export class ListOrderComponent implements OnInit {
 
   timeout: boolean = false;
   listOrders: OrderRO[] = [];
-
+  room: RoomRO = this.localStorage.getSelectedRoom();
+  
   constructor(
     private modal: NzModalService,
     private viewContainerRef: ViewContainerRef,
@@ -41,7 +43,7 @@ export class ListOrderComponent implements OnInit {
     private orderHistoryService: OrderHistoryService,
     private cdr: ChangeDetectorRef
   ) {
-    this.listOrders = this.localStorage.getOrdersList();
+    this.listOrders = this.localStorage.getOrdersList().filter(i => i.roomKey === this.room.key);
   }
 
   ngOnInit(): void {
@@ -82,6 +84,7 @@ export class ListOrderComponent implements OnInit {
 
   public onAddDish(order: OrderRO, userId: string, position: number): void {
     const orderDTO: OrderDTO = new OrderDTO();
+    orderDTO.roomKey = this.room.key;
     orderDTO.dish = order.dish;
     orderDTO.userNotes = order.userNotes.map((item, index) => {
       if (index === position && item.userId === userId) {
@@ -101,6 +104,7 @@ export class ListOrderComponent implements OnInit {
     orderHistory.userId = userId;
     orderHistory.dishName = order.dish.name;
     orderHistory.createAt = new Date().toISOString();
+    orderHistory.roomKey = this.room.key;
     this.orderHistoryService.create(orderHistory);
   }
 
@@ -125,6 +129,7 @@ export class ListOrderComponent implements OnInit {
     });
 
     orderDTO.userNotes = userNotes;
+    orderDTO.roomKey = this.room.key;
 
     if (orderDTO.userNotes.length > 0) {
       this.orderService.updateOrder(order.key, orderDTO);
@@ -137,6 +142,7 @@ export class ListOrderComponent implements OnInit {
     orderHistory.userId = userId;
     orderHistory.dishName = order.dish.name;
     orderHistory.createAt = new Date().toISOString();
+    orderHistory.roomKey = this.room.key;
     this.orderHistoryService.create(orderHistory);
   }
 
@@ -155,7 +161,6 @@ export class ListOrderComponent implements OnInit {
     });
     modal.afterClose.subscribe(data => {
       if (data) {
-        console.log(data.noteContent);
         const orderDTO: OrderDTO = new OrderDTO();
         orderDTO.dish = order.dish;
         orderDTO.userNotes = order.userNotes.map((item, index) => {
@@ -205,7 +210,7 @@ export class ListOrderComponent implements OnInit {
       )
     ).subscribe(data => {
       this.localStorage.setOrdersList(data);
-      this.listOrders = data;
+      this.listOrders = data.filter(i => i.roomKey === this.room.key);
     });
   }
 

@@ -5,6 +5,7 @@ import { OrderDetailDTO } from '../dto/order-detail.dto';
 import { OrderDTO } from '../dto/order.dto';
 import { OrderDetailRO } from '../ro/order-detail.ro';
 import { OrderRO } from '../ro/order.ro';
+import { LocalStorageService } from './localstorage.service';
 
 @Injectable({
   providedIn: 'root'
@@ -17,7 +18,8 @@ export class OrderService {
   ordersRef: AngularFireList<OrderRO | OrderDTO> = null;
   orderDetailRef: AngularFireObject<OrderDetailRO | OrderDetailDTO> = null;
   constructor(
-    private db: AngularFireDatabase
+    private db: AngularFireDatabase,
+    private localStorage: LocalStorageService
   ) {
     this.ordersRef = db.list(this.dbOrdersPath);
     this.orderDetailRef = db.object(this.dbOrderDetailPath);
@@ -39,8 +41,14 @@ export class OrderService {
     return this.ordersRef.remove(key);
   }
 
-  deleteAllListOrders(): Promise<void> {
-    return this.ordersRef.remove();
+  deleteAllListOrders(): void {
+    const orders = this.localStorage.getOrdersList();
+    const room = this.localStorage.getSelectedRoom();
+    orders.forEach(i => {
+      if (i.roomKey === room.key) {
+        this.deleteOrder(i.key);
+      }
+    });
   }
 
   // order detail

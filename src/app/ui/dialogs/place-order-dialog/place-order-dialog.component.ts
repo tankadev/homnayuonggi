@@ -73,7 +73,7 @@ export class PlaceOrderDialogComponent implements OnInit {
   }
 
   public submitPlaceOrderForm(): void {
-    if (this.placeOrderForm.valid && this.placeOrderForm.value.sponsorPrice > 0) {
+    if (this.placeOrderForm.valid) {
       const { shippingFee, serviceFee, sponsorPrice, splitMoneyType, sponsorUser } = this.placeOrderForm.value;
 
       const splitMoney = new SplitMoneyDeliveryModel();
@@ -144,7 +144,7 @@ export class PlaceOrderDialogComponent implements OnInit {
     this.placeOrderForm = this.fb.group({
       shippingFee: [0],
       serviceFee: [0],
-      sponsorPrice: [0, [Validators.required]],
+      sponsorPrice: [0],
       splitMoneyType: [null, [Validators.required]]
     });
 

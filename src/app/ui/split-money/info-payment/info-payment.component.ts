@@ -7,6 +7,7 @@ import { UserNote } from 'src/app/dto/order.dto';
 
 import { DeliveryRO } from 'src/app/ro/delivery.ro';
 import { OrderRO } from 'src/app/ro/order.ro';
+import { RoomRO } from 'src/app/ro/room.ro';
 import { UserRO } from 'src/app/ro/user.ro';
 import { DeliveryService } from 'src/app/services/delivery.service';
 import { FcmService } from 'src/app/services/fcm.service';
@@ -43,6 +44,7 @@ export class InfoPaymentComponent implements OnInit, OnChanges {
   totalDish: number = 0;
   downPrice: number = 0;
   isSendMessage: boolean = false;
+  room: RoomRO = this.storage.getSelectedRoom();
 
   constructor(
     private modal: NzModalService,
@@ -133,7 +135,7 @@ export class InfoPaymentComponent implements OnInit, OnChanges {
     this.totalDish = 0;
     this.downPrice = 0;
     const userLogin: UserRO = this.storage.getUserInfo();
-    const orderList: OrderRO[] = this.storage.getOrdersList();
+    const orderList: OrderRO[] = this.storage.getOrdersList().filter(i => i.roomKey === this.room.key);
     const splitMoney = this.deliveryInfo.splitMoney;
     switch (splitMoney.type) {
       case 0:
@@ -175,7 +177,7 @@ export class InfoPaymentComponent implements OnInit, OnChanges {
     let totalUserNotes: UserNote[] = [];
     const unique = [];
     const distinctUser = [];
-    const orderList: OrderRO[] = this.storage.getOrdersList();
+    const orderList: OrderRO[] = this.storage.getOrdersList().filter(i => i.roomKey === this.room.key);
     orderList.forEach(item => {
       totalUserNotes = totalUserNotes.concat(item.userNotes);
     });

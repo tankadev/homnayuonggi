@@ -4,6 +4,7 @@ import { AngularFireDatabase, AngularFireList } from '@angular/fire/database';
 
 import { OrderHistoryDTO } from '../dto/order-history.dto';
 import { OrderHistoryRO } from '../ro/order-history.ro';
+import { LocalStorageService } from './localstorage.service';
 
 @Injectable({
   providedIn: 'root'
@@ -14,7 +15,8 @@ export class OrderHistoryService {
 
   ordersHistoryRef: AngularFireList<OrderHistoryRO | OrderHistoryDTO> = null;
   constructor(
-    private db: AngularFireDatabase
+    private db: AngularFireDatabase,
+    private localStorage: LocalStorageService
   ) {
     this.ordersHistoryRef = db.list(this.dbPath);
   }
@@ -31,7 +33,13 @@ export class OrderHistoryService {
     return this.ordersHistoryRef.update(key, value);
   }
 
-  removeAll(): Promise<void> {
-    return this.ordersHistoryRef.remove();
+  removeAll(): void {
+    const orderHistories = this.localStorage.getOrdersHistory();
+    const room = this.localStorage.getSelectedRoom();
+    orderHistories.forEach(i => {
+      if (i.roomKey === room.key) {
+        this.ordersHistoryRef.remove(i.key);
+      }
+    });
   }
 }

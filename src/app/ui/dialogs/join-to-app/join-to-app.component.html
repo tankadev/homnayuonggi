@@ -39,14 +39,14 @@
       <div class="method-login__item">
         <i *ngIf="loginMethod === 'REGISTER'" nz-icon nzType="check-circle" nzTheme="fill"></i>
         <div class="method-login__content" (click)="onChangeLoginType('REGISTER')">
-          <p [ngStyle]="{'color': loginMethod === 'REGISTER' ? '#0053FF' : '#2D3867'}">Đăng ký</p>
+          <p [ngStyle]="{'color': loginMethod === 'REGISTER' ? '#ee4d2d' : '#2D3867'}">Đăng ký</p>
           <p class="method-login__content__note">Bạn chưa có tài khoản ?</p>
         </div>
       </div>
       <div class="method-login__item" (click)="onChangeLoginType('LOGIN')">
         <i *ngIf="loginMethod === 'LOGIN'" nz-icon nzType="check-circle" nzTheme="fill"></i>
         <div class="method-login__content">
-          <p [ngStyle]="{'color': loginMethod === 'LOGIN' ? '#0053FF' : '#2D3867'}">Đăng nhập</p>
+          <p [ngStyle]="{'color': loginMethod === 'LOGIN' ? '#ee4d2d' : '#2D3867'}">Đăng nhập</p>
           <p class="method-login__content__note">Bạn đã có tài khoản rồi ?</p>
         </div>
       </div>

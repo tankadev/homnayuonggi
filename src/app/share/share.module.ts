@@ -13,6 +13,7 @@ import { DisplayUserOrderPipe } from './display-user-order.pipe';
 import { TotalOrderPipe } from './total-order.pipe';
 import { DisplayUserInfoPipe } from './display-user-info.pipe';
 import { DeliveryDetailPipe } from './delivery-detail.pipe';
+import { FindRoomInOrdersPipe } from './find-room-in-orders.pipe';
 
 @NgModule({
   declarations: [
@@ -28,7 +29,8 @@ import { DeliveryDetailPipe } from './delivery-detail.pipe';
     DisplayUserOrderPipe,
     TotalOrderPipe,
     DisplayUserInfoPipe,
-    DeliveryDetailPipe
+    DeliveryDetailPipe,
+    FindRoomInOrdersPipe
   ],
   imports: [
     CommonModule
@@ -46,8 +48,9 @@ import { DeliveryDetailPipe } from './delivery-detail.pipe';
     DisplayUserOrderPipe,
     TotalOrderPipe,
     DisplayUserInfoPipe,
-    DeliveryDetailPipe
+    DeliveryDetailPipe,
+    FindRoomInOrdersPipe
   ],
-  providers: [ DisplayNameUserPipe, DishTotalQuantityPipe, DecimalPipe, DisplayImagePipe, DisplayUserOrderPipe, DeliveryDetailPipe ]
+  providers: [ DisplayNameUserPipe, DishTotalQuantityPipe, DecimalPipe, DisplayImagePipe, DisplayUserOrderPipe, DeliveryDetailPipe, FindRoomInOrdersPipe ]
 })
 export class ShareModule { }

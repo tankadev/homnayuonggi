@@ -60,7 +60,7 @@
 
       i {
         font-size: 1.3rem;
-        color: #FF4154;
+        color: #000000;
       }
     }
 
@@ -125,14 +125,14 @@
         transition: all .3s ease-in-out;
 
         &:hover {
-          border: 1px solid #0053FF;
+          border: 1px solid #ee4d2d;
         }
 
         i {
           position: absolute;
           top: 12px;
           left: 11px;
-          color: #0053FF;
+          color: #ee4d2d;
           animation-duration: 0.1s;
           animation-name: showOut;
           animation-timing-function: ease-in-out;
@@ -156,7 +156,7 @@
       width: 100%;
       border-radius: 5px;
       border: 0;
-      background: #0053FF;
+      background: #ee4d2d;
       margin-top: 1.5rem;
       padding: 0.9rem;
       color: #ffffff;

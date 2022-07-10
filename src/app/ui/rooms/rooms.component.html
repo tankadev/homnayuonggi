@@ -2,6 +2,9 @@
     <div class="room-content">
         <div *ngFor="let room of listRooms;" class="room-item" (click)="onSelectedRoom(room)">
             <p class="room-content">{{ room.name }}</p>
+            <div *ngIf="(room.key | findRoomInOrders:listDeliveries)" class="water-box">
+                <div class="wave"></div>
+            </div>
         </div>
         <div class="room-item" (click)="addRoom()">
             <i nz-icon nzType="plus" nzTheme="outline"></i>

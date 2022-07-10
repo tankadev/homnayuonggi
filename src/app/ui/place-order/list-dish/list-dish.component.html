@@ -2,7 +2,7 @@
   <div *ngIf="deliveryInfo.delivery.voucher && deliveryInfo.delivery.voucher.length > 0" class="voucher-box">
     <p class="title">Mã giảm giá</p>
     <div class="voucher-wrapper">
-      <div *ngFor="let voucher of deliveryInfo.delivery.voucher" class="voucher-item" [ngStyle]="{'background-color': voucher.isPromotion ? '#EBF2FF' : '#FFE1E1'}">
+      <div *ngFor="let voucher of deliveryInfo.delivery.voucher" class="voucher-item" [ngStyle]="{'background-color': voucher.isPromotion ? '#fff4f1' : '#FFE1E1'}">
         <div class="icon">
           <img [src]="voucher.icon" alt="{{ voucher.code }}">
         </div>
