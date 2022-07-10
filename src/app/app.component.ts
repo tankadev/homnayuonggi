@@ -21,7 +21,7 @@ export class AppComponent implements OnInit, OnDestroy {
   isDeliveryStatus: boolean = false;
   isLoginIn: boolean = false;
   isSelectedRoom: boolean = false;
-  deliveryInfo: DeliveryRO = new DeliveryRO();
+  deliveriesList: DeliveryRO[] = [];
   userInfo: UserRO = new UserRO();
   room: RoomRO = new RoomRO();
 
@@ -50,7 +50,7 @@ export class AppComponent implements OnInit, OnDestroy {
     });
 
     this.userInfo = this.storage.getUserInfo();
-    this.deliveryInfo = this.storage.getDelivery();
+    this.deliveriesList = this.storage.getDeliveriesList();
     this.room = this.storage.getSelectedRoom();
     this.isLoginIn = this.userInfo ? true : false;
     this.isSelectedRoom = this.room ? true : false;
@@ -75,13 +75,15 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   private onListenDeliveryChangesFromFirebaseDB(): void {
-    this.deliveryService.getDetail().snapshotChanges().pipe(
+    this.deliveryService.getAll().snapshotChanges().pipe(
       map(changes =>
-        ({ key: changes.payload.key, ...changes.payload.val() })
+        changes.map(c =>
+          ({ key: c.payload.key, ...c.payload.val() })
+        )
       )
     ).subscribe(data => {
-      this.storage.setDelivery(data);
-      this.deliveryInfo = data;
+      this.storage.setDeliveriesList(data);
+      this.deliveriesList = data;
     });
   }
 }

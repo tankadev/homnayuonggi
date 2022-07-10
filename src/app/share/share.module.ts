@@ -12,6 +12,7 @@ import { IsUserPermissionPipe } from './is-user-permission.pipe';
 import { DisplayUserOrderPipe } from './display-user-order.pipe';
 import { TotalOrderPipe } from './total-order.pipe';
 import { DisplayUserInfoPipe } from './display-user-info.pipe';
+import { DeliveryDetailPipe } from './delivery-detail.pipe';
 
 @NgModule({
   declarations: [
@@ -26,7 +27,8 @@ import { DisplayUserInfoPipe } from './display-user-info.pipe';
     IsUserPermissionPipe,
     DisplayUserOrderPipe,
     TotalOrderPipe,
-    DisplayUserInfoPipe
+    DisplayUserInfoPipe,
+    DeliveryDetailPipe
   ],
   imports: [
     CommonModule
@@ -43,8 +45,9 @@ import { DisplayUserInfoPipe } from './display-user-info.pipe';
     IsUserPermissionPipe,
     DisplayUserOrderPipe,
     TotalOrderPipe,
-    DisplayUserInfoPipe
+    DisplayUserInfoPipe,
+    DeliveryDetailPipe
   ],
-  providers: [ DisplayNameUserPipe, DishTotalQuantityPipe, DecimalPipe, DisplayImagePipe, DisplayUserOrderPipe ]
+  providers: [ DisplayNameUserPipe, DishTotalQuantityPipe, DecimalPipe, DisplayImagePipe, DisplayUserOrderPipe, DeliveryDetailPipe ]
 })
 export class ShareModule { }

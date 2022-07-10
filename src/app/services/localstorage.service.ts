@@ -27,9 +27,9 @@ export class LocalStorageService {
     return usersList;
   }
 
-  getDelivery(): DeliveryRO {
-    const delivery: DeliveryRO = JSON.parse(localStorage.getItem(LocalStorage.DELIVERY_INFO));
-    return delivery;
+  getDeliveriesList(): DeliveryRO[] {
+    const deliveries: DeliveryRO[] = JSON.parse(localStorage.getItem(LocalStorage.DELIVERY_LIST));
+    return deliveries;
   }
 
   getSelectedRoom(): RoomRO {
@@ -65,8 +65,8 @@ export class LocalStorageService {
     localStorage.setItem(LocalStorage.USER_LIST, JSON.stringify(userList));
   }
 
-  setDelivery = (delivery: DeliveryRO) => {
-    localStorage.setItem(LocalStorage.DELIVERY_INFO, JSON.stringify(delivery));
+  setDeliveriesList = (deliveries: DeliveryRO[]) => {
+    localStorage.setItem(LocalStorage.DELIVERY_LIST, JSON.stringify(deliveries));
   }
 
   setSelectedRoom = (room: RoomRO) => {

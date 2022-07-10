@@ -3,4 +3,5 @@ export class OrderHistoryDTO {
   userId: string;
   dishName: string;
   createAt: string;
+  roomKey: string;
 }

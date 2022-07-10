@@ -1,5 +1,5 @@
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 
 import { NzNotificationService } from 'ng-zorro-antd/notification';
 
@@ -10,6 +10,7 @@ import { DeliveryService } from './../../../services/delivery.service';
 import { DeliveryDetailNowAPI } from 'src/app/ro/delivery-detail-now-api.ro';
 import { DeliveryDTO } from 'src/app/dto/delivery.dto';
 import { LocalStorageService } from './../../../services/localstorage.service';
+import { DeliveryRO } from 'src/app/ro/delivery.ro';
 
 @Component({
   selector: 'create-delivery-form',
@@ -17,6 +18,8 @@ import { LocalStorageService } from './../../../services/localstorage.service';
   styleUrls: ['./create-delivery-form.component.scss']
 })
 export class CreateDeliveryFormComponent implements OnInit {
+
+  @Input() deliveryInfo: DeliveryRO;
 
   @Output() onClose = new EventEmitter<boolean>();
 
@@ -36,7 +39,7 @@ export class CreateDeliveryFormComponent implements OnInit {
   }
 
   public onBtnCancelClick = () => {
-    this.deliveryService.remove();
+    this.deliveryService.remove(this.deliveryInfo.key);
     this.onClose.emit(false);
   }
 
@@ -61,7 +64,7 @@ export class CreateDeliveryFormComponent implements OnInit {
             deliveryUpdateDTO.serviceFee = 0;
             deliveryUpdateDTO.sponsorPrice = 0;
             deliveryUpdateDTO.splitMoney = null;
-            this.deliveryService.update(deliveryUpdateDTO);
+            this.deliveryService.update(this.deliveryInfo.key, deliveryUpdateDTO);
           } else {
             this.notification.create(
               'warning',

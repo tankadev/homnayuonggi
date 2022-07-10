@@ -4,8 +4,9 @@ import { Component, Input, OnInit } from '@angular/core';
 
 import { DeliveryRO } from './../../ro/delivery.ro';
 import { UserRO } from 'src/app/ro/user.ro';
-import { LocalStorage } from 'src/app/const/local-storage';
 import { LocalStorageService } from 'src/app/services/localstorage.service';
+import { NzNotificationService } from 'ng-zorro-antd/notification';
+import { RoomRO } from 'src/app/ro/room.ro';
 
 @Component({
   selector: 'create-delivery',
@@ -21,22 +22,37 @@ export class CreateDeliveryComponent implements OnInit {
 
   constructor(
     private deliveryService: DeliveryService,
-    private storage: LocalStorageService
+    private storage: LocalStorageService,
+    private notification: NzNotificationService,
   ) {
     this.user = this.storage.getUserInfo();
   }
 
   ngOnInit(): void {
+    const currentUser = this.storage.getUserInfo().key;
+    if (this.deliveryInfo && this.deliveryInfo.isEdit && this.deliveryInfo.userCreate === currentUser) {
+      this.isCreate = true;
+    }
   }
 
   public onCreateDelivery = (value: boolean, isAdd?: boolean): void => {
-    if (isAdd) {
-      const deliveryDTO = new DeliveryDTO();
-      deliveryDTO.isEdit = true;
-      deliveryDTO.userCreate = this.storage.getUserInfo().key ?? null;
-      this.deliveryService.create(deliveryDTO);
+    const room: RoomRO = this.storage.getSelectedRoom();
+    if (room && room.key) {
+      if (isAdd) {
+        const deliveryDTO = new DeliveryDTO();
+        deliveryDTO.isEdit = true;
+        deliveryDTO.userCreate = this.storage.getUserInfo().key ?? null;
+        deliveryDTO.roomKey = this.storage.getSelectedRoom().key;
+        this.deliveryService.create(deliveryDTO);
+      }
+      this.isCreate = value;
+    } else {
+      this.notification.create(
+        'error',
+        'Lỗi xảy ra',
+        'Không tìm thấy phòng đặt nước'
+      );
     }
-    this.isCreate = value;
   }
 
 }

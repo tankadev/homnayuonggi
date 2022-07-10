@@ -2,7 +2,7 @@ import { Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 
-import { AngularFireDatabase, AngularFireObject } from '@angular/fire/database';
+import { AngularFireDatabase, AngularFireList } from '@angular/fire/database';
 
 import { environment } from 'src/environments/environment';
 
@@ -14,33 +14,33 @@ import { DeliveryRO } from '../ro/delivery.ro';
 })
 export class DeliveryService {
 
-  private dbPath = '/delivery';
+  private dbPath = '/deliveries';
 
-  deliveryRef: AngularFireObject<DeliveryRO | DeliveryDTO> = null;
+  deliveryRef: AngularFireList<DeliveryRO | DeliveryDTO> = null;
   constructor(
     private db: AngularFireDatabase,
     private http: HttpClient
   ) {
-    this.deliveryRef = db.object(this.dbPath);
+    this.deliveryRef = db.list(this.dbPath);
   }
 
   getDetailDeliveryFromShopeeFoodApi(param: string): Observable<any> {
     return this.http.get(`${environment.apiURL}/get-detail?url=${param}`);
   }
 
-  getDetail(): AngularFireObject<DeliveryRO> {
-    return this.deliveryRef as AngularFireObject<DeliveryRO>;
+  getAll(): AngularFireList<DeliveryRO> {
+    return this.deliveryRef as AngularFireList<DeliveryRO>;
   }
 
   create(delivery: DeliveryDTO): any {
-    return this.deliveryRef.set(delivery);
+    return this.deliveryRef.push(delivery);
   }
 
-  update(value: DeliveryDTO): Promise<void> {
-    return this.deliveryRef.update(value);
+  update(key: string, value: DeliveryDTO): Promise<void> {
+    return this.deliveryRef.update(key, value);
   }
 
-  remove(): Promise<void> {
-    return this.deliveryRef.remove();
+  remove(key: string): Promise<void> {
+    return this.deliveryRef.remove(key);
   }
 }

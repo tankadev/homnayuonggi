@@ -2,14 +2,14 @@
   <header [userInfo]="userInfo"></header>
   <ng-container *ngIf="isLoginIn; else showNeedLogin">
     <ng-container *ngIf="isSelectedRoom; else noRoomSelected">
-      <ng-container *ngIf="deliveryInfo && deliveryInfo.isCreate; else showCreateDelivery">
-        <place-order *ngIf="!deliveryInfo.isCompleted; else splitMoneyInformation" [deliveryInfo]="deliveryInfo"></place-order>
+      <ng-container *ngIf="(deliveriesList | deliveryDetail) && (deliveriesList | deliveryDetail).isCreate; else showCreateDelivery">
+        <place-order *ngIf="!(deliveriesList | deliveryDetail).isCompleted; else splitMoneyInformation" [deliveryInfo]="deliveriesList | deliveryDetail"></place-order>
         <ng-template #splitMoneyInformation>
-          <split-money [deliveryInfo]="deliveryInfo"></split-money>
+          <split-money [deliveryInfo]="deliveriesList | deliveryDetail"></split-money>
         </ng-template>
       </ng-container>
       <ng-template #showCreateDelivery>
-        <create-delivery [deliveryInfo]="deliveryInfo" [user]="userInfo"></create-delivery>
+        <create-delivery [deliveryInfo]="deliveriesList | deliveryDetail" [user]="userInfo"></create-delivery>
       </ng-template>
     </ng-container>
     <ng-template #noRoomSelected>

@@ -5,4 +5,5 @@ export class OrderRO {
   key: string;
   userNotes: UserNote[];
   dish: Dish;
+  roomKey: string;
 }

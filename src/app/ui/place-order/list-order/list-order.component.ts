@@ -14,6 +14,7 @@ import { OrderHistoryService } from 'src/app/services/order-history.service';
 import { NoteDialogComponent } from '../../dialogs/note-dialog/note-dialog.component';
 import { ConfirmDialogComponent } from '../../dialogs/confirm-dialog/confirm-dialog.component';
 import { PlaceOrderDialogComponent } from '../../dialogs/place-order-dialog/place-order-dialog.component';
+import { DeliveryRO } from 'src/app/ro/delivery.ro';
 
 @Component({
   selector: 'list-order',
@@ -26,6 +27,7 @@ export class ListOrderComponent implements OnInit {
   @Input() createDate: string;
   @Input() createUserId: string;
   @Input() assignUserId: string;
+  @Input() deliveryInfo: DeliveryRO;
 
   timeout: boolean = false;
   listOrders: OrderRO[] = [];
@@ -61,7 +63,7 @@ export class ListOrderComponent implements OnInit {
     });
     modal.afterClose.subscribe(isAccept => {
       if (isAccept) {
-        this.deliveryService.remove();
+        this.deliveryService.remove(this.deliveryInfo.key);
         this.orderService.deleteAllListOrders();
         this.orderHistoryService.removeAll();
       }
@@ -183,7 +185,8 @@ export class ListOrderComponent implements OnInit {
       nzMaskClosable: false,
       nzComponentParams: {
         isSponsor: false,
-        assignUserId: this.assignUserId
+        assignUserId: this.assignUserId,
+        deliveryInfo: this.deliveryInfo
       }
     });
     modal.afterClose.subscribe(isConfirm => {

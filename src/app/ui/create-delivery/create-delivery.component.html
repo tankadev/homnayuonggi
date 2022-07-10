@@ -1,13 +1,13 @@
 <div class="create-delivery-container">
   <div class="create-delivery-content">
     <div *ngIf="!isCreate; else createForm" class="create-delivery-content__item">
-      <button *ngIf="deliveryInfo && (!deliveryInfo.isEdit || deliveryInfo.userCreate === user.key); else otherUserCreate" (click)="onCreateDelivery(true, true)">TẠO <br/>BÌNH <br/>CHỌN</button>
+      <button *ngIf="(!deliveryInfo || !deliveryInfo.isEdit || deliveryInfo.userCreate === user.key); else otherUserCreate" (click)="onCreateDelivery(true, true)">TẠO <br/>BÌNH <br/>CHỌN</button>
       <ng-template #otherUserCreate>
         <p class="other-user-create">Đợi một tí nhé!<br/><span class="current-user">{{ deliveryInfo.userCreate | displayNameUser}}</span> đang tạo bình chọn nè!</p>
       </ng-template>
     </div>
     <ng-template #createForm>
-      <create-delivery-form (onClose)="onCreateDelivery($event)"></create-delivery-form>
+      <create-delivery-form (onClose)="onCreateDelivery($event)" [deliveryInfo]="deliveryInfo"></create-delivery-form>
     </ng-template>
   </div>
 

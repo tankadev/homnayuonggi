@@ -16,4 +16,5 @@ export class DeliveryRO {
   sponsorPrice? : number;
   splitMoney?: SplitMoneyDeliveryModel;
   deliveryStatus?: number; // 1: delivering, 2: received
+  roomKey: string;
 }

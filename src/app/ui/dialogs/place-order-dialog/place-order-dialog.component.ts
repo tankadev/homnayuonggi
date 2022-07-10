@@ -9,6 +9,7 @@ import { UserDTO } from 'src/app/dto/user.dto';
 import { FormHelper } from 'src/app/helper/form.help';
 import { SplitMoneyDeliveryModel, SplitMoneyModel } from 'src/app/models/split-money.model';
 import { UserPaymentModel } from 'src/app/models/user-payment.model';
+import { DeliveryRO } from 'src/app/ro/delivery.ro';
 import { UserRO } from 'src/app/ro/user.ro';
 import { DeliveryService } from 'src/app/services/delivery.service';
 import { LocalStorageService } from 'src/app/services/localstorage.service';
@@ -21,6 +22,7 @@ import { UserService } from 'src/app/services/user.service';
 })
 export class PlaceOrderDialogComponent implements OnInit {
 
+  @Input() deliveryInfo: DeliveryRO;
   @Input() assignUserId?: string;
   @Input() set isSponsor(value: boolean) {
     this._isSponsor = value;
@@ -93,7 +95,7 @@ export class PlaceOrderDialogComponent implements OnInit {
 
   public submitPaymentForm(): void {
     if (this.paymentForm.valid) {
-      const userPaymentId: string = this.storage.getDelivery().assignUserId;
+      const userPaymentId: string = this.deliveryInfo.assignUserId;
       const userPaymentInfo: UserRO = this.storage.findUserByUserId(userPaymentId);
       const { phone, paymentTypeGroup } = this.paymentForm.value;
 
@@ -103,7 +105,7 @@ export class PlaceOrderDialogComponent implements OnInit {
       userDTO.phone = phone;
       userDTO.payment = paymentTypeGroup;
 
-      this.deliveryService.update(this.deliveryUpdateDTO).then();
+      this.deliveryService.update(this.deliveryInfo.key, this.deliveryUpdateDTO).then();
       this.userService.update(userPaymentId, userDTO).then();
       this.modal.destroy();
     }
@@ -154,7 +156,7 @@ export class PlaceOrderDialogComponent implements OnInit {
   }
 
   private initPaymentForm(): void {
-    const userPaymentId: string = this.storage.getDelivery().assignUserId;
+    const userPaymentId: string = this.deliveryInfo.assignUserId;
     const userPaymentInfo: UserRO = this.storage.findUserByUserId(userPaymentId);
     const phone = userPaymentInfo.phone ?? null;
     let paymentType: UserPaymentModel[] = [];

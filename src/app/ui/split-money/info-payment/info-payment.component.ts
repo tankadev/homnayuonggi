@@ -80,7 +80,7 @@ export class InfoPaymentComponent implements OnInit, OnChanges {
     });
     modal.afterClose.subscribe(isAccept => {
       if (isAccept) {
-        this.deliveryService.remove();
+        this.deliveryService.remove(this.deliveryInfo.key);
         this.orderService.deleteAllListOrders();
         this.orderHistoryService.removeAll();
       }
@@ -205,7 +205,7 @@ export class InfoPaymentComponent implements OnInit, OnChanges {
     const deliveryUpdateDTO: DeliveryDTO = new DeliveryDTO();
     deliveryUpdateDTO.deliveryStatus = 2;
 
-    this.deliveryService.update(deliveryUpdateDTO).then();
+    this.deliveryService.update(this.deliveryInfo.key, deliveryUpdateDTO).then();
   }
 
 }

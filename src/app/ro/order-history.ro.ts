@@ -4,4 +4,5 @@ export class OrderHistoryRO {
   userId: string;
   dishName: string;
   createAt: string;
+  roomKey: string;
 }
