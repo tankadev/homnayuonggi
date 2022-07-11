@@ -44,12 +44,12 @@ export class LocalStorageService {
 
   getOrdersList(): OrderRO[] {
     const orders: OrderRO[] = JSON.parse(localStorage.getItem(LocalStorage.ORDERS_LIST));
-    return orders;
+    return localStorage.getItem(LocalStorage.ORDERS_LIST) ? orders : [];
   }
 
   getOrdersHistory(): OrderHistoryRO[] {
     const histories: OrderHistoryRO[] = JSON.parse(localStorage.getItem(LocalStorage.ORDERS_HISTORY));
-    return histories;
+    return localStorage.getItem(LocalStorage.ORDERS_HISTORY) ? histories : [];
   }
 
   getFcmToken(): string {
