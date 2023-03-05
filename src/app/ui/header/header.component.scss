@@ -12,7 +12,7 @@ nz-header {
     font-weight: bold;
     font-size: 25px;
     font-family: 'Dosis';
-    color: #ee4d2d;
+    color: #407F55;
     position: relative;
 
     img {
@@ -45,7 +45,7 @@ nz-header {
     justify-content: center;
     align-items: center;
     transition: all 0.5s;
-    background-color: #fff4f1;
+    background-color: #e4f0e8;
     border-radius: 30px;
 
     .avatar {
@@ -55,7 +55,7 @@ nz-header {
       display: flex;
       justify-content: center;
       align-items: center;
-      background-color: #ee4d2d;
+      background-color: #407F55;
       border: 1px solid #ffffff;
 
         span {
@@ -66,10 +66,10 @@ nz-header {
 
     .text {
       margin-left: 0.5rem;
-      color: #ee4d2d;
+      color: #407F55;
       margin: 0;
       height: 30px;
-      border: 1px solid #ee4d2d;
+      border: 1px solid #407F55;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -116,7 +116,7 @@ nz-header {
   .btn-quit-room {
     width: auto;
     height: 35px;
-    background-color: #fff4f1;
+    background-color: #e4f0e8;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -129,8 +129,8 @@ nz-header {
     transition: all .3s ease-in-out;
 
     &:hover {
-      color: #ee4d2d;
-      border-color: #ee4d2d;
+      color: #407F55;
+      border-color: #407F55;
     }
   }
 }

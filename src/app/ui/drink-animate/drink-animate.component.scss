@@ -1,0 +1,83 @@
+/* Styles des verres */
+.fill--blue { fill:#407F55; }
+.fill--dark-blue { fill:#092F45; }
+.fill--pink { fill:#E9735C; }
+.outline--dark-blue {
+  fill:none;
+  stroke:#092F45;
+  stroke-width:3;
+  stroke-miterlimit:6;
+}
+
+.container {
+  width: 200px;
+  height: 200px
+}
+
+/* Animations des verres */
+/* ****************** */
+
+/* Rotate right */
+@keyframes rotate-right{
+  30% {
+    transform: rotate(20deg);
+  }
+}
+
+/* Rotate left */
+@keyframes rotate-left{
+  30% {
+    transform: rotate(-20deg);
+  }
+}
+
+/* Petit probleme avec CSS */
+.pink-drink, .blue-drink {
+  transform-origin: 50% 50%;
+  transform-box: fill-box;
+}
+
+/* Application des rotations */
+.pink-drink {
+  animation-name: rotate-left;
+  animation-duration: 1.5s;
+  animation-iteration-count: infinite;
+}
+.blue-drink {
+  animation-name: rotate-right;
+  animation-duration: 1.5s;
+  animation-iteration-count: infinite;
+}
+
+
+/* ******************** */
+
+/* Animation des lignes au dessus des verres */
+@keyframes scale-line {
+  30% {
+    transform: scale(1);
+    opacity: 0.9;
+  }
+  60% {
+    transform: scale(0);
+    opacity: 0;
+  }
+}
+
+.line-1{
+  transform-origin: bottom;
+  transform-box: fill-box;
+
+  animation-name: scale-line;
+  animation-duration: 1.5s;
+  animation-iteration-count: infinite;
+}
+
+.line-2{
+  transform-origin: bottom;
+  transform-box: fill-box;
+
+  animation-name: scale-line;
+  animation-duration: 1.6s;
+  animation-iteration-count: infinite;
+}

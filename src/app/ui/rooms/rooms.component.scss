@@ -10,19 +10,20 @@
 
         .room-item {
             position: relative;
-            overflow: hidden;
-            width: 10vw;
-            height: 10vw;
+            width: 160px;
+            height: 250px;
             border-radius: 10px;
             margin: 0 1vw;
             display: flex;
             flex-direction: column;
-            justify-content: center;
+            justify-content: flex-start;
             align-items: center;
-            box-shadow: 0px 1px 15px rgba(180, 191, 206, 0.1);
-            background-color: #ffffff;
-            border: 1px solid white;
+            // box-shadow: 0px 1px 15px rgba(180, 191, 206, 0.1);
+            background-color: #e4f0e8; /* For browsers that do not support gradients */
+            background-image: linear-gradient(white, white, #e4f0e8);
+            border: 1px solid #e4f0e8;
             text-align: center;
+            padding: 20px;
             transition: all .3s ease-in-out;
 
             i {
@@ -33,24 +34,92 @@
             }
 
             &:hover {
-                border-color: #ee4d2d;
+                border-color: #ffe5df;
+                // cursor: pointer;
+            }
+
+            .room-button {
+              position: absolute;
+              width: 100%;
+              left: 0;
+              bottom: -10px;
+
+              button {
+                background-color: #417e56;
+                color: white;
+                font-size: 12px;
+                border: 0;
+                border-radius: 15px;
+                padding: 3px 10px 3px 10px;
+                transition: all .3s ease-in-out;
                 cursor: pointer;
 
-                i,
-                .room-content {
-                    color: #ee4d2d;
+                &:hover {
+                  background-color: #263c2d;
                 }
+              }
             }
         }
 
         .room-content {
-            font-size: 1vw;
-            height: 1.3vw;
+            font-size: 13px;
+            height: 40px;
             font-weight: bold;
             margin: 0;
-            color: #2D3867;
-            z-index: 100;
-            transition: all .3s ease-in-out;
+            color: #3B5043;
+        }
+
+        .room-sub-content {
+          font-size: 11px;
+          height: 30px;
+          margin: 0;
+          color: #c1c1c1;
+        }
+
+        .room-status {
+          font-size: 10px;
+          font-weight: bold;
+          height: 30px;
+          margin: 0;
+          color: #E9735C;
+          margin-top: 10px;
+        }
+
+        .room-avatar {
+          width: 70px;
+          height: 70px;
+          border-radius: 50%;
+          background-color: #263c2d;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          position: relative;
+
+          .room-avatar-content {
+            font-size: 15px;
+            color: #FFFFFF;
+            margin: 0;
+          }
+
+          .room-avatar-sub-icon {
+            position: absolute;
+            width: 25px;
+            height: 25px;
+            border: 2px solid #ffffff;
+            background-color: #417e56;
+            bottom: 0;
+            right: -5px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 11;
+
+            span {
+              color: #ffffff;
+              font-size: 13px;
+            }
+          }
         }
     }
 
@@ -88,7 +157,7 @@
         position: relative;
         width: 100%;
         height: 100%;
-        background: #ee4d2d;
+        background: #407F55;
         border-radius: 0;
         box-shadow: inset 0 0 50px rgba(0, 0, 0.5);
     }
@@ -125,5 +194,69 @@
         100% {
             transform: translate(-50%, -75%) rotate(360deg);
         }
+    }
+
+    // loader
+    .loader-container {
+      position: relative;
+      width: 70px;
+      height: 70px;
+    }
+    .loader-container svg.spinner {
+      position: absolute;
+      left: 0;
+      right: 0;
+      z-index: 10;
+    }
+    // Here is where the magic happens
+
+    $offset: 622;
+    $duration: 1.4s;
+
+    .spinner {
+      animation: rotator $duration linear infinite;
+    }
+    .loader-dog {
+      left:10px;
+      bottom: 10px;
+      width: 186px;
+      height:auto;
+    }
+    @keyframes rotator {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(270deg); }
+    }
+
+    .path {
+      stroke-dasharray: $offset;
+      stroke-dashoffset: 0;
+      transform-origin: center;
+      animation:
+        dash $duration ease-in-out infinite;
+        stroke-width: 9px;
+    }
+
+    .spinner.path-in-order {
+      .path {
+        stroke: #E9735C;
+      }
+    }
+
+    .spinner.path-order-success {
+      .path {
+        stroke: #64ca86;
+      }
+    }
+
+    @keyframes dash {
+     0% { stroke-dashoffset: $offset; }
+     50% {
+       stroke-dashoffset: $offset/4;
+       transform:rotate(135deg);
+     }
+     100% {
+       stroke-dashoffset: $offset;
+       transform:rotate(450deg);
+     }
     }
 }

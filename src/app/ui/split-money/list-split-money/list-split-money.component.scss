@@ -93,7 +93,7 @@
                         align-items: flex-end;
 
                         .price {
-                            color: #ee4d2d;
+                            color: #407F55;
                             padding: 0 0.2rem 0 0;
                             border-radius: 5px;
                             font-size: 0.6vw;
@@ -121,8 +121,8 @@
                     justify-content: center;
 
                     span {
-                        color: #ee4d2d;
-                        background-color: #fff4f1;
+                        color: #407F55;
+                        background-color: #e4f0e8;
                         padding: 0.1vw 0.8vw;
                         font-size: 0.6vw;
                         border-radius: 10px;
@@ -146,7 +146,7 @@
                     align-items: center;
                     width: 100%;
                     padding: 0.3vw 0;
-                    border-top: 1px solid #fff4f1;
+                    border-top: 1px solid #e4f0e8;
 
                     .main-content {
                         display: flex;
@@ -224,7 +224,7 @@
         bottom: 0;
         left: 0;
         z-index: 100;
-        border-top: 1px solid #fff4f1;
+        border-top: 1px solid #e4f0e8;
         display: flex;
         align-items: center;
         justify-content: space-between;
@@ -281,8 +281,8 @@
             .btn-place-order {
                 border-radius: 20px;
                 border: 0;
-                background: #fff4f1;
-                color: #ee4d2d;
+                background: #e4f0e8;
+                color: #407F55;
                 font-size: 0.8vw;
                 padding: 0.3vw 0.6vw;
                 cursor: pointer;

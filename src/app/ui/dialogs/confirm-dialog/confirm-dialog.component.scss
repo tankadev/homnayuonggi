@@ -8,7 +8,7 @@
         align-items: center;
         justify-content: space-between;
         margin-bottom: 1rem;
-    
+
         .btn-close-modal {
           color: #B4BFCE;
           background-color: rgb(236, 243, 254);
@@ -22,18 +22,18 @@
           font-weight: bold;
           cursor: pointer;
           transition: all .3s ease-in-out;
-    
+
           &:active, &:focus {
             outline: none;
             border: 0;
           }
-    
+
           &:hover {
             color: #2D3867;
             background-color: rgba(236, 243, 254, 0.7);
           }
         }
-    
+
         h1 {
           margin: 0;
         }
@@ -74,7 +74,7 @@
         }
 
         .btn-accept {
-            background: #ee4d2d;
+            background: #407F55;
         }
     }
 }

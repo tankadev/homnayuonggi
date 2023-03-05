@@ -78,7 +78,7 @@
 
     .dish-wrapper {
       .dish-item {
-        border: 1px solid #fff4f1;
+        border: 1px solid #e4f0e8;
         border-radius: 10px;
         display: flex;
         align-items: flex-start;
@@ -101,9 +101,9 @@
 
           .btn-add {
             display: none;
-            color: #ee4d2d;
+            color: #407F55;
             border: 1px solid transparent;
-            background-color: #fff4f1;
+            background-color: #e4f0e8;
             font-size: 1.1vw;
             width: 4vw;
             height: 2vw;
@@ -115,7 +115,7 @@
             animation-timing-function: ease-in-out;
 
             &:hover {
-              border-color: #ee4d2d;
+              border-color: #407F55;
             }
           }
         }
@@ -214,7 +214,7 @@
             align-items: flex-end;
 
             .price {
-              color: #ee4d2d;
+              color: #407F55;
               padding: 0 0.2rem;
               border-radius: 5px;
               font-size: 1vw;

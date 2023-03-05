@@ -2,13 +2,13 @@
     background-color: #F9FAFE;
     padding: 24px;
     border-radius: 10px;
-  
+
     &__header {
       display: flex;
       align-items: center;
       justify-content: space-between;
       margin-bottom: 1rem;
-  
+
       .btn-close-modal {
         color: #B4BFCE;
         background-color: rgb(236, 243, 254);
@@ -22,23 +22,23 @@
         font-weight: bold;
         cursor: pointer;
         transition: all .3s ease-in-out;
-  
+
         &:active, &:focus {
           outline: none;
           border: 0;
         }
-  
+
         &:hover {
           color: #2D3867;
           background-color: rgba(236, 243, 254, 0.7);
         }
       }
-  
+
       h1 {
         margin: 0;
       }
     }
-  
+
     form {
       .form-content {
         margin-top: 2rem;
@@ -55,12 +55,12 @@
             animation-duration: 0.1s;
             animation-name: showOut;
             animation-timing-function: ease-in-out;
-    
+
             &:hover {
               border-color: rgba(0, 83, 255, 0.3);
             }
         }
-  
+
         nz-input-number {
             width: 100%;
             padding: 0.5rem;
@@ -86,17 +86,17 @@
           background-color: #F9FAFE;
           border: 0;
         }
-  
+
         nz-form-control.first-control {
           margin-bottom: 0.7rem;
         }
       }
-  
+
       .btn-footer {
         width: 100%;
         border-radius: 5px;
         border: 0;
-        background: #ee4d2d;
+        background: #407F55;
         margin-top: 1.5rem;
         padding: 0.9rem;
         color: #ffffff;
@@ -111,4 +111,3 @@
       margin: 0 auto;
     }
   }
-  

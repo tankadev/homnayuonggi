@@ -125,14 +125,14 @@
         transition: all .3s ease-in-out;
 
         &:hover {
-          border: 1px solid #ee4d2d;
+          border: 1px solid #407F55;
         }
 
         i {
           position: absolute;
           top: 12px;
           left: 11px;
-          color: #ee4d2d;
+          color: #407F55;
           animation-duration: 0.1s;
           animation-name: showOut;
           animation-timing-function: ease-in-out;
@@ -156,7 +156,7 @@
       width: 100%;
       border-radius: 5px;
       border: 0;
-      background: #ee4d2d;
+      background: #407F55;
       margin-top: 1.5rem;
       padding: 0.9rem;
       color: #ffffff;

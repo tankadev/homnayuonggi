@@ -1,19 +1,43 @@
 <div class="room-container">
     <div class="room-content">
-        <div *ngFor="let room of listRooms;" class="room-item" (click)="onSelectedRoom(room)">
+        <div *ngFor="let room of listRooms;" class="room-item">
+            <div class="loader-container">
+              <svg class="spinner path-in-order" stroke="#000" width="70" height="70" viewBox="0 0 206 206" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                  <clipPath id="cut-off-bottom">
+                    <rect x="0" y="0" width="70" height="70" fill="#000"/>
+                  </clipPath>
+                </defs>
+
+                <circle class="path" fill="none" stroke-width="6" stroke-linecap="round" cx="103" cy="103" r="100"></circle>
+              </svg>
+              <div class="room-avatar">
+                <p class="room-avatar-content">{{ room.name | firstCharOfEachWord }}</p>
+                <div nz-tooltip class="room-avatar-sub-icon" nzTooltipPlacement="right" nzTooltipTitle="Phòng riêng tư">
+                  <span nz-icon nzType="lock" nzTheme="outline"></span>
+                  <!-- <span nz-icon nzType="global" nzTheme="outline"></span> -->
+                </div>
+              </div>
+            </div>
+
+            <p class="room-status">Đang chọn món</p>
             <p class="room-content">{{ room.name }}</p>
-            <div *ngIf="(room.key | findRoomInOrders:listDeliveries)" class="water-box">
+            <p class="room-sub-content">Phòng đặt đồ ăn trưa siêu tốc</p>
+            <!-- <div *ngIf="(room.key | findRoomInOrders:listDeliveries)" class="water-box">
                 <div class="wave"></div>
+            </div> -->
+            <div class="room-button">
+              <button type="button" (click)="onSelectedRoom(room)">Vào phòng</button>
             </div>
         </div>
-        <div class="room-item" (click)="addRoom()">
+        <!-- <div class="room-item" (click)="addRoom()">
             <i nz-icon nzType="plus" nzTheme="outline"></i>
             <p class="room-content">Thêm phòng</p>
-        </div>
+        </div> -->
     </div>
 
     <div class="footer">
-        <p class="version">Phiên bản 1.0.0</p>
-        <p class="copy">© Copyright 2022 TodayUongGi?. All rights reserved</p>
+        <p class="version">Phiên bản 2.0.0</p>
+        <p class="copy">© Copyright 2023 TodayUongGi?. All rights reserved</p>
     </div>
 </div>
