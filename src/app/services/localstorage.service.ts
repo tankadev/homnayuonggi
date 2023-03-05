@@ -1,12 +1,16 @@
 import { DeliveryRO } from './../ro/delivery.ro';
 import { Injectable } from '@angular/core';
 
+import * as CryptoJS from 'crypto-js';
+
 import { LocalStorage } from '../const/local-storage';
 import { UserRO } from '../ro/user.ro';
 import { AppService } from './app.service';
 import { OrderRO } from '../ro/order.ro';
 import { OrderHistoryRO } from '../ro/order-history.ro';
 import { RoomRO } from '../ro/room.ro';
+import { RoomPwdModel } from '../models/rooms-pwd.model';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -52,6 +56,11 @@ export class LocalStorageService {
     return localStorage.getItem(LocalStorage.ORDERS_HISTORY) ? histories : [];
   }
 
+  getMyRoomsPwd(): RoomPwdModel[] {
+    const roomsPwd: RoomPwdModel[] = JSON.parse(localStorage.getItem(LocalStorage.ROOM_PWD_LIST));
+    return localStorage.getItem(LocalStorage.ROOM_PWD_LIST) ? roomsPwd : [];
+  }
+
   getFcmToken(): string {
     const token: string = localStorage.getItem(LocalStorage.FCM_TOKEN);
     return token;
@@ -89,6 +98,12 @@ export class LocalStorageService {
     localStorage.setItem(LocalStorage.FCM_TOKEN, token);
   }
 
+  setMyRoomsPwd = (roomPwd: RoomPwdModel) => {
+    const roomsPwd = this.getMyRoomsPwd();
+    roomsPwd.push(roomPwd);
+    localStorage.setItem(LocalStorage.ROOM_PWD_LIST, JSON.stringify(roomsPwd));
+  }
+
   findUserByUserName(username: string): UserRO {
     const userList = this.getListUser();
     const findUser = userList.find(user => user.username === username);
@@ -111,6 +126,18 @@ export class LocalStorageService {
   quitRoom = () => {
     localStorage.removeItem(LocalStorage.SELECTED_ROOM);
     this.appService.changeSelectedRoom();
+  }
+
+  validRoomPwd(room: RoomRO): boolean {
+    const roomsPwd = this.getMyRoomsPwd();
+    const roomPwd = roomsPwd.find(i => i.key === room.key);
+    if (!roomPwd) {
+      return false;
+    }
+    const pwdSaved = CryptoJS.AES.decrypt(roomPwd.pwd.trim(), environment.pwd).toString(CryptoJS.enc.Utf8);
+    const pwdActiveRoom = CryptoJS.AES.decrypt(room.password.trim(), environment.pwd).toString(CryptoJS.enc.Utf8);
+
+    return pwdSaved === pwdActiveRoom;
   }
 
 }

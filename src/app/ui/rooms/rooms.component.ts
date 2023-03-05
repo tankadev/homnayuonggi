@@ -8,6 +8,7 @@ import { DeliveryService } from 'src/app/services/delivery.service';
 import { LocalStorageService } from 'src/app/services/localstorage.service';
 import { RoomsService } from 'src/app/services/rooms.service';
 import { CreateRoomComponent } from '../dialogs/create-room/create-room.component';
+import { JoinRoomPwdComponent } from '../dialogs/join-room-pwd/join-room-pwd.component';
 
 @Component({
   selector: 'rooms',
@@ -18,7 +19,7 @@ export class RoomsComponent implements OnInit {
 
   listRooms: RoomRO[] = [];
   listDeliveries: DeliveryRO[] = [];
-  
+
   constructor(
     private modal: NzModalService,
     private viewContainerRef: ViewContainerRef,
@@ -34,8 +35,35 @@ export class RoomsComponent implements OnInit {
   }
 
   public onSelectedRoom(room: RoomRO) {
-    this.localStorage.setSelectedRoom(room);
-    this.appService.changeSelectedRoom();
+    if (room.isPrivate) {
+      const checkPwdSaved = this.localStorage.validRoomPwd(room);
+      if (checkPwdSaved) {
+        this.localStorage.setSelectedRoom(room);
+        this.appService.changeSelectedRoom();
+      } else {
+        const modal = this.modal.create({
+          nzTitle: null,
+          nzContent: JoinRoomPwdComponent,
+          nzViewContainerRef: this.viewContainerRef,
+          nzFooter: null,
+          nzClosable: false,
+          nzAutofocus: null,
+          nzMaskClosable: false,
+          nzComponentParams: {
+            roomInfo: room,
+          }
+        });
+        modal.afterClose.subscribe(data => {
+          if (data) {
+            this.localStorage.setSelectedRoom(room);
+            this.appService.changeSelectedRoom();
+          }
+        });
+      }
+    } else {
+      this.localStorage.setSelectedRoom(room);
+      this.appService.changeSelectedRoom();
+    }
   }
 
   public addRoom() {

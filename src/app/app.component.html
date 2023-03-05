@@ -1,6 +1,7 @@
 <div class="app-content-wrapper">
   <header [userInfo]="userInfo"></header>
   <ng-container *ngIf="isLoginIn; else showNeedLogin">
+
     <ng-container *ngIf="isSelectedRoom; else noRoomSelected">
       <ng-container *ngIf="(deliveriesList | deliveryDetail) && (deliveriesList | deliveryDetail).isCreate; else showCreateDelivery">
         <place-order *ngIf="!(deliveriesList | deliveryDetail).isCompleted; else splitMoneyInformation" [deliveryInfo]="deliveriesList | deliveryDetail"></place-order>
@@ -12,10 +13,12 @@
         <create-delivery [deliveryInfo]="deliveriesList | deliveryDetail" [user]="userInfo"></create-delivery>
       </ng-template>
     </ng-container>
+
     <ng-template #noRoomSelected>
       <rooms></rooms>
     </ng-template>
   </ng-container>
+
   <ng-template #showNeedLogin>
     <need-login></need-login>
   </ng-template>

@@ -7,7 +7,24 @@
       <div class="form-content">
         <nz-form-item>
           <nz-form-control [nzXs]="24" nzErrorTip="Vui lòng nhập tên phòng">
-            <input nz-input formControlName="name" id="name" autocomplete="off" placeholder="Tên phòng (*). Vd: Team D" maxlength="20"/>
+            <input nz-input formControlName="name" id="name" autocomplete="off" placeholder="Tên phòng (*). Vd: Team D" maxlength="15"/>
+          </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+          <nz-form-control [nzXs]="24">
+            <input nz-input formControlName="description" id="description" autocomplete="off" placeholder="Mô tả phòng" maxlength="40"/>
+          </nz-form-control>
+        </nz-form-item>
+        <nz-form-item nz-row class="register-area">
+          <nz-form-control [nzXs]="24">
+            <label nz-checkbox formControlName="isPrivate" (ngModelChange)="optionPrivateRoomChanged()">
+              <span>Phòng riêng tư</span>
+            </label>
+          </nz-form-control>
+        </nz-form-item>
+        <nz-form-item *ngIf="isConfigPrivateRoom">
+          <nz-form-control [nzXs]="24" nzErrorTip="Vui lòng nhập mật khẩu phòng">
+            <input nz-input formControlName="passwordRoom" id="passwordRoom" autocomplete="off" placeholder="Mật khẩu phòng (*)" maxlength="20"/>
           </nz-form-control>
         </nz-form-item>
       </div>

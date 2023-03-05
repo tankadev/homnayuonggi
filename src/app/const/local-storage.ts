@@ -8,4 +8,5 @@ export class LocalStorage {
     static FCM_TOKEN = 'fcm_token';
     static ROOMS_LIST = 'rooms_list';
     static SELECTED_ROOM = 'selected_room';
+    static ROOM_PWD_LIST = 'room_pwd_list';
 }

@@ -23,7 +23,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   room: RoomRO = new RoomRO();
   subSelectedRoom$: Subscription;
-  
+
   constructor(
     private modal: NzModalService,
     private viewContainerRef: ViewContainerRef,

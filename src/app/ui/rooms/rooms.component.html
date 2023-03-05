@@ -2,7 +2,9 @@
     <div class="room-content">
         <div *ngFor="let room of listRooms;" class="room-item">
             <div class="loader-container">
-              <svg class="spinner path-in-order" stroke="#000" width="70" height="70" viewBox="0 0 206 206" xmlns="http://www.w3.org/2000/svg">
+              <svg
+                *ngIf="room.key | findRoomInOrders:listDeliveries"
+                class="spinner path-in-order" stroke="#000" width="70" height="70" viewBox="0 0 206 206" xmlns="http://www.w3.org/2000/svg">
                 <defs>
                   <clipPath id="cut-off-bottom">
                     <rect x="0" y="0" width="70" height="70" fill="#000"/>
@@ -13,16 +15,23 @@
               </svg>
               <div class="room-avatar">
                 <p class="room-avatar-content">{{ room.name | firstCharOfEachWord }}</p>
-                <div nz-tooltip class="room-avatar-sub-icon" nzTooltipPlacement="right" nzTooltipTitle="Phòng riêng tư">
-                  <span nz-icon nzType="lock" nzTheme="outline"></span>
-                  <!-- <span nz-icon nzType="global" nzTheme="outline"></span> -->
+                <div nz-tooltip class="room-avatar-sub-icon" nzTooltipPlacement="right" [nzTooltipTitle]="room.isPrivate ? 'Phòng riêng tư' : 'Phòng công khai'">
+                  <span *ngIf="room.isPrivate; else publicRoom " nz-icon nzType="lock" nzTheme="outline"></span>
+                  <ng-template #publicRoom>
+                    <span nz-icon nzType="global" nzTheme="outline"></span>
+                  </ng-template>
                 </div>
               </div>
             </div>
 
-            <p class="room-status">Đang chọn món</p>
+            <p class="room-status">
+              <span *ngIf="(room.key | findRoomInOrders:listDeliveries); else empty">Đang chọn món</span>
+              <ng-template #empty>
+                <span class="empty">Phòng trống</span>
+              </ng-template>
+            </p>
             <p class="room-content">{{ room.name }}</p>
-            <p class="room-sub-content">Phòng đặt đồ ăn trưa siêu tốc</p>
+            <p class="room-sub-content">{{ room.description }}</p>
             <!-- <div *ngIf="(room.key | findRoomInOrders:listDeliveries)" class="water-box">
                 <div class="wave"></div>
             </div> -->
@@ -30,10 +39,10 @@
               <button type="button" (click)="onSelectedRoom(room)">Vào phòng</button>
             </div>
         </div>
-        <!-- <div class="room-item" (click)="addRoom()">
+        <div class="room-create-item" (click)="addRoom()">
             <i nz-icon nzType="plus" nzTheme="outline"></i>
             <p class="room-content">Thêm phòng</p>
-        </div> -->
+        </div>
     </div>
 
     <div class="footer">
