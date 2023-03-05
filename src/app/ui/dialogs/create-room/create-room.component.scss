@@ -40,6 +40,40 @@
         }
     }
 
+    .room-note {
+      border: 1px dashed #B4BFCE;
+      border-radius: 5px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 0.8rem 1rem;
+
+      &__icon {
+        width: 30px;
+        height: 30px;
+        background-color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 1rem;
+        border-radius: 5px;
+        box-shadow: 0px 8px 15px rgba(180, 191, 206, 0.3);
+
+        i {
+          font-size: 1.3rem;
+          color: #000000;
+        }
+      }
+
+      &__content {
+        color: rgb(180, 191, 206);
+
+        b {
+          color: #2D3867;
+        }
+      }
+    }
+
     form {
         .form-content {
             margin-top: 2rem;
