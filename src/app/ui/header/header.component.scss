@@ -33,6 +33,10 @@ nz-header {
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;
+
+    .room-icon-type {
+      padding-right: 6px;
+    }
   }
 
   .btn-icon-edit-room {

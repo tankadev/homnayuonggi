@@ -33,7 +33,7 @@ export class ListOrderComponent implements OnInit {
   timeout: boolean = false;
   listOrders: OrderRO[] = [];
   room: RoomRO = this.localStorage.getSelectedRoom();
-  
+
   constructor(
     private modal: NzModalService,
     private viewContainerRef: ViewContainerRef,
@@ -196,7 +196,7 @@ export class ListOrderComponent implements OnInit {
     });
     modal.afterClose.subscribe(isConfirm => {
       if (isConfirm) {
-        
+
       }
     });
   }

@@ -9,8 +9,9 @@ export class DeliveryDetailPipe implements PipeTransform {
 
     constructor(private storage: LocalStorageService) { }
 
-    transform(deliveries: DeliveryRO[]): DeliveryRO {
+    transform(deliveries: DeliveryRO[], roomId?: string): DeliveryRO {
         const room = this.storage.getSelectedRoom();
-        return deliveries.find(i => i.roomKey === room.key);
+        const tempRoomId = roomId ? roomId : room.key;
+        return deliveries.find(i => i.roomKey === tempRoomId);
     }
 }

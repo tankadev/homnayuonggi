@@ -3,8 +3,10 @@
         <div *ngFor="let room of listRooms;" class="room-item">
             <div class="loader-container">
               <svg
-                *ngIf="room.key | findRoomInOrders:listDeliveries"
-                class="spinner path-in-order" stroke="#000" width="70" height="70" viewBox="0 0 206 206" xmlns="http://www.w3.org/2000/svg">
+                *ngIf="(room.key | findRoomInOrders:listDeliveries)"
+                [class.path-in-order]="room.key | findRoomInOrders:listDeliveries"
+                [class.path-order-success]="(listDeliveries | deliveryDetail:room.key) && (listDeliveries | deliveryDetail:room.key).isCompleted"
+                class="spinner" stroke="#000" width="70" height="70" viewBox="0 0 206 206" xmlns="http://www.w3.org/2000/svg">
                 <defs>
                   <clipPath id="cut-off-bottom">
                     <rect x="0" y="0" width="70" height="70" fill="#000"/>
@@ -25,9 +27,14 @@
             </div>
 
             <p class="room-status">
-              <span *ngIf="(room.key | findRoomInOrders:listDeliveries); else empty">Đang chọn món</span>
-              <ng-template #empty>
-                <span class="empty">Phòng trống</span>
+              <span *ngIf="!(room.key | findRoomInOrders:listDeliveries); else inProcess" class="empty">Phòng trống</span>
+              <ng-template #inProcess>
+                <span *ngIf="(listDeliveries | deliveryDetail:room.key) && (listDeliveries | deliveryDetail:room.key).isCompleted; else inOrder" class="already-order">Đã đặt món</span>
+
+                <ng-template #inOrder>
+                  <span>Đang chọn món</span>
+                </ng-template>
+
               </ng-template>
             </p>
             <p class="room-content">{{ room.name }}</p>

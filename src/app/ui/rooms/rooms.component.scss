@@ -126,6 +126,10 @@
           .empty {
             color: #d1d1d1;
           }
+
+          .already-order {
+            color: #64ca86;
+          }
         }
 
         .room-avatar {
@@ -286,7 +290,7 @@
       }
     }
 
-    .spinner.path-order-success {
+    .spinner.path-in-order.path-order-success {
       .path {
         stroke: #64ca86;
         -webkit-text-stroke: #64ca86;

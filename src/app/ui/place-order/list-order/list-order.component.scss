@@ -38,7 +38,7 @@
     &::-webkit-scrollbar-corner { display: none; }
 
     .order-item {
-      border-bottom: 5px solid #EBF2FF;
+      border-bottom: 5px solid #eef0f4;
       padding: 0.5vw 1.5vw 0 1.5vw;
       display: flex;
       flex-direction: column;
@@ -160,10 +160,24 @@
 
             .username {
               font-weight: bold;
+
+              span {
+                color: #fadb15;
+                font-size: 0.8vw;
+              }
+            }
+
+            .note-content {
+              color: #92969e;
             }
 
             .note-content-cursor {
               cursor: pointer;
+              transition: all .3s;
+
+              &:hover {
+                color: #407F55;
+              }
             }
           }
 

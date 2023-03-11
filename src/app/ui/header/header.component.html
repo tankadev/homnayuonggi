@@ -4,9 +4,9 @@
       <img src="../../../assets/images/shopeefoodvn.png" alt="logo">
     </div>
     <div *ngIf="room" class="room-name">
-      <span *ngIf="room.isPrivate; else publicRoom " nz-icon nzType="lock" nzTheme="outline"></span>
+      <span *ngIf="room.isPrivate; else publicRoom " nz-icon nzType="lock" nzTheme="outline" class="room-icon-type"></span>
       <ng-template #publicRoom>
-        <span nz-icon nzType="global" nzTheme="outline"></span>
+        <span nz-icon nzType="global" nzTheme="outline" class="room-icon-type"></span>
       </ng-template>
 
       <span *ngIf="room.description; else noDes" nz-tooltip nzTooltipPlacement="bottom" [nzTooltipTitle]="room.description">{{ room.name }}</span>

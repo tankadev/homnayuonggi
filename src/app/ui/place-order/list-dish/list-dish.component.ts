@@ -34,7 +34,7 @@ export class ListDishComponent implements OnInit {
     // check dish exist
     const listOrdersLocal: OrderRO[] = this.localStorage.getOrdersList();
     const userId: string = this.localStorage.getUserInfo().key;
-    const findDish = listOrdersLocal ? listOrdersLocal.find(order => order.dish.id === dish.id) : null;
+    const findDish = listOrdersLocal ? listOrdersLocal.find(order => order.dish.id === dish.id && order.roomKey == this.room.key) : null;
     if (listOrdersLocal && listOrdersLocal.length > 0 && findDish) {
       const orderDto: OrderDTO = new OrderDTO();
       const userNoteIndex = findDish.userNotes.findIndex(note => note.userId === userId);
