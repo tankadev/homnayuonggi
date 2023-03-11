@@ -14,7 +14,7 @@
         <span>{{ room.name }}</span>
       </ng-template>
 
-      <span nz-icon nzType="edit" nzTheme="outline" class="btn-icon-edit-room" (click)="editRoom()"></span>
+      <span *isAllow="room.createUser" nz-icon nzType="edit" nzTheme="outline" class="btn-icon-edit-room" (click)="editRoom()"></span>
     </div>
     <div class="right-content">
       <div class="nick-name-box" [ngStyle]="userInfo && {'padding': '0 1rem 0 0'}">

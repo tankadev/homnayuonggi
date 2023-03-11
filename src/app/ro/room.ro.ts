@@ -4,4 +4,5 @@ export class RoomRO {
     description: string;
     password: string;
     isPrivate: boolean;
+    createUser: string;
 }

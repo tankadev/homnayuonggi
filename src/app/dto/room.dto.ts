@@ -3,4 +3,5 @@ export class RoomDTO {
     description: string;
     password?: string;
     isPrivate: boolean;
+    createUser: string;
 }

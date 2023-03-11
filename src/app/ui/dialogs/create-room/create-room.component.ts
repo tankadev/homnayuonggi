@@ -10,6 +10,7 @@ import { RoomDTO } from 'src/app/dto/room.dto';
 import { FormHelper } from 'src/app/helper/form.help';
 import { RoomsService } from 'src/app/services/rooms.service';
 import { RoomRO } from 'src/app/ro/room.ro';
+import { LocalStorageService } from 'src/app/services/localstorage.service';
 
 @Component({
   selector: 'create-room',
@@ -27,6 +28,7 @@ export class CreateRoomComponent implements OnInit {
     private modal: NzModalRef,
     private fb: FormBuilder,
     private roomService: RoomsService,
+    private storage: LocalStorageService
   ) { }
 
   ngOnInit(): void {
@@ -57,10 +59,12 @@ export class CreateRoomComponent implements OnInit {
         this.modal.destroy({name: name, description: description});
       } else {
         // Thêm mới room
+        const currentUser = this.storage.getUserInfo();
         const roomDTO = new RoomDTO();
         roomDTO.name = name;
         roomDTO.isPrivate = isPrivate;
         roomDTO.description = description;
+        roomDTO.createUser = currentUser.key;
         if (isPrivate) {
           roomDTO.password = CryptoJS.AES.encrypt(this.roomForm.value.passwordRoom.trim(), environment.pwd).toString();
         }
