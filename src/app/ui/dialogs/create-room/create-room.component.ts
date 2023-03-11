@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { environment } from 'src/environments/environment';
 
@@ -9,6 +9,7 @@ import { RoomDTO } from 'src/app/dto/room.dto';
 
 import { FormHelper } from 'src/app/helper/form.help';
 import { RoomsService } from 'src/app/services/rooms.service';
+import { RoomRO } from 'src/app/ro/room.ro';
 
 @Component({
   selector: 'create-room',
@@ -16,6 +17,8 @@ import { RoomsService } from 'src/app/services/rooms.service';
   styleUrls: ['./create-room.component.scss']
 })
 export class CreateRoomComponent implements OnInit {
+
+  @Input() roomInfo?: RoomRO;
 
   roomForm: FormGroup;
   isConfigPrivateRoom: boolean = false;
@@ -32,20 +35,39 @@ export class CreateRoomComponent implements OnInit {
       isPrivate: [false],
       description: []
     });
+
+    if (this.roomInfo) {
+      this.roomForm.controls['name'].setValue(this.roomInfo.name);
+      this.roomForm.controls['description'].setValue(this.roomInfo.description);
+      this.roomForm.controls['isPrivate'].setValue(this.roomInfo.isPrivate);
+      this.roomForm.controls['isPrivate'].disable();
+    }
   }
 
   public submitRoomForm(): void {
     if (this.roomForm.valid) {
       const { isPrivate, name, description } = this.roomForm.value;
-      const roomDTO = new RoomDTO();
-      roomDTO.name = name;
-      roomDTO.isPrivate = isPrivate;
-      roomDTO.description = description;
-      if (isPrivate) {
-        roomDTO.password = CryptoJS.AES.encrypt(this.roomForm.value.passwordRoom.trim(), environment.pwd).toString();
+
+      // Cập nhật room
+      if (this.roomInfo) {
+        const roomDTO = new RoomDTO();
+        roomDTO.name = name;
+        roomDTO.description = description;
+        this.roomService.update(this.roomInfo.key, roomDTO);
+        this.modal.destroy({name: name, description: description});
+      } else {
+        // Thêm mới room
+        const roomDTO = new RoomDTO();
+        roomDTO.name = name;
+        roomDTO.isPrivate = isPrivate;
+        roomDTO.description = description;
+        if (isPrivate) {
+          roomDTO.password = CryptoJS.AES.encrypt(this.roomForm.value.passwordRoom.trim(), environment.pwd).toString();
+        }
+        this.roomService.create(roomDTO);
+        this.closeModal();
       }
-      this.roomService.create(roomDTO);
-      this.closeModal();
+
     } else {
       FormHelper.validateAllFormFields(this.roomForm);
     }

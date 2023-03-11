@@ -9,6 +9,7 @@ import en from '@angular/common/locales/en';
 
 import { NZ_I18N } from 'ng-zorro-antd/i18n';
 import { en_US } from 'ng-zorro-antd/i18n';
+import { QRCodeModule } from 'angularx-qrcode';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -78,7 +79,8 @@ registerLocaleData(en);
     HttpClientModule,
     BrowserAnimationsModule,
     HttpClientModule,
-    ShareModule
+    ShareModule,
+    QRCodeModule
   ],
   providers: [
     { provide: NZ_I18N, useValue: en_US }

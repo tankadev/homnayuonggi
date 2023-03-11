@@ -22,4 +22,10 @@
       <span class="head">URL: </span> <a [href]="deliveryInfo.delivery.url" target="_blank">{{ deliveryInfo.delivery.url }}</a>
     </p>
   </div>
+  <qrcode
+    [qrdata]="deliveryInfo.delivery.url + '?source_url=shopeefood_store_detail'"
+    cssClass="qr-code"
+    [errorCorrectionLevel]="'M'"
+    [elementType]="'img'"
+  ></qrcode>
 </div>

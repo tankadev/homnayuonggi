@@ -1,5 +1,5 @@
 :host ::ng-deep .shop-info-container {
-  height: 30vh;
+  height: 45vh;
   margin: 1rem 2rem 1rem 10%;
   box-shadow: 0px 1px 15px rgba(180, 191, 206, 0.1);
   background-color: #ffffff;
@@ -77,6 +77,18 @@
       padding: 0.3rem 0.4rem;
       border-radius: 10px;
       color: #ffffff;
+    }
+  }
+
+  .qr-code {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    canvas {
+      width: 19vh !important;
+      height: 19vh !important;
     }
   }
 }

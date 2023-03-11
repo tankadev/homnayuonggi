@@ -11,6 +11,7 @@ import { AppService } from 'src/app/services/app.service';
 import { LocalStorageService } from 'src/app/services/localstorage.service';
 import { RoomRO } from 'src/app/ro/room.ro';
 import { Subscription } from 'rxjs';
+import { CreateRoomComponent } from '../dialogs/create-room/create-room.component';
 
 @Component({
   selector: 'header',
@@ -77,6 +78,27 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   public quitRoom = () => {
     this.storage.quitRoom();
+  }
+
+  public editRoom(): void {
+    const modal = this.modal.create({
+      nzTitle: null,
+      nzContent: CreateRoomComponent,
+      nzViewContainerRef: this.viewContainerRef,
+      nzFooter: null,
+      nzClosable: false,
+      nzAutofocus: null,
+      nzMaskClosable: false,
+      nzComponentParams: {
+        roomInfo: this.room,
+      }
+    });
+    modal.afterClose.subscribe(data => {
+      if (data) {
+        this.room.name = data.name;
+        this.room.description = data.description;
+      }
+    });
   }
 
   private onListenUsersChangesFromFirebaseDB(): void {

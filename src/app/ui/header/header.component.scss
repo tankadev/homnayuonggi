@@ -35,6 +35,16 @@ nz-header {
     overflow: hidden;
   }
 
+  .btn-icon-edit-room {
+    cursor: pointer;
+    margin-left: 10px;
+    transition: all .3s;
+
+    &:hover {
+      color: #407F55;
+    }
+  }
+
   .right-content {
     display: flex;
     align-items: center;

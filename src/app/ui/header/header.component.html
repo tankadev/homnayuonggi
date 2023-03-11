@@ -4,7 +4,17 @@
       <img src="../../../assets/images/shopeefoodvn.png" alt="logo">
     </div>
     <div *ngIf="room" class="room-name">
-      {{ room.name }}
+      <span *ngIf="room.isPrivate; else publicRoom " nz-icon nzType="lock" nzTheme="outline"></span>
+      <ng-template #publicRoom>
+        <span nz-icon nzType="global" nzTheme="outline"></span>
+      </ng-template>
+
+      <span *ngIf="room.description; else noDes" nz-tooltip nzTooltipPlacement="bottom" [nzTooltipTitle]="room.description">{{ room.name }}</span>
+      <ng-template #noDes>
+        <span>{{ room.name }}</span>
+      </ng-template>
+
+      <span nz-icon nzType="edit" nzTheme="outline" class="btn-icon-edit-room" (click)="editRoom()"></span>
     </div>
     <div class="right-content">
       <div class="nick-name-box" [ngStyle]="userInfo && {'padding': '0 1rem 0 0'}">
