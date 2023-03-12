@@ -9,4 +9,5 @@ export class LocalStorage {
     static ROOMS_LIST = 'rooms_list';
     static SELECTED_ROOM = 'selected_room';
     static ROOM_PWD_LIST = 'room_pwd_list';
+    static PAYMENT_PAID_LIST = 'payment_paid_list';
 }

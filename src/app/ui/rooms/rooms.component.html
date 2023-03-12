@@ -16,7 +16,13 @@
                 <circle class="path" fill="none" stroke-width="6" stroke-linecap="round" cx="103" cy="103" r="100"></circle>
               </svg>
               <div class="room-avatar">
-                <p class="room-avatar-content">{{ room.name | firstCharOfEachWord }}</p>
+                <p *ngIf="!(room.key | findRoomInOrders:listDeliveries); else showImageOrder" class="room-avatar-content">{{ room.name | firstCharOfEachWord }}</p>
+                <ng-template #showImageOrder>
+                  <img
+                    [src]="(listDeliveries | deliveryDetail:room.key).delivery.photos | displayImage"
+                  >
+                </ng-template>
+
                 <div nz-tooltip class="room-avatar-sub-icon" nzTooltipPlacement="right" [nzTooltipTitle]="room.isPrivate ? 'Phòng riêng tư' : 'Phòng công khai'">
                   <span *ngIf="room.isPrivate; else publicRoom " nz-icon nzType="lock" nzTheme="outline"></span>
                   <ng-template #publicRoom>
@@ -26,6 +32,7 @@
               </div>
             </div>
 
+            <p *ngIf="(room.key | findRoomInOrders:listDeliveries)" class="room-delivery-name">{{ (listDeliveries | deliveryDetail:room.key).delivery.name }}</p>
             <p class="room-status">
               <span *ngIf="!(room.key | findRoomInOrders:listDeliveries); else inProcess" class="empty">Phòng trống</span>
               <ng-template #inProcess>
@@ -37,6 +44,7 @@
 
               </ng-template>
             </p>
+
             <p class="room-content">{{ room.name }}</p>
             <p class="room-sub-content">{{ room.description }}</p>
             <!-- <div *ngIf="(room.key | findRoomInOrders:listDeliveries)" class="water-box">

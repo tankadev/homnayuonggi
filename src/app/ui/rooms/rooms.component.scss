@@ -118,10 +118,10 @@
         .room-status {
           font-size: 10px;
           font-weight: bold;
-          height: 30px;
+          height: 25px;
           margin: 0;
           color: #E9735C;
-          margin-top: 10px;
+          margin-top: 4px;
 
           .empty {
             color: #d1d1d1;
@@ -130,6 +130,19 @@
           .already-order {
             color: #64ca86;
           }
+        }
+
+        .room-delivery-name {
+          font-size: 10px;
+          font-weight: bold;
+          height: 15px;
+          width: 130px;
+          margin: 0;
+          color: #e3ca39;
+          margin-top: 10px;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
         }
 
         .room-avatar {
@@ -141,6 +154,13 @@
           justify-content: center;
           align-items: center;
           position: relative;
+
+          img {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            object-fit: cover;
+          }
 
           .room-avatar-content {
             font-size: 15px;

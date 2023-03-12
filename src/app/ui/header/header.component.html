@@ -14,9 +14,12 @@
         <span>{{ room.name }}</span>
       </ng-template>
 
-      <span *isAllow="room.createUser" nz-icon nzType="edit" nzTheme="outline" class="btn-icon-edit-room" (click)="editRoom()"></span>
+      <span *isAllow="room.createUser" nz-icon nzType="edit" nzTheme="outline" class="btn-icon-edit-room" (click)="editRoom()" nz-tooltip nzTooltipPlacement="bottom" [nzTooltipTitle]="'Chỉnh sửa thông tin phòng'"></span>
     </div>
     <div class="right-content">
+      <nz-badge *ngIf="paymentPaid" (click)="openDrawer()" class="notify-payment-paid" nzDot nz-tooltip nzTooltipPlacement="bottom" [nzTooltipTitle]="'Danh sách chưa thanh toán tiền cho người đặt'">
+        <span nz-icon nzType="notification"></span>
+      </nz-badge>
       <div class="nick-name-box" [ngStyle]="userInfo && {'padding': '0 1rem 0 0'}">
         <ng-container *ngIf="!userInfo; else userInfoContent">
             <p class="text" (click)="openLoginDialog()">Đăng nhập</p>
@@ -31,8 +34,22 @@
       <button *ngIf="userInfo && room" class="btn-quit-room" (click)="quitRoom()">
         Thoát phòng
       </button>
-      <button *ngIf="userInfo" class="btn-logout" (click)="logOut()">
+      <button *ngIf="userInfo" class="btn-logout" (click)="logOut()" nz-tooltip nzTooltipPlacement="bottom" [nzTooltipTitle]="'Đăng xuất'">
         <i nz-icon nzType="logout" nzTheme="outline"></i>
       </button>
     </div>
 </nz-header>
+
+<nz-drawer
+  [nzClosable]="false"
+  [nzVisible]="visibleDrawerPaymentsPaid"
+  nzPlacement="right"
+  nzTitle="Danh sách chưa thanh toán"
+  (nzOnClose)="closeDrawer()"
+>
+  <ng-container *nzDrawerContent>
+    <p>Some contents...</p>
+    <p>Some contents...</p>
+    <p>Some contents...</p>
+  </ng-container>
+</nz-drawer>

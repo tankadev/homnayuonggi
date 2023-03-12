@@ -11,6 +11,7 @@ import { OrderHistoryRO } from '../ro/order-history.ro';
 import { RoomRO } from '../ro/room.ro';
 import { RoomPwdModel } from '../models/rooms-pwd.model';
 import { environment } from 'src/environments/environment';
+import { PaymentPaidRO } from '../ro/payment-paid.ro';
 
 @Injectable({
   providedIn: 'root'
@@ -92,6 +93,10 @@ export class LocalStorageService {
 
   setOrdersHistory = (histories: OrderHistoryRO[]) => {
     localStorage.setItem(LocalStorage.ORDERS_HISTORY, JSON.stringify(histories));
+  }
+
+  setPaymentsPaid = (paymentsPaid: PaymentPaidRO[]) => {
+    localStorage.setItem(LocalStorage.PAYMENT_PAID_LIST, JSON.stringify(paymentsPaid));
   }
 
   setFcmToken = (token: string) => {

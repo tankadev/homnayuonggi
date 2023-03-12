@@ -1,5 +1,5 @@
 <div class="info-payment-container">
-    <p class="title">Thông tin thanh toán mà bạn phải chi trả</p>
+    <p class="title">Thông tin thanh toán</p>
     <!-- <div class="price-content">
         <p class="payment-price">
             Giá chênh lệch sau khuyến mãi <span>3.000 vnđ</span>
@@ -19,7 +19,7 @@
             <p>Tổng giá được giảm: <b>{{ downPrice | number }} vnđ</b></p>
         </div>
         <div class="btn-group">
-            <button *ngIf="deliveryInfo.deliveryStatus === 2" class="btn-cancel" (click)="renewDelivery()">Tạo bình chọn mới</button>
+            <button class="btn-cancel" (click)="renewDelivery()">Tạo bình chọn mới</button>
             <button *ngIf="(createUserId | isUserPermission:assignUserId:false) && deliveryInfo.deliveryStatus === 1" class="btn-complete" (click)="completeDelivery()"
                 [ngStyle]="isSendMessage && {'width': '80px'}"
             >
@@ -33,23 +33,25 @@
     <p class="title">Thông tin món của bạn</p>
     <table>
         <tr>
-            <th class="text-center">STT</th>
+            <th class="text-center price-quantity">STT</th>
             <th class="text-center">Thông tin món</th>
-            <th class="text-center">Số lượng</th>
-            <th class="text-center">Giá món (đ)</th>
-            <th class="text-center">Giá được giảm (đ)</th>
-            <th class="text-center">Tổng cộng (đ)</th>
+            <th class="text-center price-note">Ghi chú</th>
+            <th class="text-center price-quantity">Số lượng</th>
+            <th class="text-center price-w">Giá món <br>(đ)</th>
+            <th class="text-center price-w">Giảm giá <br>(đ)</th>
+            <th class="text-center price-w-total">Tổng giá <br>(đ)</th>
         </tr>
         <tr *ngFor="let item of paymentDishByUser; let i = index">
             <td class="text-center">{{ i + 1 }}</td>
             <td>{{ item.dishName }}</td>
+            <td>{{ item.note }}</td>
             <td class="text-center">{{ item.quantity }}</td>
             <td class="text-right">{{ (item.discountPrice ? item.discountPrice : item.price) | number }}</td>
             <td class="text-right">{{ item.sponsorPrice | number }}</td>
             <td class="text-right">{{ item.totalPrice | number }}</td>
         </tr>
         <tr class="total-payment">
-            <td class="text-right" colspan="5">Tổng tiền phải trả</td>
+            <td class="text-right" colspan="6">Tổng tiền phải trả</td>
             <td class="text-right">{{ this.totalPayment | number }}</td>
         </tr>
     </table>
@@ -58,26 +60,28 @@
     <p class="title">Thông tin món người khác</p>
     <table>
         <tr>
-            <th class="text-center">STT</th>
+            <th class="text-center price-quantity">STT</th>
             <th class="text-center">Người đặt</th>
             <th class="text-center">Thông tin món</th>
-            <th class="text-center">Số lượng</th>
-            <th class="text-center">Giá món (đ)</th>
-            <th class="text-center">Giá được giảm (đ)</th>
-            <th class="text-center">Tổng cộng (đ)</th>
+            <th class="text-center price-note">Ghi chú</th>
+            <th class="text-center price-quantity">Số lượng</th>
+            <th class="text-center price-w">Giá món <br>(đ)</th>
+            <th class="text-center price-w">Giảm giá <br>(đ)</th>
+            <th class="text-center price-w-total">Tổng giá <br>(đ)</th>
         </tr>
         <tr *ngFor="let item of paymentDishByOtherUser; let i = index">
             <td class="text-center">{{ i + 1 }}</td>
             <td>{{ item.userKey | displayNameUser }}</td>
             <td>{{ item.dishName }}</td>
+            <td>{{ item.note }}</td>
             <td class="text-center">{{ item.quantity }}</td>
             <td class="text-right">{{ (item.discountPrice ? item.discountPrice : item.price) | number }}</td>
             <td class="text-right">{{ item.sponsorPrice | number }}</td>
             <td class="text-right">{{ item.totalPrice | number }}</td>
         </tr>
-        <tr class="total-payment">
-            <td class="text-right" colspan="6">Tổng tiền phải trả</td>
+        <!-- <tr class="total-payment">
+            <td class="text-right" colspan="7">Tổng tiền phải trả</td>
             <td class="text-right">{{ this.totalPaymentOther | number }}</td>
-        </tr>
+        </tr> -->
     </table>
 </div>

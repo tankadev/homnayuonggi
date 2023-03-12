@@ -15,6 +15,7 @@ import { DisplayUserInfoPipe } from './display-user-info.pipe';
 import { DeliveryDetailPipe } from './delivery-detail.pipe';
 import { FindRoomInOrdersPipe } from './find-room-in-orders.pipe';
 import { FirstCharOfEachWordPipe } from './first-char-of-each-word.pipe';
+import { PaymentPaidByRoomPipe } from './payment-paid-by-room.pipe';
 
 @NgModule({
   declarations: [
@@ -32,7 +33,8 @@ import { FirstCharOfEachWordPipe } from './first-char-of-each-word.pipe';
     DisplayUserInfoPipe,
     DeliveryDetailPipe,
     FindRoomInOrdersPipe,
-    FirstCharOfEachWordPipe
+    FirstCharOfEachWordPipe,
+    PaymentPaidByRoomPipe
   ],
   imports: [
     CommonModule
@@ -52,7 +54,8 @@ import { FirstCharOfEachWordPipe } from './first-char-of-each-word.pipe';
     DisplayUserInfoPipe,
     DeliveryDetailPipe,
     FindRoomInOrdersPipe,
-    FirstCharOfEachWordPipe
+    FirstCharOfEachWordPipe,
+    PaymentPaidByRoomPipe
   ],
   providers: [ DisplayNameUserPipe, DishTotalQuantityPipe, DecimalPipe, DisplayImagePipe, DisplayUserOrderPipe, DeliveryDetailPipe, FindRoomInOrdersPipe ]
 })

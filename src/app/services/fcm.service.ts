@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
 import { Observable } from 'rxjs';
-
+import { environment } from 'src/environments/environment';
 @Injectable({
   providedIn: 'root'
 })
@@ -13,6 +13,6 @@ export class FcmService {
   ) { }
 
   sendNotificationWhenDeliverySuccess(listToken: string[]): Observable<any> {
-    return this.http.post(`https://todayuonggi-be.herokuapp.com/send-message-delivery-success`, listToken);
+    return this.http.post(`${environment.apiURL}/send-message-delivery-success`, listToken);
   }
 }

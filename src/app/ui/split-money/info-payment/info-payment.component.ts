@@ -1,4 +1,5 @@
-import { Component, Input, OnChanges, OnInit, SimpleChanges, ViewContainerRef } from '@angular/core';
+import { PaymentOrderModel } from './../../../models/payment-order.model';
+import { Component, Input, OnInit, ViewContainerRef } from '@angular/core';
 
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { NzNotificationService } from 'ng-zorro-antd/notification';
@@ -8,46 +9,32 @@ import { UserNote } from 'src/app/dto/order.dto';
 import { DeliveryRO } from 'src/app/ro/delivery.ro';
 import { OrderRO } from 'src/app/ro/order.ro';
 import { RoomRO } from 'src/app/ro/room.ro';
-import { UserRO } from 'src/app/ro/user.ro';
 import { DeliveryService } from 'src/app/services/delivery.service';
 import { FcmService } from 'src/app/services/fcm.service';
 import { LocalStorageService } from 'src/app/services/localstorage.service';
 import { OrderHistoryService } from 'src/app/services/order-history.service';
 import { OrderService } from 'src/app/services/order.service';
-import { DisplayImagePipe } from 'src/app/share/display-image.pipe';
-import { DisplayUserOrderPipe } from 'src/app/share/display-user-order.pipe';
 import { ConfirmDialogComponent } from '../../dialogs/confirm-dialog/confirm-dialog.component';
-
-class PaymentOrder {
-  image: string;
-  dishName: string;
-  price: number;
-  discountPrice: number;
-  quantity: number;
-  sponsorPrice: number;
-  totalPrice: number;
-  userKey: string;
-}
 
 @Component({
   selector: 'info-payment',
   templateUrl: './info-payment.component.html',
   styleUrls: ['./info-payment.component.scss']
 })
-export class InfoPaymentComponent implements OnInit, OnChanges {
+export class InfoPaymentComponent implements OnInit {
 
   @Input() deliveryInfo: DeliveryRO;
   @Input() createUserId: string;
   @Input() assignUserId: string;
+  @Input() paymentDishByUser: PaymentOrderModel[] = [];
+  @Input() paymentDishByOtherUser: PaymentOrderModel[] = [];
+  @Input() totalPayment: number = 0;
+  @Input() totalDish: number = 0;
+  @Input() downPrice: number = 0;
+  @Input() totalPaymentOther: number = 0;
+  @Input() totalDishOther: number = 0;
+  @Input() downPriceOther: number = 0;
 
-  paymentDishByUser: PaymentOrder[] = [];
-  paymentDishByOtherUser: PaymentOrder[] = [];
-  totalPayment: number = 0;
-  totalDish: number = 0;
-  downPrice: number = 0;
-  totalPaymentOther: number = 0;
-  totalDishOther: number = 0;
-  downPriceOther: number = 0;
   isSendMessage: boolean = false;
   room: RoomRO = this.storage.getSelectedRoom();
 
@@ -58,19 +45,11 @@ export class InfoPaymentComponent implements OnInit, OnChanges {
     private orderService: OrderService,
     private storage: LocalStorageService,
     private orderHistoryService: OrderHistoryService,
-    private displayImagePipe: DisplayImagePipe,
-    private displayUserOrderPipe: DisplayUserOrderPipe,
     private fcmService: FcmService,
     private notification: NzNotificationService
   ) { }
 
   ngOnInit(): void { }
-
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes.deliveryInfo) {
-      this.generatePaymentInfoForUser();
-    }
-  }
 
   public renewDelivery = (): void => {
     const modal = this.modal.create({
@@ -131,62 +110,6 @@ export class InfoPaymentComponent implements OnInit, OnChanges {
           this.completePayment();
         }
       }
-    });
-  }
-
-  private generatePaymentInfoForUser = (): void => {
-    this.paymentDishByUser = [];
-    this.paymentDishByOtherUser = [];
-    this.totalPayment = 0;
-    this.totalDish = 0;
-    this.downPrice = 0;
-    this.totalPaymentOther = 0;
-    this.totalDishOther = 0;
-    this.downPriceOther = 0;
-    const userLogin: UserRO = this.storage.getUserInfo();
-    const orderList: OrderRO[] = this.storage.getOrdersList().filter(i => i.roomKey === this.room.key);
-    const splitMoney = this.deliveryInfo.splitMoney;
-    switch (splitMoney.type) {
-      case 0:
-        this.equallyDivided(userLogin, orderList);
-        break;
-    }
-  }
-
-  private equallyDivided = (userLogin: UserRO, orderList: OrderRO[]) => {
-    orderList.forEach(order => {
-      const paymentOrder = new PaymentOrder();
-      paymentOrder.image = this.displayImagePipe.transform(order.dish.photos, 120);
-      paymentOrder.dishName = order.dish.name;
-      paymentOrder.price = order.dish.price.value;
-      paymentOrder.discountPrice = order.dish.discountPrice ? order.dish.discountPrice.value : null;
-
-      const orderUserNote: UserNote[] = JSON.parse(JSON.stringify(order.userNotes));
-
-      orderUserNote.forEach(userNote => {
-        paymentOrder.quantity = userNote.quantity;
-
-        const totalDish = this.displayUserOrderPipe.transform(orderList, 'countDish', true);
-        const dishPrice = order.dish.discountPrice ? order.dish.discountPrice.value : order.dish.price.value;
-        const plusPrice = this.deliveryInfo.shippingFee + this.deliveryInfo.serviceFee;
-        const minusPrice = this.deliveryInfo.sponsorPrice;
-
-        paymentOrder.sponsorPrice = Math.floor(((minusPrice - plusPrice) / +totalDish));
-        paymentOrder.totalPrice = userNote.quantity * (dishPrice - paymentOrder.sponsorPrice);
-        paymentOrder.userKey = userNote.userId;
-
-        if (userNote.userId === userLogin.key) {
-          this.totalPayment += paymentOrder.totalPrice;
-          this.totalDish = +totalDish;
-          this.downPrice = minusPrice - plusPrice;
-          this.paymentDishByUser.push(JSON.parse(JSON.stringify(paymentOrder)));
-        } else {
-          this.totalPaymentOther += paymentOrder.totalPrice;
-          this.totalDishOther = +totalDish;
-          this.downPriceOther = minusPrice - plusPrice;
-          this.paymentDishByOtherUser.push(JSON.parse(JSON.stringify(paymentOrder)));
-        }
-      });
     });
   }
 

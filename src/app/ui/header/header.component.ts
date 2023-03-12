@@ -12,6 +12,7 @@ import { LocalStorageService } from 'src/app/services/localstorage.service';
 import { RoomRO } from 'src/app/ro/room.ro';
 import { Subscription } from 'rxjs';
 import { CreateRoomComponent } from '../dialogs/create-room/create-room.component';
+import { PaymentPaidRO } from 'src/app/ro/payment-paid.ro';
 
 @Component({
   selector: 'header',
@@ -21,9 +22,11 @@ import { CreateRoomComponent } from '../dialogs/create-room/create-room.componen
 export class HeaderComponent implements OnInit, OnDestroy {
 
   @Input() userInfo: UserRO;
+  @Input() paymentPaid?: PaymentPaidRO;
 
   room: RoomRO = new RoomRO();
   subSelectedRoom$: Subscription;
+  visibleDrawerPaymentsPaid: boolean = false;
 
   constructor(
     private modal: NzModalService,
@@ -99,6 +102,14 @@ export class HeaderComponent implements OnInit, OnDestroy {
         this.room.description = data.description;
       }
     });
+  }
+
+  public openDrawer(): void {
+    this.visibleDrawerPaymentsPaid = true;
+  }
+
+  public closeDrawer(): void {
+    this.visibleDrawerPaymentsPaid = false;
   }
 
   private onListenUsersChangesFromFirebaseDB(): void {

@@ -43,18 +43,8 @@ export class PlaceOrderDialogComponent implements OnInit {
     },
     {
       type: 1,
-      content: 'Chia theo % món trên giá trị đơn hàng',
-      disable: true
-    },
-    {
-      type: 2,
-      content: 'Tài trợ 100% luôn',
-      disable: true
-    },
-    {
-      type: 3,
-      content: 'Tài trợ chút đỉnh thôi',
-      disable: true
+      content: 'Tài trợ 100%',
+      disable: false
     }
   ];
 
@@ -130,7 +120,7 @@ export class PlaceOrderDialogComponent implements OnInit {
   public parserPrice = (value: string) => value.replace(' vnđ', '').replace(',', '');
 
   public onSplitMoneyTypeChange = (type: number): void => {
-    if (type === 2) {
+    if (type === 1) {
       const sponsorUserCtrl: AbstractControl = this.fb.control(null, [Validators.required]);
       this.placeOrderForm.addControl('sponsorUser', sponsorUserCtrl);
       this._isSponsor = true;

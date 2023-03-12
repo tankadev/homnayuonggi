@@ -14,6 +14,8 @@ export class ListSplitMoneyComponent implements OnInit {
   @Input() deliveryInfo: DeliveryRO;
   @Input() createUserId: string;
 
+  test: boolean = true;
+
   listOrders: OrderRO[] = [];
   room: RoomRO = this.localStorage.getSelectedRoom();
 

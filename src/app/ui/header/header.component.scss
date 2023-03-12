@@ -147,4 +147,34 @@ nz-header {
       border-color: #407F55;
     }
   }
+
+  .notify-payment-paid {
+    margin-right: 15px;
+    cursor: pointer;
+    animation: notifyMove;
+    animation-iteration-count: infinite;
+    animation-duration: 1s;
+    animation-timing-function: ease-out;
+
+    span {
+      font-size: 1.1vw;
+      color: #2D3867;
+      transition: all .3s;
+    }
+
+    &:hover {
+      span {
+        color: #407F55;
+      }
+    }
+  }
+
+  @keyframes notifyMove {
+    from {
+      scale: 1;
+    }
+    to {
+      scale: 1.1;
+    }
+  }
 }

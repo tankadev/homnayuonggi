@@ -1,6 +1,6 @@
 <div class="split-money-container">
     <div nz-row>
-      <div nz-col nzSpan="7">
+      <div nz-col nzSpan="6">
         <info-user-payment [deliveryInfo]="deliveryInfo"></info-user-payment>
         <info-order [deliveryInfo]="deliveryInfo"></info-order>
         <div class="version-box">
@@ -8,14 +8,22 @@
             <p class="copy">© Copyright 2023 TodayUongGi?. All rights reserved</p>
         </div>
       </div>
-      <div nz-col nzSpan="10">
+      <div nz-col nzSpan="13">
         <info-payment
           [deliveryInfo]="deliveryInfo"
           [createUserId]="deliveryInfo.userCreate"
           [assignUserId]="deliveryInfo.assignUserId"
+          [paymentDishByUser]="paymentDishByUser"
+          [paymentDishByOtherUser]="paymentDishByOtherUser"
+          [totalPayment]="totalPayment"
+          [totalDish]="totalDish"
+          [downPrice]="downPrice"
+          [totalPaymentOther]="totalPaymentOther"
+          [totalDishOther]="totalDishOther"
+          [downPriceOther]="downPriceOther"
         ></info-payment>
       </div>
-      <div nz-col nzSpan="7">
+      <div nz-col nzSpan="5">
         <list-split-money [deliveryInfo]="deliveryInfo" [createUserId]="deliveryInfo.userCreate"></list-split-money>
       </div>
     </div>

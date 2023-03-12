@@ -1,35 +1,15 @@
 <div class="list-split-money-container">
-    <p class="title">Danh sách món đã chọn</p>
-    <div class="order-content">
-        <div *ngFor="let order of listOrders;" class="order-item">
-            <div class="order-item__main-content">
-                <div class="image">
-                    <img [src]="order.dish.photos | displayImage:120" alt="{{ order.dish.name }}">
+    <p class="title">Kiểm tra thanh toán</p>
+    <div class="split-money-content">
+        <div class="split-money-item">
+            <div class="split-money-item__main-content">
+                <div class="main-content-info">
+                  <p class="main-content-name">Dâu</p>
+                  <p class="main-content-total">18,000vnd</p>
                 </div>
-                <div class="other-info">
-                    <p class="name" [ngStyle]="order.dish.description && {'line-height': '1.1vw'}">{{ order.dish.name }}
-                    </p>
-                    <div class="price-wrapper">
-                        <p class="price">{{ order.dish.discountPrice ? order.dish.discountPrice.text :
-                            order.dish.price.text }}</p>
-                        <p *ngIf="order.dish.discountPrice" class="remove-price">{{ order.dish.price.text }}</p>
-                    </div>
-                </div>
-                <p class="total-quantity"><span>{{ order.userNotes | dishTotalQuantity }} phần</span></p>
-            </div>
-            <div class="order-item__order-by-each-user">
-                <p class="order-item__order-by-each-user__title">Thông tin người đặt</p>
-                <div *ngFor="let note of order.userNotes; let i = index" class="order-item__order-by-each-user__info">
-                    <div class="main-content">
-                        <p class="username">{{ note.userId | displayNameUser }}</p>
-                        <p>Ghi chú: {{ note.content }}</p>
-                    </div>
-                    <div class="action-content">
-                        <div class="btn-change-quantity"
-                            [ngStyle]="{'justify-content': 'center', 'background-color': '#ffffff' }">
-                            <span>{{ note.quantity }}</span>
-                        </div>
-                    </div>
+                <div class="main-content-check-payment">
+                  <p class="main-content-name">Đã thanh toán</p>
+                  <label nz-checkbox [(ngModel)]="test"></label>
                 </div>
             </div>
         </div>

@@ -10,6 +10,8 @@ import { DeliveryService } from './services/delivery.service';
 import { LocalStorageService } from './services/localstorage.service';
 import { RoomRO } from './ro/room.ro';
 import { DeliveryRO } from './ro/delivery.ro';
+import { PaymentPaidService } from './services/payment-paid.service';
+import { PaymentPaidRO } from './ro/payment-paid.ro';
 
 @Component({
   selector: 'app-root',
@@ -24,6 +26,7 @@ export class AppComponent implements OnInit, OnDestroy {
   deliveriesList: DeliveryRO[] = [];
   userInfo: UserRO = new UserRO();
   room: RoomRO = new RoomRO();
+  paymentsPaid: PaymentPaidRO[] = [];
 
   subDelivery$: Subscription;
   subLogin$: Subscription;
@@ -33,7 +36,8 @@ export class AppComponent implements OnInit, OnDestroy {
     private messagingService: MessagingService,
     private appService: AppService,
     private deliveryService: DeliveryService,
-    private storage: LocalStorageService
+    private storage: LocalStorageService,
+    private paymentPaidService: PaymentPaidService,
   ) {
     this.subDelivery$ = this.appService.getDeliveryStatus().subscribe(status => {
       this.isDeliveryStatus = status;
@@ -58,6 +62,7 @@ export class AppComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.onListenDeliveryChangesFromFirebaseDB();
+    this.onListenPaymentPaidChangesFromFirebaseDB();
     this.messagingService.requestPermission();
     this.messagingService.receiveMessage();
     this.messagingService.currentMessage.subscribe(
@@ -84,6 +89,19 @@ export class AppComponent implements OnInit, OnDestroy {
     ).subscribe(data => {
       this.storage.setDeliveriesList(data);
       this.deliveriesList = data;
+    });
+  }
+
+  private onListenPaymentPaidChangesFromFirebaseDB(): void {
+    this.paymentPaidService.getAll().snapshotChanges().pipe(
+      map(changes =>
+        changes.map(c =>
+          ({ key: c.payload.key, ...c.payload.val() })
+        )
+      )
+    ).subscribe(data => {
+      this.storage.setPaymentsPaid(data);
+      this.paymentsPaid = data;
     });
   }
 }
