@@ -227,8 +227,8 @@ export class PlaceOrderDialogComponent implements OnInit {
           const dishPrice = order.dish.discountPrice ? order.dish.discountPrice.value : order.dish.price.value;
           const plusPrice = shippingFee + serviceFee;
 
-          const addFee = dishPrice / tempTotalBill * plusPrice;
-          const discountPrice = dishPrice / tempTotalBill * sponsorPrice;
+          const addFee = parseInt((dishPrice / tempTotalBill * plusPrice).toFixed(0));
+          const discountPrice = parseInt((dishPrice / tempTotalBill * sponsorPrice).toFixed(0));
           const lastDiscountPrice = discountPrice - addFee;
 
           if (userNote.userId === userOrderId) {

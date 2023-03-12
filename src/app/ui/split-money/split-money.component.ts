@@ -34,6 +34,7 @@ export class SplitMoneyComponent implements OnInit, OnChanges {
   downPriceOther: number = 0;
   room: RoomRO = this.storage.getSelectedRoom();
   paymentsPaid: PaymentPaidRO;
+  splitMoneyType: number = 0;
 
   constructor(
     private storage: LocalStorageService,
@@ -68,6 +69,11 @@ export class SplitMoneyComponent implements OnInit, OnChanges {
     switch (splitMoney.type) {
       case 0:
         this.equallyDivided(userLogin, orderList);
+        this.splitMoneyType = 0;
+        break;
+      case 1:
+        this.sponsorAll(userLogin, orderList);
+        this.splitMoneyType = 1;
         break;
     }
   }
@@ -92,8 +98,8 @@ export class SplitMoneyComponent implements OnInit, OnChanges {
         const plusPrice = this.deliveryInfo.shippingFee + this.deliveryInfo.serviceFee;
         const minusPrice = this.deliveryInfo.sponsorPrice;
 
-        const addFee = dishPrice / tempTotalBill * plusPrice;
-        const discountPrice = dishPrice / tempTotalBill * this.deliveryInfo.sponsorPrice;
+        const addFee = parseInt((dishPrice / tempTotalBill * plusPrice).toFixed(0));
+        const discountPrice = parseInt((dishPrice / tempTotalBill * this.deliveryInfo.sponsorPrice).toFixed(0));
         const lastDiscountPrice = discountPrice - addFee;
 
         paymentOrder.sponsorPrice = discountPrice;
@@ -111,6 +117,32 @@ export class SplitMoneyComponent implements OnInit, OnChanges {
           this.totalPaymentOther += paymentOrder.totalPrice;
           this.totalDishOther = +totalDish;
           this.downPriceOther = minusPrice - plusPrice;
+          this.paymentDishByOtherUser.push(JSON.parse(JSON.stringify(paymentOrder)));
+        }
+      });
+    });
+  }
+
+  private sponsorAll = (userLogin: UserRO, orderList: OrderRO[]) => {
+    orderList.forEach(order => {
+      const paymentOrder = new PaymentOrderModel();
+      paymentOrder.image = this.displayImagePipe.transform(order.dish.photos, 120);
+      paymentOrder.dishName = order.dish.name;
+      paymentOrder.price = order.dish.price.value;
+      paymentOrder.discountPrice = order.dish.discountPrice ? order.dish.discountPrice.value : null;
+
+      const orderUserNote: UserNote[] = JSON.parse(JSON.stringify(order.userNotes));
+
+      orderUserNote.forEach(userNote => {
+        const totalDish = this.displayUserOrderPipe.transform(orderList, 'countDish', true);
+        paymentOrder.quantity = userNote.quantity;
+        paymentOrder.userKey = userNote.userId;
+        paymentOrder.note = userNote.content;
+
+        if (userNote.userId === userLogin.key) {
+          this.totalDish = +totalDish;
+          this.paymentDishByUser.push(JSON.parse(JSON.stringify(paymentOrder)));
+        } else {
           this.paymentDishByOtherUser.push(JSON.parse(JSON.stringify(paymentOrder)));
         }
       });

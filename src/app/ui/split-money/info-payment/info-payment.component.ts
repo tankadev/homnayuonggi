@@ -15,6 +15,8 @@ import { LocalStorageService } from 'src/app/services/localstorage.service';
 import { OrderHistoryService } from 'src/app/services/order-history.service';
 import { OrderService } from 'src/app/services/order.service';
 import { ConfirmDialogComponent } from '../../dialogs/confirm-dialog/confirm-dialog.component';
+import { PaymentPaidRO } from 'src/app/ro/payment-paid.ro';
+import { PaymentPaidService } from 'src/app/services/payment-paid.service';
 
 @Component({
   selector: 'info-payment',
@@ -34,6 +36,8 @@ export class InfoPaymentComponent implements OnInit {
   @Input() totalPaymentOther: number = 0;
   @Input() totalDishOther: number = 0;
   @Input() downPriceOther: number = 0;
+  @Input() splitMoneyType: number = 0;
+  @Input() paymentsPaid: PaymentPaidRO;
 
   isSendMessage: boolean = false;
   room: RoomRO = this.storage.getSelectedRoom();
@@ -46,7 +50,8 @@ export class InfoPaymentComponent implements OnInit {
     private storage: LocalStorageService,
     private orderHistoryService: OrderHistoryService,
     private fcmService: FcmService,
-    private notification: NzNotificationService
+    private notification: NzNotificationService,
+    private paymentPaidService: PaymentPaidService,
   ) { }
 
   ngOnInit(): void { }
@@ -66,6 +71,10 @@ export class InfoPaymentComponent implements OnInit {
     });
     modal.afterClose.subscribe(isAccept => {
       if (isAccept) {
+        const findIndex = this.paymentsPaid.usersPaid.findIndex(i => i.isPaid == false);
+        if (findIndex == -1) {
+          this.paymentPaidService.remove(this.paymentsPaid.key);
+        }
         this.deliveryService.remove(this.deliveryInfo.key);
         this.orderService.deleteAllListOrders();
         this.orderHistoryService.removeAll();

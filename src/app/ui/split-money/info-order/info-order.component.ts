@@ -10,6 +10,7 @@ import { DeliveryRO } from 'src/app/ro/delivery.ro';
 export class InfoOrderComponent implements OnInit {
 
   @Input() deliveryInfo: DeliveryRO;
+  @Input() splitMoneyType: number = 0;
 
   constructor() { }
 

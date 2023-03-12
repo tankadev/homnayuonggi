@@ -31,4 +31,8 @@ export class PaymentPaidService {
   update(key: string, value: PaymentPaidDTO): Promise<void> {
     return this.paymentsPaidRef.update(key, value);
   }
+
+  remove(key: string): Promise<void> {
+    return this.paymentsPaidRef.remove(key);
+  }
 }
