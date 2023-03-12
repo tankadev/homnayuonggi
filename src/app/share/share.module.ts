@@ -57,6 +57,6 @@ import { PaymentPaidByRoomPipe } from './payment-paid-by-room.pipe';
     FirstCharOfEachWordPipe,
     PaymentPaidByRoomPipe
   ],
-  providers: [ DisplayNameUserPipe, DishTotalQuantityPipe, DecimalPipe, DisplayImagePipe, DisplayUserOrderPipe, DeliveryDetailPipe, FindRoomInOrdersPipe ]
+  providers: [ DisplayNameUserPipe, DishTotalQuantityPipe, DecimalPipe, DisplayImagePipe, DisplayUserOrderPipe, DeliveryDetailPipe, FindRoomInOrdersPipe, TotalOrderPipe ]
 })
 export class ShareModule { }

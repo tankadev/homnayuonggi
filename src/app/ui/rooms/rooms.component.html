@@ -16,7 +16,7 @@
                 <circle class="path" fill="none" stroke-width="6" stroke-linecap="round" cx="103" cy="103" r="100"></circle>
               </svg>
               <div class="room-avatar">
-                <p *ngIf="!(room.key | findRoomInOrders:listDeliveries); else showImageOrder" class="room-avatar-content">{{ room.name | firstCharOfEachWord }}</p>
+                <p *ngIf="!(room.key | findRoomInOrders:listDeliveries) || !((listDeliveries | deliveryDetail:room.key).delivery); else showImageOrder" class="room-avatar-content">{{ room.name | firstCharOfEachWord }}</p>
                 <ng-template #showImageOrder>
                   <img
                     [src]="(listDeliveries | deliveryDetail:room.key).delivery.photos | displayImage"
@@ -32,14 +32,18 @@
               </div>
             </div>
 
-            <p *ngIf="(room.key | findRoomInOrders:listDeliveries)" class="room-delivery-name">{{ (listDeliveries | deliveryDetail:room.key).delivery.name }}</p>
+            <p *ngIf="(room.key | findRoomInOrders:listDeliveries) && ((listDeliveries | deliveryDetail:room.key).delivery)" class="room-delivery-name">{{ (listDeliveries | deliveryDetail:room.key).delivery.name }}</p>
             <p class="room-status">
               <span *ngIf="!(room.key | findRoomInOrders:listDeliveries); else inProcess" class="empty">Phòng trống</span>
               <ng-template #inProcess>
-                <span *ngIf="(listDeliveries | deliveryDetail:room.key) && (listDeliveries | deliveryDetail:room.key).isCompleted; else inOrder" class="already-order">Đã đặt món</span>
+                <span *ngIf="(listDeliveries | deliveryDetail:room.key) && (listDeliveries | deliveryDetail:room.key).isCompleted; else inOrder" class="already-order">Chọn món xong</span>
 
                 <ng-template #inOrder>
-                  <span>Đang chọn món</span>
+                  <span *ngIf="(room.key | findRoomInOrders:listDeliveries) && ((listDeliveries | deliveryDetail:room.key).delivery); else selectingDelivery">Đang chọn món</span>
+                  <ng-template #selectingDelivery>
+                    <span class="selecting-delivery">Đang chọn quán</span>
+                  </ng-template>
+
                 </ng-template>
 
               </ng-template>

@@ -4,7 +4,6 @@ export class PaymentPaidRO {
   roomId: string;
   orderDate: string;
   userOrderId: string;
-  userOrderName: string;
   deliveryName: string;
   deliveryAddress: string;
   totalBill: number;
@@ -13,7 +12,6 @@ export class PaymentPaidRO {
 
 export class PaymentPaidDetailRO {
   userId: string;
-  userName: string;
   moneyPaid: number;
   isPaid: boolean;
 }

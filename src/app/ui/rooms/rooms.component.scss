@@ -145,6 +145,11 @@
           text-overflow: ellipsis;
         }
 
+        .selecting-delivery, .empty {
+          margin-top: 8px;
+          display: inline-block;
+        }
+
         .room-avatar {
           width: 70px;
           height: 70px;

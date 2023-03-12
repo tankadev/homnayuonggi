@@ -7,7 +7,7 @@
       <nz-step nzTitle="Đơn hàng"></nz-step>
       <nz-step nzTitle="Thông tin thanh toán"></nz-step>
     </nz-steps>
-    
+
     <form nz-form [formGroup]="placeOrderForm" (ngSubmit)="submitPlaceOrderForm()" [hidden]="currentStep === 0 ? false : true">
       <div class="form-content">
         <p>Giá trị đơn hàng tạm tính: <b>{{ 'vnđ' | totalOrder }}</b></p>
@@ -63,7 +63,7 @@
         <nz-form-item *ngIf="_isSponsor">
           <nz-form-control [nzXs]="24" nzErrorTip="Vui lòng chọn một người trong danh sách">
             <nz-select nzShowSearch nzAllowClear nzPlaceHolder="Chọn người tài trợ (*)" formControlName="sponsorUser">
-              <nz-option *ngFor="let user of userList" nzLabel="{{user.displayName}} ({{user.username}})" [nzValue]="user.key"></nz-option>
+              <nz-option *ngFor="let user of userList" nzLabel="{{user.displayName}}" [nzValue]="user.key"></nz-option>
             </nz-select>
           </nz-form-control>
         </nz-form-item>

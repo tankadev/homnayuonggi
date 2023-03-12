@@ -24,7 +24,7 @@
       <nz-form-item>
         <nz-form-control [nzXs]="24" nzErrorTip="Vui lòng chọn một người trong danh sách">
           <nz-select nzShowSearch nzAllowClear nzPlaceHolder="Chọn người đặt hàng (*)" formControlName="assignUser">
-            <nz-option *ngFor="let user of userList" nzLabel="{{user.displayName}} ({{user.username}})" [nzValue]="user.username"></nz-option>
+            <nz-option *ngFor="let user of userList" nzLabel="{{user.displayName}}" [nzValue]="user.username"></nz-option>
           </nz-select>
         </nz-form-control>
       </nz-form-item>

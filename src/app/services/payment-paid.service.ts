@@ -26,7 +26,7 @@ export class PaymentPaidService {
 
   create(paymentPaidDTO: PaymentPaidDTO): any {
     return this.paymentsPaidRef.push(paymentPaidDTO);
-  }x
+  }
 
   update(key: string, value: PaymentPaidDTO): Promise<void> {
     return this.paymentsPaidRef.update(key, value);

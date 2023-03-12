@@ -191,7 +191,8 @@ export class ListOrderComponent implements OnInit {
       nzComponentParams: {
         isSponsor: false,
         assignUserId: this.assignUserId,
-        deliveryInfo: this.deliveryInfo
+        deliveryInfo: this.deliveryInfo,
+        listOrders: this.listOrders
       }
     });
     modal.afterClose.subscribe(isConfirm => {

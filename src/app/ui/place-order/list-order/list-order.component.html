@@ -20,8 +20,8 @@
         <div *ngFor="let note of order.userNotes; let i = index" class="order-item__order-by-each-user__info">
           <div class="main-content">
             <p class="username">
-              <span *ngIf="assignUserId == note.userId" nz-icon nzType="crown" nzTheme="outline"></span>
-              {{ note.userId | displayNameUser }}
+              <span class="icon-key-room" *ngIf="assignUserId == note.userId" nz-icon nzType="crown" nzTheme="outline"></span>
+              <span [class.current-user-order]="note.userId | isAllow">{{ note.userId | displayNameUser }}</span>
             </p>
             <p *ngIf="(note.userId | isAllow); else noEditNote" class="note-content note-content-cursor" (click)="addNote(order, note.userId, i, note.content)">
               Ghi chú: {{ note.content ? note.content : 'nhập ghi chú ...' }}

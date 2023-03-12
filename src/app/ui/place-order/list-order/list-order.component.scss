@@ -161,9 +161,14 @@
             .username {
               font-weight: bold;
 
-              span {
+              span.icon-key-room {
                 color: #fadb15;
                 font-size: 0.8vw;
+              }
+
+              span.current-user-order {
+                text-decoration: underline;
+                text-decoration-style: dotted;
               }
             }
 
