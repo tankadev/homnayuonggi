@@ -22,7 +22,6 @@ import { TotalOrderPipe } from 'src/app/share/total-order.pipe';
 export class SplitMoneyComponent implements OnInit, OnChanges {
 
   @Input() deliveryInfo: DeliveryRO;
-  @Input() paymentPaid?: PaymentPaidRO;
 
   paymentDishByUser: PaymentOrderModel[] = [];
   paymentDishByOtherUser: PaymentOrderModel[] = [];
@@ -33,7 +32,7 @@ export class SplitMoneyComponent implements OnInit, OnChanges {
   totalDishOther: number = 0;
   downPriceOther: number = 0;
   room: RoomRO = this.storage.getSelectedRoom();
-  paymentsPaid: PaymentPaidRO;
+  paymentsPaid?: PaymentPaidRO;
   splitMoneyType: number = 0;
 
   constructor(

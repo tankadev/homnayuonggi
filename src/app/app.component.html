@@ -1,5 +1,5 @@
 <div class="app-content-wrapper">
-  <header [userInfo]="userInfo" [paymentPaid]="paymentsPaid | paymentPaidByRoom:room"></header>
+  <header [userInfo]="userInfo" [paymentPaid]="paymentsPaid | paymentPaidByRoom:(deliveriesList | deliveryDetail):room"></header>
   <ng-container *ngIf="isLoginIn; else showNeedLogin">
 
     <ng-container *ngIf="isSelectedRoom; else noRoomSelected">
