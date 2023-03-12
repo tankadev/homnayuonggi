@@ -1,4 +1,5 @@
 import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import { map } from 'rxjs/operators';
 import { UserNote } from 'src/app/dto/order.dto';
 import { PaymentOrderModel } from 'src/app/models/payment-order.model';
 
@@ -8,8 +9,10 @@ import { PaymentPaidRO } from 'src/app/ro/payment-paid.ro';
 import { RoomRO } from 'src/app/ro/room.ro';
 import { UserRO } from 'src/app/ro/user.ro';
 import { LocalStorageService } from 'src/app/services/localstorage.service';
+import { PaymentPaidService } from 'src/app/services/payment-paid.service';
 import { DisplayImagePipe } from 'src/app/share/display-image.pipe';
 import { DisplayUserOrderPipe } from 'src/app/share/display-user-order.pipe';
+import { TotalOrderPipe } from 'src/app/share/total-order.pipe';
 
 @Component({
   selector: 'split-money',
@@ -30,14 +33,18 @@ export class SplitMoneyComponent implements OnInit, OnChanges {
   totalDishOther: number = 0;
   downPriceOther: number = 0;
   room: RoomRO = this.storage.getSelectedRoom();
+  paymentsPaid: PaymentPaidRO;
 
   constructor(
     private storage: LocalStorageService,
     private displayImagePipe: DisplayImagePipe,
     private displayUserOrderPipe: DisplayUserOrderPipe,
+    private paymentPaidService: PaymentPaidService,
+    private totalOrderPipe: TotalOrderPipe
   ) { }
 
   ngOnInit(): void {
+    this.onListenPaymentPaidChangesFromFirebaseDB();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -66,6 +73,8 @@ export class SplitMoneyComponent implements OnInit, OnChanges {
   }
 
   private equallyDivided = (userLogin: UserRO, orderList: OrderRO[]) => {
+    const tempTotalBill = +this.totalOrderPipe.transform('', orderList);
+
     orderList.forEach(order => {
       const paymentOrder = new PaymentOrderModel();
       paymentOrder.image = this.displayImagePipe.transform(order.dish.photos, 120);
@@ -83,8 +92,13 @@ export class SplitMoneyComponent implements OnInit, OnChanges {
         const plusPrice = this.deliveryInfo.shippingFee + this.deliveryInfo.serviceFee;
         const minusPrice = this.deliveryInfo.sponsorPrice;
 
-        paymentOrder.sponsorPrice = Math.floor(((minusPrice - plusPrice) / +totalDish));
-        paymentOrder.totalPrice = userNote.quantity * (dishPrice - paymentOrder.sponsorPrice);
+        const addFee = dishPrice / tempTotalBill * plusPrice;
+        const discountPrice = dishPrice / tempTotalBill * this.deliveryInfo.sponsorPrice;
+        const lastDiscountPrice = discountPrice - addFee;
+
+        paymentOrder.sponsorPrice = discountPrice;
+        paymentOrder.fee = addFee;
+        paymentOrder.totalPrice = userNote.quantity * (dishPrice - lastDiscountPrice);
         paymentOrder.userKey = userNote.userId;
         paymentOrder.note = userNote.content;
 
@@ -100,6 +114,19 @@ export class SplitMoneyComponent implements OnInit, OnChanges {
           this.paymentDishByOtherUser.push(JSON.parse(JSON.stringify(paymentOrder)));
         }
       });
+    });
+  }
+
+  private onListenPaymentPaidChangesFromFirebaseDB(): void {
+    this.paymentPaidService.getAll().snapshotChanges().pipe(
+      map(changes =>
+        changes.map(c =>
+          ({ key: c.payload.key, ...c.payload.val() })
+        )
+      )
+    ).subscribe(data => {
+      this.storage.setPaymentsPaid(data);
+      this.paymentsPaid = data.find(i => i.deliveryId == this.deliveryInfo.key && i.roomId == this.room.key);
     });
   }
 

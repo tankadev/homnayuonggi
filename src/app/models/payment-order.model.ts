@@ -4,6 +4,7 @@ export class PaymentOrderModel {
   price: number;
   discountPrice: number;
   quantity: number;
+  fee: number;
   sponsorPrice: number;
   totalPrice: number;
   userKey: string;

@@ -1,18 +1,20 @@
 <div class="list-split-money-container">
     <p class="title">Kiểm tra thanh toán</p>
     <div class="split-money-content">
-        <div class="split-money-item">
+      <ng-container *ngIf="paymentsPaid">
+        <div *ngFor="let item of paymentsPaid.usersPaid; trackBy:trackByIndex" class="split-money-item">
             <div class="split-money-item__main-content">
                 <div class="main-content-info">
-                  <p class="main-content-name">Dâu</p>
-                  <p class="main-content-total">18,000vnd</p>
+                  <p [class.current-user]="item.userId | isAllow" class="main-content-name">{{ item.userId | displayNameUser}}</p>
+                  <p class="main-content-total">{{ item.moneyPaid | number}} vnđ</p>
                 </div>
                 <div class="main-content-check-payment">
                   <p class="main-content-name">Đã thanh toán</p>
-                  <label nz-checkbox [(ngModel)]="test"></label>
+                  <label nz-checkbox [(ngModel)]="item.isPaid" [nzDisabled]="!(paymentsPaid.userOrderId | isAllow)" (ngModelChange)="onPaid($event, item.userId)"></label>
                 </div>
             </div>
         </div>
+      </ng-container>
     </div>
     <div class="order-footer">
         <p class="remaining-time">

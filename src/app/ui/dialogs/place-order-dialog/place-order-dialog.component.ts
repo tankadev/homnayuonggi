@@ -244,7 +244,9 @@ export class PlaceOrderDialogComponent implements OnInit {
     });
 
     paymentsPaid.totalBill = totalBill;
-    paymentsPaid.usersPaid = usersPaid;
+    paymentsPaid.usersPaid = usersPaid.sort((x,y) => {
+      return y.moneyPaid - x.moneyPaid;
+    });
 
     this.paymentPaidService.create(paymentsPaid);
   }

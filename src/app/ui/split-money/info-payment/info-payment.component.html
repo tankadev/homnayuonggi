@@ -14,20 +14,20 @@
     <div class="line-break"></div> -->
     <div class="payment-other-info">
         <div class="group-info">
-            <p>Trạng thái đơn hàng: <b>{{ deliveryInfo.deliveryStatus === 1 ? 'ĐANG VẬN CHUYỂN' : 'ĐÃ NHẬN HÀNG' }}</b></p>
+            <!-- <p>Trạng thái đơn hàng: <b>{{ deliveryInfo.deliveryStatus === 1 ? 'ĐANG VẬN CHUYỂN' : 'ĐÃ NHẬN HÀNG' }}</b></p> -->
             <p>Tổng số phần: <b>{{ totalDish }}</b></p>
             <p>Tổng giá được giảm: <b>{{ downPrice | number }} vnđ</b></p>
         </div>
         <div class="btn-group">
             <button class="btn-cancel" (click)="renewDelivery()">Tạo bình chọn mới</button>
-            <button *ngIf="(createUserId | isUserPermission:assignUserId:false) && deliveryInfo.deliveryStatus === 1" class="btn-complete" (click)="completeDelivery()"
+            <!-- <button *ngIf="(createUserId | isUserPermission:assignUserId:false) && deliveryInfo.deliveryStatus === 1" class="btn-complete" (click)="completeDelivery()"
                 [ngStyle]="isSendMessage && {'width': '80px'}"
             >
                 <span *ngIf="!isSendMessage; else sendingMsg">Gửi thông báo đã nhận hàng</span>
                 <ng-template #sendingMsg>
                     <div class="dot-flashing"></div>
                 </ng-template>
-            </button>
+            </button> -->
         </div>
     </div>
     <p class="title">Thông tin món của bạn</p>
@@ -38,6 +38,7 @@
             <th class="text-center price-note">Ghi chú</th>
             <th class="text-center price-quantity">Số lượng</th>
             <th class="text-center price-w">Giá món <br>(đ)</th>
+            <th class="text-center price-w">Phí <br>(đ)</th>
             <th class="text-center price-w">Giảm giá <br>(đ)</th>
             <th class="text-center price-w-total">Tổng giá <br>(đ)</th>
         </tr>
@@ -47,11 +48,12 @@
             <td>{{ item.note }}</td>
             <td class="text-center">{{ item.quantity }}</td>
             <td class="text-right">{{ (item.discountPrice ? item.discountPrice : item.price) | number }}</td>
+            <td class="text-right">{{ item.fee | number }}</td>
             <td class="text-right">{{ item.sponsorPrice | number }}</td>
             <td class="text-right">{{ item.totalPrice | number }}</td>
         </tr>
         <tr class="total-payment">
-            <td class="text-right" colspan="6">Tổng tiền phải trả</td>
+            <td class="text-right" colspan="7">Tổng tiền phải trả</td>
             <td class="text-right">{{ this.totalPayment | number }}</td>
         </tr>
     </table>
@@ -66,6 +68,7 @@
             <th class="text-center price-note">Ghi chú</th>
             <th class="text-center price-quantity">Số lượng</th>
             <th class="text-center price-w">Giá món <br>(đ)</th>
+            <th class="text-center price-w">Phí <br>(đ)</th>
             <th class="text-center price-w">Giảm giá <br>(đ)</th>
             <th class="text-center price-w-total">Tổng giá <br>(đ)</th>
         </tr>
@@ -76,12 +79,13 @@
             <td>{{ item.note }}</td>
             <td class="text-center">{{ item.quantity }}</td>
             <td class="text-right">{{ (item.discountPrice ? item.discountPrice : item.price) | number }}</td>
+            <td class="text-right">{{ item.fee | number }}</td>
             <td class="text-right">{{ item.sponsorPrice | number }}</td>
             <td class="text-right">{{ item.totalPrice | number }}</td>
         </tr>
-        <!-- <tr class="total-payment">
-            <td class="text-right" colspan="7">Tổng tiền phải trả</td>
+        <tr class="total-payment">
+            <td class="text-right" colspan="8">Tổng</td>
             <td class="text-right">{{ this.totalPaymentOther | number }}</td>
-        </tr> -->
+        </tr>
     </table>
 </div>

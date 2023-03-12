@@ -10,6 +10,6 @@ export const environment = {
     appId: "1:405891226420:web:d5679ea5c12d9beca2a361",
     measurementId: "G-VHZJ2DCT10"
   },
-  apiURL: 'https://todayuonggi-be.herokuapp.com',
+  apiURL: 'https://ynp9ry2lcf.execute-api.ap-southeast-1.amazonaws.com/dev',
   pwd: 'EMBEXINHDEP'
 };
