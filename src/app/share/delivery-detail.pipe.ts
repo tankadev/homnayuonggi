@@ -11,6 +11,9 @@ export class DeliveryDetailPipe implements PipeTransform {
 
     transform(deliveries: DeliveryRO[], roomId?: string): DeliveryRO {
         const room = this.storage.getSelectedRoom();
+        if (!roomId && !room) {
+          return null;
+        }
         const tempRoomId = roomId ? roomId : room.key;
         return deliveries.find(i => i.roomKey === tempRoomId);
     }
