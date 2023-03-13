@@ -39,6 +39,7 @@ import { RoomsComponent } from './ui/rooms/rooms.component';
 import { CreateRoomComponent } from './ui/dialogs/create-room/create-room.component';
 import { DrinkAnimateComponent } from './ui/drink-animate/drink-animate.component';
 import { JoinRoomPwdComponent } from './ui/dialogs/join-room-pwd/join-room-pwd.component';
+import { UnpaidListComponent } from './ui/unpaid-list/unpaid-list.component';
 
 registerLocaleData(en);
 
@@ -67,7 +68,8 @@ registerLocaleData(en);
     RoomsComponent,
     CreateRoomComponent,
     DrinkAnimateComponent,
-    JoinRoomPwdComponent
+    JoinRoomPwdComponent,
+    UnpaidListComponent
   ],
   imports: [
     BrowserModule,

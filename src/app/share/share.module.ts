@@ -16,6 +16,9 @@ import { DeliveryDetailPipe } from './delivery-detail.pipe';
 import { FindRoomInOrdersPipe } from './find-room-in-orders.pipe';
 import { FirstCharOfEachWordPipe } from './first-char-of-each-word.pipe';
 import { PaymentPaidByRoomPipe } from './payment-paid-by-room.pipe';
+import { UnPaidListByRoomPipe } from './unpaid-list-by-room.pipe';
+import { UnPaidListSortPipe } from './unpaid-list-sort.pipe';
+import { DisplayTabNameUnPaidPipe } from './display-tab-name-unpaid.pipe';
 
 @NgModule({
   declarations: [
@@ -34,7 +37,10 @@ import { PaymentPaidByRoomPipe } from './payment-paid-by-room.pipe';
     DeliveryDetailPipe,
     FindRoomInOrdersPipe,
     FirstCharOfEachWordPipe,
-    PaymentPaidByRoomPipe
+    PaymentPaidByRoomPipe,
+    UnPaidListByRoomPipe,
+    UnPaidListSortPipe,
+    DisplayTabNameUnPaidPipe
   ],
   imports: [
     CommonModule
@@ -55,7 +61,10 @@ import { PaymentPaidByRoomPipe } from './payment-paid-by-room.pipe';
     DeliveryDetailPipe,
     FindRoomInOrdersPipe,
     FirstCharOfEachWordPipe,
-    PaymentPaidByRoomPipe
+    PaymentPaidByRoomPipe,
+    UnPaidListByRoomPipe,
+    UnPaidListSortPipe,
+    DisplayTabNameUnPaidPipe
   ],
   providers: [ DisplayNameUserPipe, DishTotalQuantityPipe, DecimalPipe, DisplayImagePipe, DisplayUserOrderPipe, DeliveryDetailPipe, FindRoomInOrdersPipe, TotalOrderPipe ]
 })

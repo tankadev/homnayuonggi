@@ -22,7 +22,7 @@ import { PaymentPaidRO } from 'src/app/ro/payment-paid.ro';
 export class HeaderComponent implements OnInit, OnDestroy {
 
   @Input() userInfo: UserRO;
-  @Input() paymentPaid?: PaymentPaidRO;
+  @Input() unpaidList: PaymentPaidRO[];
 
   room: RoomRO = new RoomRO();
   subSelectedRoom$: Subscription;

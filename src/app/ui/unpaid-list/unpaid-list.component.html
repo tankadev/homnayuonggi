@@ -1,0 +1,59 @@
+<div class="unpaid-list-container">
+  <nz-tabset
+      [nzTabPosition]="nzTabPosition"
+      [(nzSelectedIndex)]="selectedIndex"
+      (nzSelectChange)="onTabChange($event)"
+    >
+      <nz-tab
+        *ngFor="let tab of unpaidList; trackBy:trackByIndex"
+        [nzTitle]="tab.deliveryName | displayTabNameUnPaid:(tab.orderDate| date: 'dd/MM/yyyy')"
+        (nzSelect)="log(['select', tab])"
+        (nzClick)="log(['click', tab])"
+        (nzContextmenu)="log(['contextmenu', tab])"
+        (nzDeselect)="log(['deselect', tab])"
+      >
+        <p class="more-info">
+          <b>Quán:</b> {{ tab.deliveryName }}
+        </p>
+        <p class="more-info">
+          <b>Tổng đơn hàng:</b> {{ tab.totalBill | number }} vnđ
+        </p>
+        <p class="more-info">
+          <b>Người đặt:</b> {{ tab.userOrderId | displayNameUser }}
+        </p>
+        <p class="more-info">
+          <b>Số điện thoại:</b> {{ tab.userOrderId | displayUserInfo:'phone' }}
+        </p>
+        <p class="more-info">
+          <b>Chấp nhận thanh toán:</b>
+          <ng-container *ngFor="let item of (tab.userOrderId | displayUserInfo:'payment':userList);let index=index; let last=last">
+            <span
+                *ngIf="item.checked"
+            >
+                {{ item.label }}{{ index != last ? '' : ',' }}
+            </span>
+        </ng-container>
+        </p>
+        <br>
+        <p class="more-info"><b>Danh sách chưa thanh toán</b></p>
+        <table>
+          <tr>
+              <th class="text-center price-quantity">STT</th>
+              <th class="text-center">Người đặt</th>
+              <th class="text-center price-w">Tiền phải trả</th>
+              <th class="text-center is-paid">Đã thanh toán</th>
+          </tr>
+          <ng-container *ngFor="let item of tab.usersPaid; let i = index; trackBy:trackByIndex">
+            <tr *ngIf="!item.isPaid">
+              <td class="text-center">{{ i + 1 }}</td>
+              <td class="text-left">{{ item.userId | displayNameUser }}</td>
+              <td class="text-right">{{ item.moneyPaid | number }} vnđ</td>
+              <td class="text-center">
+                <label nz-checkbox [(ngModel)]="item.isPaid" [nzDisabled]="!(tab.userOrderId | isAllow)" (ngModelChange)="onPaid($event, item.userId, tab)"></label>
+              </td>
+          </tr>
+          </ng-container>
+      </table>
+      </nz-tab>
+  </nz-tabset>
+</div>

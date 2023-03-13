@@ -17,7 +17,7 @@
       <span *isAllow="room.createUser" nz-icon nzType="edit" nzTheme="outline" class="btn-icon-edit-room" (click)="editRoom()" nz-tooltip nzTooltipPlacement="bottom" [nzTooltipTitle]="'Chỉnh sửa thông tin phòng'"></span>
     </div>
     <div class="right-content">
-      <nz-badge *ngIf="paymentPaid" (click)="openDrawer()" class="notify-payment-paid" nzDot nz-tooltip nzTooltipPlacement="bottom" [nzTooltipTitle]="'Danh sách chưa thanh toán tiền cho người đặt'">
+      <nz-badge *ngIf="unpaidList && unpaidList.length > 0" (click)="openDrawer()" class="notify-payment-paid" nzDot nz-tooltip nzTooltipPlacement="bottom" [nzTooltipTitle]="'Danh sách chưa thanh toán tiền cho người đặt'">
         <span nz-icon nzType="notification"></span>
       </nz-badge>
       <div class="nick-name-box" [ngStyle]="userInfo && {'padding': '0 1rem 0 0'}">
@@ -46,10 +46,12 @@
   nzPlacement="right"
   nzTitle="Danh sách chưa thanh toán"
   (nzOnClose)="closeDrawer()"
+  [nzWidth]="'35vw'"
 >
   <ng-container *nzDrawerContent>
-    <p>Đợi một chút...</p>
-    <p>Tính năng này đang được phát triển</p>
-    <p>Hãy quay lại sau</p>
+    <unpaid-list *ngIf="unpaidList && unpaidList.length > 0; else emptyData" [unpaidList]="(unpaidList | unPaidListSort)"></unpaid-list>
+    <ng-template #emptyData>
+      <nz-empty nzNotFoundImage="simple"></nz-empty>
+    </ng-template>
   </ng-container>
 </nz-drawer>
