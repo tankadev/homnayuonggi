@@ -217,7 +217,7 @@ export class PlaceOrderDialogComponent implements OnInit {
     distinctUserId.forEach(userOrderId => {
       const userPaid = new PaymentPaidDetailDTO();
       userPaid.userId = userOrderId;
-      userPaid.isPaid = false;
+      userPaid.isPaid = userOrderId == this.deliveryInfo.assignUserId ? true : false;
       let totalPaid = 0;
 
       this.listOrders.forEach(order => {

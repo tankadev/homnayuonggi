@@ -43,17 +43,15 @@
               <th class="text-center price-w">Tiền phải trả</th>
               <th class="text-center is-paid">Đã thanh toán</th>
           </tr>
-          <ng-container *ngFor="let item of tab.usersPaid; let i = index; trackBy:trackByIndex">
-            <tr *ngIf="!item.isPaid">
-              <td class="text-center">{{ i + 1 }}</td>
-              <td class="text-left">{{ item.userId | displayNameUser }}</td>
-              <td class="text-right">{{ item.moneyPaid | number }} vnđ</td>
-              <td class="text-center">
-                <label nz-checkbox [(ngModel)]="item.isPaid" [nzDisabled]="!(tab.userOrderId | isAllow)" (ngModelChange)="onPaid($event, item.userId, tab)"></label>
-              </td>
+          <tr *ngFor="let item of tab.usersPaid | unPaidUserList; let i = index; trackBy:trackByIndex">
+            <td class="text-center">{{ i + 1 }}</td>
+            <td class="text-left">{{ item.userId | displayNameUser }}</td>
+            <td class="text-right">{{ item.moneyPaid | number }} vnđ</td>
+            <td class="text-center">
+              <label nz-checkbox [(ngModel)]="item.isPaid" [nzDisabled]="!(tab.userOrderId | isAllow)" (ngModelChange)="onPaid($event, item.userId, tab)"></label>
+            </td>
           </tr>
-          </ng-container>
-      </table>
+        </table>
       </nz-tab>
   </nz-tabset>
 </div>

@@ -128,6 +128,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
           if (findUserLogin) {
             this.userInfo = findUserLogin;
             this.storage.setUser(findUserLogin);
+          } else {
+            this.logOut();
           }
         }
       }

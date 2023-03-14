@@ -11,9 +11,14 @@ export class UnPaidListByRoomPipe implements PipeTransform {
     constructor() { }
 
     transform(paymentsPaid: PaymentPaidRO[], deliveryInfo?: DeliveryRO, room?: RoomRO): PaymentPaidRO[] {
-      if (!room || !deliveryInfo) {
+      if (!room) {
         return [];
       }
+
+      if (!deliveryInfo) {
+        return paymentsPaid.filter(i => i.roomId === room.key);
+      }
+
       return paymentsPaid.filter(i => i.roomId === room.key && i.deliveryId !== deliveryInfo.key);
     }
 }

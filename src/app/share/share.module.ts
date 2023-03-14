@@ -19,6 +19,7 @@ import { PaymentPaidByRoomPipe } from './payment-paid-by-room.pipe';
 import { UnPaidListByRoomPipe } from './unpaid-list-by-room.pipe';
 import { UnPaidListSortPipe } from './unpaid-list-sort.pipe';
 import { DisplayTabNameUnPaidPipe } from './display-tab-name-unpaid.pipe';
+import { UnPaidUserListPipe } from './unpaid-user-list.pipe';
 
 @NgModule({
   declarations: [
@@ -40,7 +41,8 @@ import { DisplayTabNameUnPaidPipe } from './display-tab-name-unpaid.pipe';
     PaymentPaidByRoomPipe,
     UnPaidListByRoomPipe,
     UnPaidListSortPipe,
-    DisplayTabNameUnPaidPipe
+    DisplayTabNameUnPaidPipe,
+    UnPaidUserListPipe
   ],
   imports: [
     CommonModule
@@ -64,7 +66,8 @@ import { DisplayTabNameUnPaidPipe } from './display-tab-name-unpaid.pipe';
     PaymentPaidByRoomPipe,
     UnPaidListByRoomPipe,
     UnPaidListSortPipe,
-    DisplayTabNameUnPaidPipe
+    DisplayTabNameUnPaidPipe,
+    UnPaidUserListPipe
   ],
   providers: [ DisplayNameUserPipe, DishTotalQuantityPipe, DecimalPipe, DisplayImagePipe, DisplayUserOrderPipe, DeliveryDetailPipe, FindRoomInOrdersPipe, TotalOrderPipe ]
 })
