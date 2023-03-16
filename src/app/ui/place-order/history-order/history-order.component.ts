@@ -22,7 +22,7 @@ export class HistoryOrderComponent implements OnInit {
   ) {
     const histories = this.storage.getOrdersHistory();
     if (histories) {
-      this.histories = histories;
+      this.histories = histories.filter(i => i.roomKey === this.room.key).reverse();
     }
   }
 

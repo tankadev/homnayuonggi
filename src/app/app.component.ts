@@ -12,6 +12,8 @@ import { RoomRO } from './ro/room.ro';
 import { DeliveryRO } from './ro/delivery.ro';
 import { PaymentPaidService } from './services/payment-paid.service';
 import { PaymentPaidRO } from './ro/payment-paid.ro';
+import { OrderHistoryService } from './services/order-history.service';
+import { OrderService } from './services/order.service';
 
 @Component({
   selector: 'app-root',
@@ -38,6 +40,8 @@ export class AppComponent implements OnInit, OnDestroy {
     private deliveryService: DeliveryService,
     private storage: LocalStorageService,
     private paymentPaidService: PaymentPaidService,
+    private orderHistoryService: OrderHistoryService,
+    private orderService: OrderService
   ) {
     this.subDelivery$ = this.appService.getDeliveryStatus().subscribe(status => {
       this.isDeliveryStatus = status;
@@ -63,6 +67,8 @@ export class AppComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.onListenDeliveryChangesFromFirebaseDB();
     this.onListenPaymentPaidChangesFromFirebaseDB();
+    this.onListenOrderHistoryChangesFromFirebaseDB();
+    this.onListenOrderListChangesFromFirebaseDB();
     this.messagingService.requestPermission();
     this.messagingService.receiveMessage();
     this.messagingService.currentMessage.subscribe(
@@ -102,6 +108,30 @@ export class AppComponent implements OnInit, OnDestroy {
     ).subscribe(data => {
       this.storage.setPaymentsPaid(data);
       this.paymentsPaid = data;
+    });
+  }
+
+  private onListenOrderListChangesFromFirebaseDB(): void {
+    this.orderService.getListOrders().snapshotChanges().pipe(
+      map(changes =>
+        changes.map(c =>
+          ({ key: c.payload.key, ...c.payload.val() })
+        )
+      )
+    ).subscribe(data => {
+      this.storage.setOrdersList(data);
+    });
+  }
+
+  private onListenOrderHistoryChangesFromFirebaseDB(): void {
+    this.orderHistoryService.getAll().snapshotChanges().pipe(
+      map(changes =>
+        changes.map(c =>
+          ({ key: c.payload.key, ...c.payload.val() })
+        )
+      )
+    ).subscribe(data => {
+      this.storage.setOrdersHistory(data);
     });
   }
 }
