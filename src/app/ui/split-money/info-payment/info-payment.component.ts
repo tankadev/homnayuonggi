@@ -71,9 +71,11 @@ export class InfoPaymentComponent implements OnInit {
     });
     modal.afterClose.subscribe(isAccept => {
       if (isAccept) {
-        const findIndex = this.paymentsPaid.usersPaid.findIndex(i => i.isPaid == false);
-        if (findIndex == -1) {
-          this.paymentPaidService.remove(this.paymentsPaid.key);
+        if (this.paymentsPaid && this.paymentsPaid.usersPaid) {
+          const findIndex = this.paymentsPaid.usersPaid.findIndex(i => i.isPaid == false);
+          if (findIndex == -1) {
+            this.paymentPaidService.remove(this.paymentsPaid.key);
+          }
         }
         this.deliveryService.remove(this.deliveryInfo.key);
         this.orderService.deleteAllListOrders();

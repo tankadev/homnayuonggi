@@ -1,4 +1,4 @@
-<div class="info-payment-container">
+<div class="info-payment-container" [ngStyle]="!paymentsPaid ? {'margin': '1rem 3% 1rem 1rem'} : {}">
     <p class="title">{{ splitMoneyType == 0 ? 'Thông tin thanh toán' : 'Thông tin món'}}</p>
     <!-- <div class="price-content">
         <p class="payment-price">
