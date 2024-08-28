@@ -1,9 +1,8 @@
 import { Injectable } from '@angular/core';
-
-import { AngularFireDatabase, AngularFireList } from '@angular/fire/database';
-
+import { Database, ref, push, update, DatabaseReference, set, child, onValue, DataSnapshot } from '@angular/fire/database';
 import { UserDTO } from '../dto/user.dto';
 import { UserRO } from '../ro/user.ro';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -11,23 +10,41 @@ import { UserRO } from '../ro/user.ro';
 export class UserService {
 
   private dbPath = '/users';
+  private usersRef: DatabaseReference;
 
-  usersRef: AngularFireList<UserRO | UserDTO> = null;
-  constructor(
-    private db: AngularFireDatabase
-  ) {
-    this.usersRef = db.list(this.dbPath);
+  constructor(private db: Database) {
+    this.usersRef = ref(this.db, this.dbPath);
   }
 
-  getAll(): AngularFireList<UserRO> {
-    return this.usersRef as AngularFireList<UserRO>;
+  getAll(): Observable<UserRO[]> {
+    return new Observable(observer => {
+      const usersRef = ref(this.db, this.dbPath);
+
+      onValue(usersRef, (snapshot: DataSnapshot) => {
+        const users: UserRO[] = [];
+
+        snapshot.forEach(childSnapshot => {
+          const user: UserRO = {
+            key: childSnapshot.key,
+            ...childSnapshot.val()
+          };
+          users.push(user);
+        });
+
+        observer.next(users);
+      }, error => {
+        observer.error(error);
+      });
+    });
   }
 
-  create(userDTO: UserDTO): any {
-    return this.usersRef.push(userDTO);
+  create(userDTO: UserDTO): Promise<void> {
+    const newUserRef = push(this.usersRef);
+    return set(newUserRef, userDTO);
   }
 
   update(key: string, value: UserDTO): Promise<void> {
-    return this.usersRef.update(key, value);
+    const userRef = child(this.usersRef, key);
+    return update(userRef, value);
   }
 }

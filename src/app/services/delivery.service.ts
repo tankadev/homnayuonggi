@@ -1,13 +1,13 @@
-import { Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 
-import { AngularFireDatabase, AngularFireList } from '@angular/fire/database';
+import { Database, ref, push, update, set, remove, onValue, DataSnapshot } from '@angular/fire/database';
 
 import { environment } from 'src/environments/environment';
 
 import { DeliveryDTO } from '../dto/delivery.dto';
 import { DeliveryRO } from '../ro/delivery.ro';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -15,32 +15,51 @@ import { DeliveryRO } from '../ro/delivery.ro';
 export class DeliveryService {
 
   private dbPath = '/deliveries';
+  private deliveryRef = ref(this.db, this.dbPath);
 
-  deliveryRef: AngularFireList<DeliveryRO | DeliveryDTO> = null;
   constructor(
-    private db: AngularFireDatabase,
+    private db: Database,
     private http: HttpClient
-  ) {
-    this.deliveryRef = db.list(this.dbPath);
-  }
+  ) { }
 
   getDetailDeliveryFromShopeeFoodApi(param: string): Observable<any> {
     return this.http.get(`${environment.apiURL}/get-detail?url=${param}`);
   }
 
-  getAll(): AngularFireList<DeliveryRO> {
-    return this.deliveryRef as AngularFireList<DeliveryRO>;
+  getAll(): Observable<DeliveryRO[]> {
+    return new Observable(observer => {
+      const usersRef = ref(this.db, this.dbPath);
+
+      onValue(usersRef, (snapshot: DataSnapshot) => {
+        const users: DeliveryRO[] = [];
+
+        snapshot.forEach(childSnapshot => {
+          const user: DeliveryRO = {
+            key: childSnapshot.key,
+            ...childSnapshot.val()
+          };
+          users.push(user);
+        });
+
+        observer.next(users);
+      }, error => {
+        observer.error(error);
+      });
+    });
   }
 
-  create(delivery: DeliveryDTO): any {
-    return this.deliveryRef.push(delivery);
+  create(delivery: DeliveryDTO): Promise<void> {
+    const newDeliveryRef = push(this.deliveryRef);
+    return set(newDeliveryRef, delivery);
   }
 
   update(key: string, value: DeliveryDTO): Promise<void> {
-    return this.deliveryRef.update(key, value);
+    const deliveryRef = ref(this.db, `${this.dbPath}/${key}`);
+    return update(deliveryRef, value);
   }
 
   remove(key: string): Promise<void> {
-    return this.deliveryRef.remove(key);
+    const deliveryRef = ref(this.db, `${this.dbPath}/${key}`);
+    return remove(deliveryRef);
   }
 }

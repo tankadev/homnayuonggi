@@ -31,13 +31,7 @@ export class HistoryOrderComponent implements OnInit {
   }
 
   private onListenOrdersHistoryChangesFromFirebaseDB(): void {
-    this.orderHistoryService.getAll().snapshotChanges().pipe(
-      map(changes =>
-        changes.map(c =>
-          ({ key: c.payload.key, ...c.payload.val() })
-        )
-      )
-    ).subscribe(data => {
+    this.orderHistoryService.getAll().subscribe(data => {
       this.storage.setOrdersHistory(data);
       if (data.length > 0) {
         this.histories = data.filter(i => i.roomKey === this.room.key).reverse();

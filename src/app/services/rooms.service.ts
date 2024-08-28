@@ -1,9 +1,8 @@
 import { Injectable } from '@angular/core';
-
-import { AngularFireDatabase, AngularFireList } from '@angular/fire/database';
-
+import { Database, ref, push, update, set, onValue, DataSnapshot } from '@angular/fire/database';
 import { RoomDTO } from '../dto/room.dto';
 import { RoomRO } from '../ro/room.ro';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -11,24 +10,39 @@ import { RoomRO } from '../ro/room.ro';
 export class RoomsService {
 
   private dbPath = '/rooms';
+  private roomsRef = ref(this.db, this.dbPath);
 
-  roomsRef: AngularFireList<RoomRO | RoomDTO> = null;
+  constructor(private db: Database) {}
 
-  constructor(
-    private db: AngularFireDatabase
-  ) {
-    this.roomsRef = db.list(this.dbPath);
+  getAll(): Observable<RoomRO[]> {
+    return new Observable(observer => {
+      const usersRef = ref(this.db, this.dbPath);
+
+      onValue(usersRef, (snapshot: DataSnapshot) => {
+        const users: RoomRO[] = [];
+
+        snapshot.forEach(childSnapshot => {
+          const user: RoomRO = {
+            key: childSnapshot.key,
+            ...childSnapshot.val()
+          };
+          users.push(user);
+        });
+
+        observer.next(users);
+      }, error => {
+        observer.error(error);
+      });
+    });
   }
 
-  getAll(): AngularFireList<RoomRO> {
-    return this.roomsRef as AngularFireList<RoomRO>;
-  }
-
-  create(roomDTO: RoomDTO): any {
-    return this.roomsRef.push(roomDTO);
+  create(roomDTO: RoomDTO): Promise<void> {
+    const newRoomRef = push(this.roomsRef);
+    return set(newRoomRef, roomDTO);
   }
 
   update(key: string, value: RoomDTO): Promise<void> {
-    return this.roomsRef.update(key, value);
+    const roomRef = ref(this.db, `${this.dbPath}/${key}`);
+    return update(roomRef, value);
   }
 }

@@ -113,13 +113,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   private onListenUsersChangesFromFirebaseDB(): void {
-    this.userService.getAll().snapshotChanges().pipe(
-      map(changes =>
-        changes.map(c =>
-          ({ key: c.payload.key, ...c.payload.val() })
-        )
-      )
-    ).subscribe(data => {
+    this.userService.getAll().subscribe(data => {
       if (data.length > 0) {
         const userList: UserRO[] = data;
         this.storage.setUserList(userList);

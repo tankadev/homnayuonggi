@@ -149,13 +149,7 @@ export class SplitMoneyComponent implements OnInit, OnChanges {
   }
 
   private onListenPaymentPaidChangesFromFirebaseDB(): void {
-    this.paymentPaidService.getAll().snapshotChanges().pipe(
-      map(changes =>
-        changes.map(c =>
-          ({ key: c.payload.key, ...c.payload.val() })
-        )
-      )
-    ).subscribe(data => {
+    this.paymentPaidService.getAll().subscribe(data => {
       this.storage.setPaymentsPaid(data);
       this.paymentsPaid = data.find(i => i.deliveryId == this.deliveryInfo.key && i.roomId == this.room.key);
     });

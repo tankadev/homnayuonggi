@@ -1,11 +1,12 @@
 import { Injectable } from '@angular/core';
 
-import { AngularFireDatabase, AngularFireList, AngularFireObject } from '@angular/fire/database';
+import { Database, ref, push, update, get, set, remove, onValue, DataSnapshot } from '@angular/fire/database';
 import { OrderDetailDTO } from '../dto/order-detail.dto';
 import { OrderDTO } from '../dto/order.dto';
 import { OrderDetailRO } from '../ro/order-detail.ro';
 import { OrderRO } from '../ro/order.ro';
 import { LocalStorageService } from './localstorage.service';
+import { Observable, from } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -15,30 +16,46 @@ export class OrderService {
   private dbOrdersPath = '/orders';
   private dbOrderDetailPath = '/orderDetail';
 
-  ordersRef: AngularFireList<OrderRO | OrderDTO> = null;
-  orderDetailRef: AngularFireObject<OrderDetailRO | OrderDetailDTO> = null;
-  constructor(
-    private db: AngularFireDatabase,
-    private localStorage: LocalStorageService
-  ) {
-    this.ordersRef = db.list(this.dbOrdersPath);
-    this.orderDetailRef = db.object(this.dbOrderDetailPath);
+  private ordersRef = ref(this.db, this.dbOrdersPath);
+  private orderDetailRef = ref(this.db, this.dbOrderDetailPath);
+
+  constructor(private db: Database, private localStorage: LocalStorageService) { }
+
+  getListOrders(): Observable<OrderRO[]> {
+    return new Observable(observer => {
+      const usersRef = ref(this.db, this.dbOrdersPath);
+
+      onValue(usersRef, (snapshot: DataSnapshot) => {
+        const users: OrderRO[] = [];
+
+        snapshot.forEach(childSnapshot => {
+          const user: OrderRO = {
+            key: childSnapshot.key,
+            ...childSnapshot.val()
+          };
+          users.push(user);
+        });
+
+        observer.next(users);
+      }, error => {
+        observer.error(error);
+      });
+    });
   }
 
-  getListOrders(): AngularFireList<OrderRO> {
-    return this.ordersRef as AngularFireList<OrderRO>;
-  }
-
-  addOrder(order: OrderDTO): any {
-    return this.ordersRef.push(order);
+  addOrder(order: OrderDTO): Promise<void> {
+    const newOrdersRef = push(this.ordersRef);
+    return set(newOrdersRef, order);
   }
 
   updateOrder(key: string, value: OrderDTO): Promise<void> {
-    return this.ordersRef.update(key, value);
+    const ordersRef = ref(this.db, `${this.dbOrdersPath}/${key}`);
+    return update(ordersRef, value);
   }
 
   deleteOrder(key: string): Promise<void> {
-    return this.ordersRef.remove(key);
+    const ordersRef = ref(this.db, `${this.dbOrdersPath}/${key}`);
+    return remove(ordersRef);
   }
 
   deleteAllListOrders(): void {
@@ -52,20 +69,26 @@ export class OrderService {
   }
 
   // order detail
-  getOrderDetail(): AngularFireObject<OrderDetailRO> {
-    return this.orderDetailRef as AngularFireObject<OrderDetailRO>;
+  getOrderDetail(): Observable<OrderDetailRO> {
+    return from(get(this.orderDetailRef).then(snapshot => {
+      if (snapshot.exists()) {
+        return snapshot.val() as OrderDetailRO;
+      } else {
+        return null;
+      }
+    }));
   }
 
   createOrderDetail(order: OrderDetailDTO): any {
-    return this.orderDetailRef.set(order);
+    return set(this.orderDetailRef, order);
   }
 
   updateOrderDetail(order: OrderDetailDTO): Promise<void> {
-    return this.orderDetailRef.update(order);
+    return update(this.orderDetailRef, order);
   }
 
   removeOrderDetail(): Promise<void> {
-    return this.orderDetailRef.remove();
+    return remove(this.orderDetailRef);
   }
 
 }

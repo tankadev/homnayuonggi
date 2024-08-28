@@ -85,13 +85,7 @@ export class RoomsComponent implements OnInit {
 
   private onListenListRoomsChangesFromFirebaseDB(): void {
     this.listRooms = this.localStorage.getRoomsList();
-    this.roomService.getAll().snapshotChanges().pipe(
-      map(changes =>
-        changes.map(c =>
-          ({ key: c.payload.key, ...c.payload.val() })
-        )
-      )
-    ).subscribe(data => {
+    this.roomService.getAll().subscribe(data => {
       this.localStorage.setRoomsList(data);
       this.listRooms = data;
     });
@@ -99,13 +93,7 @@ export class RoomsComponent implements OnInit {
 
   private onListenListOrdersChangesFromFirebaseDB(): void {
     this.listDeliveries = this.localStorage.getDeliveriesList();
-    this.deliveryService.getAll().snapshotChanges().pipe(
-      map(changes =>
-        changes.map(c =>
-          ({ key: c.payload.key, ...c.payload.val() })
-        )
-      )
-    ).subscribe(data => {
+    this.deliveryService.getAll().subscribe(data => {
       this.listDeliveries = data;
     });
   }

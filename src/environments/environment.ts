@@ -4,6 +4,7 @@
 
 export const environment = {
   production: false,
+  useEmulators: true,
   firebase: {
     apiKey: "AIzaSyDFCughhn6YDYKifvpuNQcCvF5bDVhAn2Q",
     authDomain: "homnaychonmongi.firebaseapp.com",
@@ -14,7 +15,7 @@ export const environment = {
     appId: "1:405891226420:web:d5679ea5c12d9beca2a361",
     measurementId: "G-VHZJ2DCT10"
   },
-  apiURL: 'http://localhost:3000',
+  apiURL: 'https://todayuonggi-api.vilinga.com',
   pwd: 'EMBEXINHDEP'
 };
 

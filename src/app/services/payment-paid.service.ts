@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
 
-import { AngularFireDatabase, AngularFireList } from '@angular/fire/database';
+import { Database, ref, push, update, set, remove, onValue, DataSnapshot } from '@angular/fire/database';
 
 import { PaymentPaidRO } from '../ro/payment-paid.ro';
 import { PaymentPaidDTO } from '../dto/payment-paid.dto';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -11,28 +12,44 @@ import { PaymentPaidDTO } from '../dto/payment-paid.dto';
 export class PaymentPaidService {
 
   private dbPath = '/paymentsPaid';
+  private paymentsPaidRef = ref(this.db, this.dbPath);
 
-  paymentsPaidRef: AngularFireList<PaymentPaidRO | PaymentPaidDTO> = null;
+  constructor(private db: Database) {}
 
-  constructor(
-    private db: AngularFireDatabase
-  ) {
-    this.paymentsPaidRef = db.list(this.dbPath);
+  getAll(): Observable<PaymentPaidRO[]> {
+    return new Observable(observer => {
+      const usersRef = ref(this.db, this.dbPath);
+
+      onValue(usersRef, (snapshot: DataSnapshot) => {
+        const users: PaymentPaidRO[] = [];
+
+        snapshot.forEach(childSnapshot => {
+          const user: PaymentPaidRO = {
+            key: childSnapshot.key,
+            ...childSnapshot.val()
+          };
+          users.push(user);
+        });
+
+        observer.next(users);
+      }, error => {
+        observer.error(error);
+      });
+    });
   }
 
-  getAll(): AngularFireList<PaymentPaidRO> {
-    return this.paymentsPaidRef as AngularFireList<PaymentPaidRO>;
-  }
-
-  create(paymentPaidDTO: PaymentPaidDTO): any {
-    return this.paymentsPaidRef.push(paymentPaidDTO);
+  create(paymentPaidDTO: PaymentPaidDTO): Promise<void> {
+    const newPaymentsPaidRef = push(this.paymentsPaidRef);
+    return set(newPaymentsPaidRef, paymentPaidDTO);
   }
 
   update(key: string, value: PaymentPaidDTO): Promise<void> {
-    return this.paymentsPaidRef.update(key, value);
+    const paymentRef = ref(this.db, `${this.dbPath}/${key}`);
+    return update(paymentRef, value);
   }
 
   remove(key: string): Promise<void> {
-    return this.paymentsPaidRef.remove(key);
+    const paymentRef = ref(this.db, `${this.dbPath}/${key}`);
+    return remove(paymentRef);
   }
 }

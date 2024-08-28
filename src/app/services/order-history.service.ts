@@ -1,10 +1,11 @@
 import { Injectable } from '@angular/core';
 
-import { AngularFireDatabase, AngularFireList } from '@angular/fire/database';
+import { Database, ref, push, update, set, remove, onValue, DataSnapshot } from '@angular/fire/database';
 
 import { OrderHistoryDTO } from '../dto/order-history.dto';
 import { OrderHistoryRO } from '../ro/order-history.ro';
 import { LocalStorageService } from './localstorage.service';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -12,25 +13,40 @@ import { LocalStorageService } from './localstorage.service';
 export class OrderHistoryService {
 
   private dbPath = '/ordersHistory';
+  private ordersHistoryRef = ref(this.db, this.dbPath);
 
-  ordersHistoryRef: AngularFireList<OrderHistoryRO | OrderHistoryDTO> = null;
-  constructor(
-    private db: AngularFireDatabase,
-    private localStorage: LocalStorageService
-  ) {
-    this.ordersHistoryRef = db.list(this.dbPath);
+  constructor(private db: Database, private localStorage: LocalStorageService) {}
+
+  getAll(): Observable<OrderHistoryRO[]> {
+    return new Observable(observer => {
+      const usersRef = ref(this.db, this.dbPath);
+
+      onValue(usersRef, (snapshot: DataSnapshot) => {
+        const users: OrderHistoryRO[] = [];
+
+        snapshot.forEach(childSnapshot => {
+          const user: OrderHistoryRO = {
+            key: childSnapshot.key,
+            ...childSnapshot.val()
+          };
+          users.push(user);
+        });
+
+        observer.next(users);
+      }, error => {
+        observer.error(error);
+      });
+    });
   }
 
-  getAll(): AngularFireList<OrderHistoryRO> {
-    return this.ordersHistoryRef as AngularFireList<OrderHistoryRO>;
-  }
-
-  create(histories: OrderHistoryDTO): any {
-    return this.ordersHistoryRef.push(histories);
+  create(histories: OrderHistoryDTO): Promise<void> {
+    const newOrdersHistoryRef = push(this.ordersHistoryRef);
+    return set(newOrdersHistoryRef, histories);
   }
 
   update(key: string, value: OrderHistoryDTO): Promise<void> {
-    return this.ordersHistoryRef.update(key, value);
+    const ordersHistoryRef = ref(this.db, `${this.dbPath}/${key}`);
+    return update(ordersHistoryRef, value);
   }
 
   removeAll(): void {
@@ -38,7 +54,8 @@ export class OrderHistoryService {
     const room = this.localStorage.getSelectedRoom();
     orderHistories.forEach(i => {
       if (i.roomKey === room.key) {
-        this.ordersHistoryRef.remove(i.key);
+        const ordersHistoryRef = ref(this.db, `${this.dbPath}/${i.key}`);
+        remove(ordersHistoryRef);
       }
     });
   }

@@ -56,13 +56,7 @@ export class UnpaidListComponent implements OnInit {
   }
 
   private onListenUsersChangesFromFirebaseDB(): void {
-    this.userService.getAll().snapshotChanges().pipe(
-      map(changes =>
-        changes.map(c =>
-          ({ key: c.payload.key, ...c.payload.val() })
-        )
-      )
-    ).subscribe(data => {
+    this.userService.getAll().subscribe(data => {
       if (data.length > 0) {
         this.userList = data;
       }

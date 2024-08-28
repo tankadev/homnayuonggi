@@ -86,51 +86,27 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   private onListenDeliveryChangesFromFirebaseDB(): void {
-    this.deliveryService.getAll().snapshotChanges().pipe(
-      map(changes =>
-        changes.map(c =>
-          ({ key: c.payload.key, ...c.payload.val() })
-        )
-      )
-    ).subscribe(data => {
+    this.deliveryService.getAll().subscribe(data => {
       this.storage.setDeliveriesList(data);
       this.deliveriesList = data;
     });
   }
 
   private onListenPaymentPaidChangesFromFirebaseDB(): void {
-    this.paymentPaidService.getAll().snapshotChanges().pipe(
-      map(changes =>
-        changes.map(c =>
-          ({ key: c.payload.key, ...c.payload.val() })
-        )
-      )
-    ).subscribe(data => {
+    this.paymentPaidService.getAll().subscribe(data => {
       this.storage.setPaymentsPaid(data);
       this.paymentsPaid = data;
     });
   }
 
   private onListenOrderListChangesFromFirebaseDB(): void {
-    this.orderService.getListOrders().snapshotChanges().pipe(
-      map(changes =>
-        changes.map(c =>
-          ({ key: c.payload.key, ...c.payload.val() })
-        )
-      )
-    ).subscribe(data => {
+    this.orderService.getListOrders().subscribe(data => {
       this.storage.setOrdersList(data);
     });
   }
 
   private onListenOrderHistoryChangesFromFirebaseDB(): void {
-    this.orderHistoryService.getAll().snapshotChanges().pipe(
-      map(changes =>
-        changes.map(c =>
-          ({ key: c.payload.key, ...c.payload.val() })
-        )
-      )
-    ).subscribe(data => {
+    this.orderHistoryService.getAll().subscribe(data => {
       this.storage.setOrdersHistory(data);
     });
   }

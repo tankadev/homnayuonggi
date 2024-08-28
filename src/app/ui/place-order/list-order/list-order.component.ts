@@ -203,13 +203,7 @@ export class ListOrderComponent implements OnInit {
   }
 
   private onListenListOrdersChangesFromFirebaseDB(): void {
-    this.orderService.getListOrders().snapshotChanges().pipe(
-      map(changes =>
-        changes.map(c =>
-          ({ key: c.payload.key, ...c.payload.val() })
-        )
-      )
-    ).subscribe(data => {
+    this.orderService.getListOrders().subscribe(data => {
       this.localStorage.setOrdersList(data);
       this.listOrders = data.filter(i => i.roomKey === this.room.key);
     });
