@@ -17,7 +17,7 @@ export const environment = {
   },
   // Fallback only — actual value is fetched from Firebase Remote Config (key: `api_url`).
   // Used when Remote Config hasn't loaded yet or fetch fails.
-  apiURL: 'https://todayuonggi-api.vilinga.com',
+  apiURL: 'http://localhost:3000',
   pwd: 'EMBEXINHDEP'
 };
 
