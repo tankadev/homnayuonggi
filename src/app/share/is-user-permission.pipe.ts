@@ -2,7 +2,8 @@ import { Pipe, PipeTransform } from '@angular/core';
 import { LocalStorageService } from '../services/localstorage.service';
 
 @Pipe({
-  name: 'isUserPermission'
+    name: 'isUserPermission',
+    standalone: false
 })
 export class IsUserPermissionPipe implements PipeTransform {
 

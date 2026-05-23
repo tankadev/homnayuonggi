@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 
 @Component({
-  selector: 'need-login',
-  templateUrl: './need-login.component.html',
-  styleUrls: ['./need-login.component.scss']
+    selector: 'need-login',
+    templateUrl: './need-login.component.html',
+    styleUrls: ['./need-login.component.scss'],
+    standalone: false
 })
 export class NeedLoginComponent implements OnInit {
 

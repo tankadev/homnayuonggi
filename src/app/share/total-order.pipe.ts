@@ -7,7 +7,8 @@ import { LocalStorageService } from '../services/localstorage.service';
 import { DishTotalQuantityPipe } from './dish-total-quantity.pipe';
 
 @Pipe({
-  name: 'totalOrder'
+    name: 'totalOrder',
+    standalone: false
 })
 export class TotalOrderPipe implements PipeTransform {
 

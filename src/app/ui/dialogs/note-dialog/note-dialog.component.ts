@@ -3,9 +3,10 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { NzModalRef, NZ_MODAL_DATA } from 'ng-zorro-antd/modal';
 
 @Component({
-  selector: 'note-dialog',
-  templateUrl: './note-dialog.component.html',
-  styleUrls: ['./note-dialog.component.scss']
+    selector: 'note-dialog',
+    templateUrl: './note-dialog.component.html',
+    styleUrls: ['./note-dialog.component.scss'],
+    standalone: false
 })
 export class NoteDialogComponent implements OnInit {
 

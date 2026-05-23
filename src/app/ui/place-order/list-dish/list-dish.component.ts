@@ -11,9 +11,10 @@ import { OrderHistoryService } from 'src/app/services/order-history.service';
 import { RoomRO } from 'src/app/ro/room.ro';
 
 @Component({
-  selector: 'list-dish',
-  templateUrl: './list-dish.component.html',
-  styleUrls: ['./list-dish.component.scss']
+    selector: 'list-dish',
+    templateUrl: './list-dish.component.html',
+    styleUrls: ['./list-dish.component.scss'],
+    standalone: false
 })
 export class ListDishComponent implements OnInit {
 

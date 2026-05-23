@@ -12,9 +12,10 @@ import { RoomPwdModel } from 'src/app/models/rooms-pwd.model';
 import { LocalStorageService } from 'src/app/services/localstorage.service';
 
 @Component({
-  selector: 'join-room-pwd',
-  templateUrl: './join-room-pwd.component.html',
-  styleUrls: ['./join-room-pwd.component.scss']
+    selector: 'join-room-pwd',
+    templateUrl: './join-room-pwd.component.html',
+    styleUrls: ['./join-room-pwd.component.scss'],
+    standalone: false
 })
 export class JoinRoomPwdComponent implements OnInit {
 

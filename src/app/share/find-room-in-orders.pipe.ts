@@ -2,7 +2,8 @@ import { Pipe, PipeTransform } from '@angular/core';
 import { DeliveryRO } from '../ro/delivery.ro';
 
 @Pipe({
-    name: 'findRoomInOrders'
+    name: 'findRoomInOrders',
+    standalone: false
 })
 export class FindRoomInOrdersPipe implements PipeTransform {
 

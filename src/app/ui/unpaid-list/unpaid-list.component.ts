@@ -7,9 +7,10 @@ import { PaymentPaidService } from 'src/app/services/payment-paid.service';
 import { UserService } from 'src/app/services/user.service';
 
 @Component({
-  selector: 'unpaid-list',
-  templateUrl: './unpaid-list.component.html',
-  styleUrls: ['./unpaid-list.component.scss']
+    selector: 'unpaid-list',
+    templateUrl: './unpaid-list.component.html',
+    styleUrls: ['./unpaid-list.component.scss'],
+    standalone: false
 })
 export class UnpaidListComponent implements OnInit {
 

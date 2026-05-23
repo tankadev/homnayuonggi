@@ -3,7 +3,8 @@ import { Pipe, PipeTransform } from '@angular/core';
 import { LocalStorageService } from 'src/app/services/localstorage.service';
 
 @Pipe({
-  name: 'displayNameUser'
+    name: 'displayNameUser',
+    standalone: false
 })
 export class DisplayNameUserPipe implements PipeTransform {
 

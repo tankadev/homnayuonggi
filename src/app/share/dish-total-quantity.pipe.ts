@@ -2,7 +2,8 @@ import { Pipe, PipeTransform } from '@angular/core';
 import { UserNote } from '../dto/order.dto';
 
 @Pipe({
-  name: 'dishTotalQuantity'
+    name: 'dishTotalQuantity',
+    standalone: false
 })
 export class DishTotalQuantityPipe implements PipeTransform {
 

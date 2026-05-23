@@ -3,9 +3,10 @@ import { Component, Input, OnInit } from '@angular/core';
 import { DeliveryRO } from 'src/app/ro/delivery.ro';
 
 @Component({
-  selector: 'info-order',
-  templateUrl: './info-order.component.html',
-  styleUrls: ['./info-order.component.scss']
+    selector: 'info-order',
+    templateUrl: './info-order.component.html',
+    styleUrls: ['./info-order.component.scss'],
+    standalone: false
 })
 export class InfoOrderComponent implements OnInit {
 

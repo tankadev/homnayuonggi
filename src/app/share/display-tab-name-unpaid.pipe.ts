@@ -1,7 +1,8 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
 @Pipe({
-  name: 'displayTabNameUnPaid'
+    name: 'displayTabNameUnPaid',
+    standalone: false
 })
 export class DisplayTabNameUnPaidPipe implements PipeTransform {
 

@@ -1,7 +1,8 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
 @Pipe({
-  name: 'displayOption'
+    name: 'displayOption',
+    standalone: false
 })
 export class DisplayOptionPipe implements PipeTransform {
 

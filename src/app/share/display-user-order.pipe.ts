@@ -5,7 +5,8 @@ import { OrderRO } from '../ro/order.ro';
 import { DisplayNameUserPipe } from './display-name-user.pipe';
 
 @Pipe({
-  name: 'displayUserOrder'
+    name: 'displayUserOrder',
+    standalone: false
 })
 export class DisplayUserOrderPipe implements PipeTransform {
 

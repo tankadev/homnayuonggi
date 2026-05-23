@@ -4,7 +4,8 @@ import { PaymentPaidRO } from '../ro/payment-paid.ro';
 import { DeliveryRO } from '../ro/delivery.ro';
 
 @Pipe({
-    name: 'unPaidListSort'
+    name: 'unPaidListSort',
+    standalone: false
 })
 export class UnPaidListSortPipe implements PipeTransform {
 

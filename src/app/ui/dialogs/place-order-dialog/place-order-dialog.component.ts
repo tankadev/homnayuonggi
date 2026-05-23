@@ -22,9 +22,10 @@ import { UserService } from 'src/app/services/user.service';
 import { TotalOrderPipe } from 'src/app/share/total-order.pipe';
 
 @Component({
-  selector: 'place-order-dialog',
-  templateUrl: './place-order-dialog.component.html',
-  styleUrls: ['./place-order-dialog.component.scss']
+    selector: 'place-order-dialog',
+    templateUrl: './place-order-dialog.component.html',
+    styleUrls: ['./place-order-dialog.component.scss'],
+    standalone: false
 })
 export class PlaceOrderDialogComponent implements OnInit {
 

@@ -2,7 +2,8 @@ import { Pipe, PipeTransform } from '@angular/core';
 import { LocalStorageService } from '../services/localstorage.service';
 
 @Pipe({
-  name: 'isAllow'
+    name: 'isAllow',
+    standalone: false
 })
 export class IsAllowPipe implements PipeTransform {
 

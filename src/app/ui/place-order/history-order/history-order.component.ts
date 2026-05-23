@@ -7,9 +7,10 @@ import { OrderHistoryService } from 'src/app/services/order-history.service';
 import { OrderHistoryRO } from './../../../ro/order-history.ro';
 
 @Component({
-  selector: 'history-order',
-  templateUrl: './history-order.component.html',
-  styleUrls: ['./history-order.component.scss']
+    selector: 'history-order',
+    templateUrl: './history-order.component.html',
+    styleUrls: ['./history-order.component.scss'],
+    standalone: false
 })
 export class HistoryOrderComponent implements OnInit {
 

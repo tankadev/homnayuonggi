@@ -11,9 +11,10 @@ import { CreateRoomComponent } from '../dialogs/create-room/create-room.componen
 import { JoinRoomPwdComponent } from '../dialogs/join-room-pwd/join-room-pwd.component';
 
 @Component({
-  selector: 'rooms',
-  templateUrl: './rooms.component.html',
-  styleUrls: ['./rooms.component.scss']
+    selector: 'rooms',
+    templateUrl: './rooms.component.html',
+    styleUrls: ['./rooms.component.scss'],
+    standalone: false
 })
 export class RoomsComponent implements OnInit {
 

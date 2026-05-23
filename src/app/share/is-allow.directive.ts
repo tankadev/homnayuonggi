@@ -5,7 +5,8 @@ import { Subject } from 'rxjs';
 import { LocalStorageService } from './../services/localstorage.service';
 
 @Directive({
-  selector: '[isAllow]'
+    selector: '[isAllow]',
+    standalone: false
 })
 export class IsAllowDirective implements OnDestroy {
 

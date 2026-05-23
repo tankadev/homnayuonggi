@@ -6,9 +6,10 @@ import { UserRO } from 'src/app/ro/user.ro';
 import { UserService } from 'src/app/services/user.service';
 
 @Component({
-  selector: 'info-user-payment',
-  templateUrl: './info-user-payment.component.html',
-  styleUrls: ['./info-user-payment.component.scss']
+    selector: 'info-user-payment',
+    templateUrl: './info-user-payment.component.html',
+    styleUrls: ['./info-user-payment.component.scss'],
+    standalone: false
 })
 export class InfoUserPaymentComponent implements OnInit {
 

@@ -13,9 +13,10 @@ import { LocalStorageService } from './../../../services/localstorage.service';
 import { DeliveryRO } from 'src/app/ro/delivery.ro';
 
 @Component({
-  selector: 'create-delivery-form',
-  templateUrl: './create-delivery-form.component.html',
-  styleUrls: ['./create-delivery-form.component.scss']
+    selector: 'create-delivery-form',
+    templateUrl: './create-delivery-form.component.html',
+    styleUrls: ['./create-delivery-form.component.scss'],
+    standalone: false
 })
 export class CreateDeliveryFormComponent implements OnInit {
 

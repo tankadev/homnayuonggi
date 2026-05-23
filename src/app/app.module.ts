@@ -13,7 +13,7 @@ import en from '@angular/common/locales/en';
 
 import { NZ_I18N } from 'ng-zorro-antd/i18n';
 import { en_US } from 'ng-zorro-antd/i18n';
-import { QRCodeModule } from 'angularx-qrcode';
+import { QRCodeComponent } from 'angularx-qrcode';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -74,14 +74,14 @@ registerLocaleData(en);
         JoinRoomPwdComponent,
         UnpaidListComponent
     ],
-    bootstrap: [AppComponent], imports: [BrowserModule.withServerTransition({ appId: 'serverApp' }),
+    bootstrap: [AppComponent], imports: [BrowserModule,
         AppRoutingModule,
         ZoroAntdModule,
         FormsModule,
         ReactiveFormsModule,
         BrowserAnimationsModule,
         ShareModule,
-        QRCodeModule], providers: [
+        QRCodeComponent], providers: [
         { provide: NZ_I18N, useValue: en_US },
         provideFirebaseApp(() => initializeApp(environment.firebase)),
         provideDatabase(() => getDatabase()),

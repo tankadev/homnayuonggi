@@ -7,9 +7,10 @@ import { LocalStorageService } from 'src/app/services/localstorage.service';
 import { PaymentPaidService } from 'src/app/services/payment-paid.service';
 
 @Component({
-  selector: 'list-split-money',
-  templateUrl: './list-split-money.component.html',
-  styleUrls: ['./list-split-money.component.scss']
+    selector: 'list-split-money',
+    templateUrl: './list-split-money.component.html',
+    styleUrls: ['./list-split-money.component.scss'],
+    standalone: false
 })
 export class ListSplitMoneyComponent implements OnInit {
 

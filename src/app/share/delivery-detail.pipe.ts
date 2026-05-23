@@ -3,7 +3,8 @@ import { DeliveryRO } from '../ro/delivery.ro';
 import { LocalStorageService } from '../services/localstorage.service';
 
 @Pipe({
-    name: 'deliveryDetail'
+    name: 'deliveryDetail',
+    standalone: false
 })
 export class DeliveryDetailPipe implements PipeTransform {
 

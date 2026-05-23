@@ -2,7 +2,8 @@ import { Pipe, PipeTransform } from '@angular/core';
 import { Photo } from '../ro/delivery-detail-now-api.ro';
 
 @Pipe({
-  name: 'displayImage'
+    name: 'displayImage',
+    standalone: false
 })
 export class DisplayImagePipe implements PipeTransform {
 

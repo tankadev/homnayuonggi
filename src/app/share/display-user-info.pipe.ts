@@ -3,7 +3,8 @@ import { UserRO } from '../ro/user.ro';
 import { LocalStorageService } from '../services/localstorage.service';
 
 @Pipe({
-  name: 'displayUserInfo'
+    name: 'displayUserInfo',
+    standalone: false
 })
 export class DisplayUserInfoPipe implements PipeTransform {
 

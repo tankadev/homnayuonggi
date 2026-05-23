@@ -3,7 +3,8 @@ import { Pipe, PipeTransform } from '@angular/core';
 import { PaymentPaidDetailRO } from '../ro/payment-paid.ro';
 
 @Pipe({
-    name: 'unPaidUserList'
+    name: 'unPaidUserList',
+    standalone: false
 })
 export class UnPaidUserListPipe implements PipeTransform {
 

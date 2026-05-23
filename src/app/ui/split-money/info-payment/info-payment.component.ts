@@ -19,9 +19,10 @@ import { PaymentPaidRO } from 'src/app/ro/payment-paid.ro';
 import { PaymentPaidService } from 'src/app/services/payment-paid.service';
 
 @Component({
-  selector: 'info-payment',
-  templateUrl: './info-payment.component.html',
-  styleUrls: ['./info-payment.component.scss']
+    selector: 'info-payment',
+    templateUrl: './info-payment.component.html',
+    styleUrls: ['./info-payment.component.scss'],
+    standalone: false
 })
 export class InfoPaymentComponent implements OnInit {
 

@@ -4,7 +4,8 @@ import { PaymentPaidRO } from '../ro/payment-paid.ro';
 import { DeliveryRO } from '../ro/delivery.ro';
 
 @Pipe({
-    name: 'paymentPaidByRoom'
+    name: 'paymentPaidByRoom',
+    standalone: false
 })
 export class PaymentPaidByRoomPipe implements PipeTransform {
 

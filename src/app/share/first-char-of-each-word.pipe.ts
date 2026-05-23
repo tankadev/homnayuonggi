@@ -1,7 +1,8 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
 @Pipe({
-  name: 'firstCharOfEachWord'
+    name: 'firstCharOfEachWord',
+    standalone: false
 })
 export class FirstCharOfEachWordPipe implements PipeTransform {
 

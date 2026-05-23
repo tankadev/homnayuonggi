@@ -13,9 +13,10 @@ import { FormHelper } from './../../../helper/form.help';
 type LoginType = 'REGISTER' | 'LOGIN';
 
 @Component({
-  selector: 'join-to-app',
-  templateUrl: './join-to-app.component.html',
-  styleUrls: ['./join-to-app.component.scss']
+    selector: 'join-to-app',
+    templateUrl: './join-to-app.component.html',
+    styleUrls: ['./join-to-app.component.scss'],
+    standalone: false
 })
 export class JoinToAppComponent implements OnInit {
 

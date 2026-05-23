@@ -15,9 +15,10 @@ import { DisplayUserOrderPipe } from 'src/app/share/display-user-order.pipe';
 import { TotalOrderPipe } from 'src/app/share/total-order.pipe';
 
 @Component({
-  selector: 'split-money',
-  templateUrl: './split-money.component.html',
-  styleUrls: ['./split-money.component.scss']
+    selector: 'split-money',
+    templateUrl: './split-money.component.html',
+    styleUrls: ['./split-money.component.scss'],
+    standalone: false
 })
 export class SplitMoneyComponent implements OnInit, OnChanges {
 

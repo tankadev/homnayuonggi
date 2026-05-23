@@ -9,9 +9,10 @@ import { NzNotificationService } from 'ng-zorro-antd/notification';
 import { RoomRO } from 'src/app/ro/room.ro';
 
 @Component({
-  selector: 'create-delivery',
-  templateUrl: './create-delivery.component.html',
-  styleUrls: ['./create-delivery.component.scss']
+    selector: 'create-delivery',
+    templateUrl: './create-delivery.component.html',
+    styleUrls: ['./create-delivery.component.scss'],
+    standalone: false
 })
 export class CreateDeliveryComponent implements OnInit {
 

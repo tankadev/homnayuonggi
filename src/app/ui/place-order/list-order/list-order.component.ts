@@ -18,9 +18,10 @@ import { DeliveryRO } from 'src/app/ro/delivery.ro';
 import { RoomRO } from 'src/app/ro/room.ro';
 
 @Component({
-  selector: 'list-order',
-  templateUrl: './list-order.component.html',
-  styleUrls: ['./list-order.component.scss']
+    selector: 'list-order',
+    templateUrl: './list-order.component.html',
+    styleUrls: ['./list-order.component.scss'],
+    standalone: false
 })
 export class ListOrderComponent implements OnInit {
 

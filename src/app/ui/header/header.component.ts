@@ -17,9 +17,10 @@ import { PaymentPaidRO } from 'src/app/ro/payment-paid.ro';
 import { ConfigService } from 'src/app/services/config.service';
 
 @Component({
-  selector: 'header',
-  templateUrl: './header.component.html',
-  styleUrls: ['./header.component.scss']
+    selector: 'header',
+    templateUrl: './header.component.html',
+    styleUrls: ['./header.component.scss'],
+    standalone: false
 })
 export class HeaderComponent implements OnInit, OnDestroy {
 

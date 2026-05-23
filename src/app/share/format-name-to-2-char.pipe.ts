@@ -1,7 +1,8 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
 @Pipe({
-  name: 'formatNameTo2Char'
+    name: 'formatNameTo2Char',
+    standalone: false
 })
 export class FormatNameTo2CharPipe implements PipeTransform {
 

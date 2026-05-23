@@ -13,9 +13,10 @@ import { RoomRO } from 'src/app/ro/room.ro';
 import { LocalStorageService } from 'src/app/services/localstorage.service';
 
 @Component({
-  selector: 'create-room',
-  templateUrl: './create-room.component.html',
-  styleUrls: ['./create-room.component.scss']
+    selector: 'create-room',
+    templateUrl: './create-room.component.html',
+    styleUrls: ['./create-room.component.scss'],
+    standalone: false
 })
 export class CreateRoomComponent implements OnInit {
 
