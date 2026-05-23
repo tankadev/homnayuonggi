@@ -7,7 +7,7 @@ import { getRemoteConfig } from 'firebase/remote-config';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { registerLocaleData } from '@angular/common';
-import { HttpClientModule } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import en from '@angular/common/locales/en';
 
@@ -47,53 +47,46 @@ import { UnpaidListComponent } from './ui/unpaid-list/unpaid-list.component';
 
 registerLocaleData(en);
 
-@NgModule({
-  declarations: [
-    AppComponent,
-    CatAnimateComponent,
-    HeaderComponent,
-    JoinToAppComponent,
-    NeedLoginComponent,
-    CreateDeliveryComponent,
-    CreateDeliveryFormComponent,
-    PlaceOrderComponent,
-    ShopInfoComponent,
-    HistoryOrderComponent,
-    ListDishComponent,
-    ListOrderComponent,
-    ConfirmDialogComponent,
-    PlaceOrderDialogComponent,
-    NoteDialogComponent,
-    SplitMoneyComponent,
-    InfoOrderComponent,
-    InfoUserPaymentComponent,
-    InfoPaymentComponent,
-    ListSplitMoneyComponent,
-    RoomsComponent,
-    CreateRoomComponent,
-    DrinkAnimateComponent,
-    JoinRoomPwdComponent,
-    UnpaidListComponent
-  ],
-  imports: [
-    BrowserModule.withServerTransition({ appId: 'serverApp' }),
-    AppRoutingModule,
-    provideFirebaseApp(() => initializeApp(environment.firebase)),
-    provideDatabase(() => getDatabase()),
-    provideMessaging(() => getMessaging()),
-    provideRemoteConfig(() => getRemoteConfig()),
-    ZoroAntdModule,
-    FormsModule,
-    ReactiveFormsModule,
-    HttpClientModule,
-    BrowserAnimationsModule,
-    HttpClientModule,
-    ShareModule,
-    QRCodeModule
-  ],
-  providers: [
-    { provide: NZ_I18N, useValue: en_US },
-  ],
-  bootstrap: [AppComponent]
-})
+@NgModule({ declarations: [
+        AppComponent,
+        CatAnimateComponent,
+        HeaderComponent,
+        JoinToAppComponent,
+        NeedLoginComponent,
+        CreateDeliveryComponent,
+        CreateDeliveryFormComponent,
+        PlaceOrderComponent,
+        ShopInfoComponent,
+        HistoryOrderComponent,
+        ListDishComponent,
+        ListOrderComponent,
+        ConfirmDialogComponent,
+        PlaceOrderDialogComponent,
+        NoteDialogComponent,
+        SplitMoneyComponent,
+        InfoOrderComponent,
+        InfoUserPaymentComponent,
+        InfoPaymentComponent,
+        ListSplitMoneyComponent,
+        RoomsComponent,
+        CreateRoomComponent,
+        DrinkAnimateComponent,
+        JoinRoomPwdComponent,
+        UnpaidListComponent
+    ],
+    bootstrap: [AppComponent], imports: [BrowserModule.withServerTransition({ appId: 'serverApp' }),
+        AppRoutingModule,
+        ZoroAntdModule,
+        FormsModule,
+        ReactiveFormsModule,
+        BrowserAnimationsModule,
+        ShareModule,
+        QRCodeModule], providers: [
+        { provide: NZ_I18N, useValue: en_US },
+        provideFirebaseApp(() => initializeApp(environment.firebase)),
+        provideDatabase(() => getDatabase()),
+        provideMessaging(() => getMessaging()),
+        provideRemoteConfig(() => getRemoteConfig()),
+        provideHttpClient(withInterceptorsFromDi()),
+    ] })
 export class AppModule { }
