@@ -74,18 +74,18 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "homnayuonggi:build"
+            "buildTarget": "homnayuonggi:build"
           },
           "configurations": {
             "production": {
-              "browserTarget": "homnayuonggi:build:production"
+              "buildTarget": "homnayuonggi:build:production"
             }
           }
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "homnayuonggi:build"
+            "buildTarget": "homnayuonggi:build"
           }
         },
         "test": {
