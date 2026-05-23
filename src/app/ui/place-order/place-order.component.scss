@@ -6,12 +6,9 @@
   margin: 0 auto;
 
   > [nz-row] {
+    gap: 20px;
+    flex-wrap: wrap;
     align-items: flex-start;
-    margin: 0 -10px;
-  }
-
-  > [nz-row] > [nz-col] {
-    padding: 0 10px;
   }
 
   .version-box {
@@ -31,14 +28,11 @@
 
     > [nz-row] {
       flex-direction: column;
-      margin: 0;
     }
 
-    > [nz-row] > [nz-col] {
+    [nz-col] {
       flex: 0 0 100% !important;
       max-width: 100% !important;
-      padding: 0;
-      margin-bottom: 16px;
     }
   }
 }
