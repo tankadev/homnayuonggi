@@ -1,10 +1,10 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { environment } from 'src/environments/environment';
 
 import * as CryptoJS from 'crypto-js';
 
-import { NzModalRef } from 'ng-zorro-antd/modal';
+import { NzModalRef, NZ_MODAL_DATA } from 'ng-zorro-antd/modal';
 import { RoomDTO } from 'src/app/dto/room.dto';
 
 import { FormHelper } from 'src/app/helper/form.help';
@@ -19,7 +19,7 @@ import { LocalStorageService } from 'src/app/services/localstorage.service';
 })
 export class CreateRoomComponent implements OnInit {
 
-  @Input() roomInfo?: RoomRO;
+  roomInfo?: RoomRO;
 
   roomForm: FormGroup;
   isConfigPrivateRoom: boolean = false;
@@ -28,8 +28,11 @@ export class CreateRoomComponent implements OnInit {
     private modal: NzModalRef,
     private fb: FormBuilder,
     private roomService: RoomsService,
-    private storage: LocalStorageService
-  ) { }
+    private storage: LocalStorageService,
+    @Inject(NZ_MODAL_DATA) data: { roomInfo?: RoomRO }
+  ) {
+    this.roomInfo = data?.roomInfo;
+  }
 
   ngOnInit(): void {
     this.roomForm = this.fb.group({

@@ -97,7 +97,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
       nzClosable: false,
       nzAutofocus: null,
       nzMaskClosable: false,
-      nzComponentParams: {
+      nzData: {
         roomInfo: this.room,
       }
     });

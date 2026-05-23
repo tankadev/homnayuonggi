@@ -1,8 +1,8 @@
 import { DecimalPipe } from '@angular/common';
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
 
-import { NzModalRef } from 'ng-zorro-antd/modal';
+import { NzModalRef, NZ_MODAL_DATA } from 'ng-zorro-antd/modal';
 import { LocalStorage } from 'src/app/const/local-storage';
 import { DeliveryDTO } from 'src/app/dto/delivery.dto';
 import { UserNote } from 'src/app/dto/order.dto';
@@ -28,12 +28,9 @@ import { TotalOrderPipe } from 'src/app/share/total-order.pipe';
 })
 export class PlaceOrderDialogComponent implements OnInit {
 
-  @Input() deliveryInfo: DeliveryRO;
-  @Input() assignUserId?: string;
-  @Input() listOrders: OrderRO[] = [];
-  @Input() set isSponsor(value: boolean) {
-    this._isSponsor = value;
-  };
+  deliveryInfo: DeliveryRO;
+  assignUserId?: string;
+  listOrders: OrderRO[] = [];
 
   _isSponsor: boolean = false;
 
@@ -65,8 +62,19 @@ export class PlaceOrderDialogComponent implements OnInit {
     private userService: UserService,
     private storage: LocalStorageService,
     private paymentPaidService: PaymentPaidService,
-    private totalOrderPipe: TotalOrderPipe
-  ) { }
+    private totalOrderPipe: TotalOrderPipe,
+    @Inject(NZ_MODAL_DATA) data: {
+      deliveryInfo: DeliveryRO;
+      assignUserId?: string;
+      listOrders?: OrderRO[];
+      isSponsor?: boolean;
+    }
+  ) {
+    this.deliveryInfo = data?.deliveryInfo;
+    this.assignUserId = data?.assignUserId;
+    this.listOrders = data?.listOrders ?? [];
+    this._isSponsor = !!data?.isSponsor;
+  }
 
   ngOnInit(): void {
     this.initPlaceOrderForm();

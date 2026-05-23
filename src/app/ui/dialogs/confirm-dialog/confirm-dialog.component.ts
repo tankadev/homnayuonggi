@@ -1,6 +1,6 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 
-import { NzModalRef } from 'ng-zorro-antd/modal';
+import { NzModalRef, NZ_MODAL_DATA } from 'ng-zorro-antd/modal';
 
 @Component({
   selector: 'confirm-dialog',
@@ -9,11 +9,14 @@ import { NzModalRef } from 'ng-zorro-antd/modal';
 })
 export class ConfirmDialogComponent implements OnInit {
 
-  @Input() body: string;
+  body: string;
 
   constructor(
-    private modal: NzModalRef
-  ) { }
+    private modal: NzModalRef,
+    @Inject(NZ_MODAL_DATA) data: { body: string }
+  ) {
+    this.body = data?.body;
+  }
 
   ngOnInit(): void {
   }

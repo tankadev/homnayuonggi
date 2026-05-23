@@ -49,7 +49,7 @@ export class RoomsComponent implements OnInit {
           nzClosable: false,
           nzAutofocus: null,
           nzMaskClosable: false,
-          nzComponentParams: {
+          nzData: {
             roomInfo: room,
           }
         });

@@ -59,7 +59,7 @@ export class ListOrderComponent implements OnInit {
       nzClosable: false,
       nzAutofocus: null,
       nzMaskClosable: false,
-      nzComponentParams: {
+      nzData: {
         body: 'Tất cả thông tin đặt món sẽ bị xóa, bạn có chắc chắn muốn hủy bình chọn quán này ?'
       }
     });
@@ -155,7 +155,7 @@ export class ListOrderComponent implements OnInit {
       nzClosable: false,
       nzAutofocus: null,
       nzMaskClosable: false,
-      nzComponentParams: {
+      nzData: {
         note: noteContent
       }
     });
@@ -188,7 +188,7 @@ export class ListOrderComponent implements OnInit {
       nzClosable: false,
       nzAutofocus: null,
       nzMaskClosable: false,
-      nzComponentParams: {
+      nzData: {
         isSponsor: false,
         assignUserId: this.assignUserId,
         deliveryInfo: this.deliveryInfo,

@@ -1,6 +1,6 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { NzModalRef } from 'ng-zorro-antd/modal';
+import { NzModalRef, NZ_MODAL_DATA } from 'ng-zorro-antd/modal';
 
 @Component({
   selector: 'note-dialog',
@@ -9,14 +9,17 @@ import { NzModalRef } from 'ng-zorro-antd/modal';
 })
 export class NoteDialogComponent implements OnInit {
 
-  @Input() note?: string;
+  note?: string;
 
   noteForm: FormGroup;
 
   constructor(
     private modal: NzModalRef,
     private fb: FormBuilder,
-  ) { }
+    @Inject(NZ_MODAL_DATA) data: { note?: string }
+  ) {
+    this.note = data?.note;
+  }
 
   ngOnInit(): void {
     this.noteForm = this.fb.group({

@@ -1,6 +1,6 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { NzModalRef } from 'ng-zorro-antd/modal';
+import { NzModalRef, NZ_MODAL_DATA } from 'ng-zorro-antd/modal';
 import { NzNotificationService } from 'ng-zorro-antd/notification';
 import { environment } from 'src/environments/environment';
 
@@ -18,7 +18,7 @@ import { LocalStorageService } from 'src/app/services/localstorage.service';
 })
 export class JoinRoomPwdComponent implements OnInit {
 
-  @Input() roomInfo: RoomRO;
+  roomInfo: RoomRO;
 
   joinRoomForm: FormGroup;
 
@@ -26,8 +26,11 @@ export class JoinRoomPwdComponent implements OnInit {
     private fb: FormBuilder,
     private modal: NzModalRef,
     private notification: NzNotificationService,
-    private storage: LocalStorageService
-  ) { }
+    private storage: LocalStorageService,
+    @Inject(NZ_MODAL_DATA) data: { roomInfo: RoomRO }
+  ) {
+    this.roomInfo = data?.roomInfo;
+  }
 
   ngOnInit(): void {
     this.joinRoomForm = this.fb.group({

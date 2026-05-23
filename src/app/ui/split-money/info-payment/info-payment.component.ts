@@ -65,7 +65,7 @@ export class InfoPaymentComponent implements OnInit {
       nzClosable: false,
       nzAutofocus: null,
       nzMaskClosable: false,
-      nzComponentParams: {
+      nzData: {
         body: 'Bạn có chắc chắn muốn tạo bình chọn mới chứ ?'
       }
     });
@@ -93,7 +93,7 @@ export class InfoPaymentComponent implements OnInit {
       nzClosable: false,
       nzAutofocus: null,
       nzMaskClosable: false,
-      nzComponentParams: {
+      nzData: {
         body: 'Bạn đã nhận được đơn hàng này rồi phải không ?'
       }
     });
