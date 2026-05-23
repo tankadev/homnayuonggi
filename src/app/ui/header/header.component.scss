@@ -1,219 +1,204 @@
-:host ::ng-deep nz-header {
-  width: min(96%, 1280px);
-  margin: 12px auto 0;
-  padding: 0 20px;
-  height: 64px;
-  line-height: normal;
-  border-radius: var(--radius-lg);
-  background-color: var(--color-surface);
-  border: 1px solid var(--color-divider);
-  box-shadow: var(--shadow-sm);
+nz-header {
+  width: 95%;
+  margin: 0 auto;
+  border-bottom-left-radius: 25px;
+  border-bottom-right-radius: 25px;
+  background-color: #ffffff;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 12px;
-  position: sticky;
-  top: 12px;
-  z-index: var(--z-header);
-  backdrop-filter: saturate(180%) blur(8px);
 
   .logo {
-    font-family: var(--font-display);
-    font-weight: 700;
-    font-size: var(--text-xl);
-    color: var(--color-primary);
+    font-weight: bold;
+    font-size: 25px;
+    font-family: 'Dosis';
+    color: #407F55;
     position: relative;
-    letter-spacing: -0.01em;
-    white-space: nowrap;
 
     img {
       width: auto;
       height: 13px;
       position: absolute;
-      top: 6px;
+      top: 5px;
       left: 0;
     }
   }
 
   .room-name {
-    font-family: var(--font-display);
-    font-weight: 600;
-    font-size: var(--text-lg);
-    color: var(--color-text);
-    max-width: 30vw;
+    font-weight: bold;
+    font-size: 25px;
+    font-family: 'Dosis';
+    color: #2D3867;
+    max-width: 20vw;
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;
-    display: flex;
-    align-items: center;
-    gap: 8px;
 
     .room-icon-type {
-      color: var(--color-primary);
-      font-size: var(--text-md);
-      padding: 0;
+      padding-right: 6px;
     }
   }
 
   .btn-icon-edit-room {
     cursor: pointer;
-    color: var(--color-text-muted);
-    transition: color var(--duration-fast) var(--ease-out);
+    margin-left: 10px;
+    transition: all .3s;
 
-    &:hover { color: var(--color-primary); }
+    &:hover {
+      color: #407F55;
+    }
   }
 
   .right-content {
     display: flex;
     align-items: center;
-    gap: 10px;
   }
 
-  // Pill-shaped user box
   .nick-name-box {
     display: flex;
+    justify-content: center;
     align-items: center;
-    gap: 8px;
-    background-color: var(--color-surface-alt);
-    border-radius: var(--radius-pill);
-    transition: background-color var(--duration-base) var(--ease-out);
-    padding: 4px;
+    transition: all 0.5s;
+    background-color: #e4f0e8;
+    border-radius: 30px;
 
     .avatar {
-      width: 32px;
-      height: 32px;
+      width: 35px;
+      height: 35px;
       border-radius: 50%;
       display: flex;
       justify-content: center;
       align-items: center;
-      background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
-      color: var(--color-text-on-brand);
+      background-color: #407F55;
+      border: 1px solid #ffffff;
 
-      span {
-        font-size: var(--text-sm);
-        font-weight: 600;
-      }
+        span {
+          font-size: 0.9rem;
+          color: #ffffff;
+        }
     }
 
     .text {
-      color: var(--color-primary);
+      margin-left: 0.5rem;
+      color: #407F55;
       margin: 0;
-      height: 32px;
-      border: 1px solid var(--color-primary);
+      height: 30px;
+      border: 1px solid #407F55;
       display: flex;
       align-items: center;
-      padding: 0 14px;
-      border-radius: var(--radius-pill);
-      font-size: var(--text-sm);
-      font-weight: 600;
+      justify-content: center;
+      padding: 0 0.5rem;
+      border-radius: 30px;
+      font-size: 0.9rem;
       cursor: pointer;
-      transition: all var(--duration-base) var(--ease-out);
-
-      &:hover {
-        background: var(--color-primary);
-        color: var(--color-text-on-brand);
-      }
     }
 
     .name {
-      height: 32px;
+      height: 30px;
       display: flex;
       align-items: center;
-      padding-right: 4px;
-      color: var(--color-text);
-      font-weight: 600;
-      font-size: var(--text-sm);
+      justify-content: center;
+      margin: 0 0.4rem;
+      color: #2D3867;
+      font-weight: bold;
     }
 
-    &:hover { background-color: var(--color-primary-soft); }
-  }
-
-  // Icon buttons (logout, refresh)
-  .btn-logout,
-  .btn-refresh-config {
-    width: 36px;
-    height: 36px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
-    border: 1px solid transparent;
-    cursor: pointer;
-    transition: all var(--duration-base) var(--ease-out);
-    font-size: var(--text-base);
+    &:hover {
+      opacity: 0.8;
+    }
   }
 
   .btn-logout {
-    background-color: rgba(229, 72, 77, 0.08);
-    color: var(--color-danger);
+    width: 35px;
+    height: 35px;
+    background-color: rgba(255, 65, 84, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 1rem;
+    border-radius: 50%;
+    border: 1px solid transparent;
+    color: #FF4154;
+    cursor: pointer;
+    transition: all .3s ease-in-out;
 
     &:hover {
-      background-color: var(--color-danger);
-      color: #fff;
+      border-color: #FF4154;
     }
   }
 
   .btn-refresh-config {
-    background-color: rgba(42, 109, 204, 0.08);
-    color: var(--color-info);
-
-    &:hover:not(:disabled) {
-      background-color: var(--color-info);
-      color: #fff;
-    }
-
-    &:disabled { cursor: not-allowed; opacity: 0.6; }
-  }
-
-  // Quit room (rectangular pill)
-  .btn-quit-room {
-    height: 36px;
-    background-color: var(--color-surface-alt);
+    width: 35px;
+    height: 35px;
+    background-color: rgba(0, 122, 255, 0.08);
     display: flex;
     align-items: center;
-    padding: 0 16px;
-    border-radius: var(--radius-pill);
+    justify-content: center;
+    margin-right: 0.75rem;
+    border-radius: 50%;
     border: 1px solid transparent;
-    color: var(--color-text);
+    color: #007AFF;
     cursor: pointer;
-    font-weight: 600;
-    font-size: var(--text-sm);
-    transition: all var(--duration-base) var(--ease-out);
+    transition: all .3s ease-in-out;
+
+    &:hover:not(:disabled) {
+      border-color: #007AFF;
+    }
+
+    &:disabled {
+      cursor: not-allowed;
+      opacity: 0.6;
+    }
+  }
+
+  .btn-quit-room {
+    width: auto;
+    height: 35px;
+    background-color: #e4f0e8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 1rem;
+    border-radius: 20px;
+    border: 1px solid transparent;
+    color: #2D3867;
+    cursor: pointer;
+    font-weight: bold;
+    transition: all .3s ease-in-out;
 
     &:hover {
-      color: var(--color-primary);
-      border-color: var(--color-primary);
-      background-color: var(--color-primary-soft);
+      color: #407F55;
+      border-color: #407F55;
     }
   }
 
   .notify-payment-paid {
+    margin-right: 15px;
     cursor: pointer;
-    width: 36px;
-    height: 36px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
-    background-color: var(--color-accent-soft);
-    color: var(--color-accent-dark);
-    transition: transform var(--duration-base) var(--ease-out);
+    animation: notifyMove;
+    animation-iteration-count: infinite;
+    animation-duration: 1s;
+    animation-timing-function: ease-out;
 
-    span { font-size: var(--text-md); color: inherit; }
+    span {
+      font-size: 1.1vw;
+      color: #2D3867;
+      transition: all .3s;
+    }
 
-    &:hover { transform: scale(1.06); }
+    &:hover {
+      span {
+        color: #407F55;
+      }
+    }
   }
-}
 
-// Responsive
-@media (max-width: 768px) {
-  :host ::ng-deep nz-header {
-    padding: 0 12px;
-
-    .logo { font-size: var(--text-md); }
-    .room-name { font-size: var(--text-base); max-width: 35vw; }
-    .right-content { gap: 6px; }
-    .btn-quit-room { padding: 0 10px; font-size: var(--text-xs); }
-    .nick-name-box .name { display: none; }
+  @keyframes notifyMove {
+    from {
+      scale: 1;
+    }
+    to {
+      scale: 1.1;
+    }
   }
 }

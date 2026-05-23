@@ -1,84 +1,89 @@
 :host ::ng-deep .join-room-form {
-  background-color: var(--color-surface);
-  padding: 28px;
-  border-radius: var(--radius-lg);
+  background-color: #F9FAFE;
+  padding: 24px;
+  border-radius: 10px;
 
   &__header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1rem;
 
-    h1 {
-      font-family: var(--font-display);
-      font-size: var(--text-lg);
-      font-weight: 700;
-      color: var(--color-text);
-      margin: 0;
-    }
+      .btn-close-modal {
+          color: #B4BFCE;
+          background-color: rgb(236, 243, 254);
+          padding: 0.2rem 1.5rem;
+          border: 0;
+          border-top-right-radius: 4px;
+          border-bottom-right-radius: 4px;
+          border-top-left-radius: 30px;
+          border-bottom-left-radius: 30px;
+          font-size: 0.8rem;
+          font-weight: bold;
+          cursor: pointer;
+          transition: all .3s ease-in-out;
 
-    .btn-close-modal {
-      color: var(--color-text-muted);
-      background-color: var(--color-surface-alt);
-      padding: 6px 14px;
-      border: 0;
-      border-radius: var(--radius-pill);
-      font-size: var(--text-xs);
-      font-weight: 600;
-      cursor: pointer;
-      transition: all var(--duration-base) var(--ease-out);
+          &:active,
+          &:focus {
+              outline: none;
+              border: 0;
+          }
 
-      &:active, &:focus { outline: none; }
-      &:hover {
-        color: var(--color-text);
-        background-color: var(--color-border);
+          &:hover {
+              color: #2D3867;
+              background-color: rgba(236, 243, 254, 0.7);
+          }
       }
-    }
+
+      h1 {
+          margin: 0;
+      }
   }
 
   form {
-    .form-content {
-      background-color: var(--color-bg);
-      border-radius: var(--radius-md);
-      padding: 20px 18px 6px;
-      border: 1px solid var(--color-divider);
+      .form-content {
+          margin-top: 2rem;
+          background-color: #ffffff;
+          border-radius: 5px;
+          box-shadow: 0px 1px 15px rgba(180, 191, 206, 0.1);
+          padding: 2.2rem 2rem 0.5rem 2rem;
 
-      input {
-        padding: 10px 14px;
-        background-color: var(--color-surface);
-        border: 1px solid var(--color-border);
-        border-radius: var(--radius-sm);
-        transition: all var(--duration-base) var(--ease-out);
+          input {
+              padding: 0.7rem;
+              background-color: #F9FAFE;
+              border: 1px solid #ECF3FE;
+              transition: all .3s ease-in-out;
+              animation-duration: 0.1s;
+              animation-name: showOut;
+              animation-timing-function: ease-in-out;
 
-        &:hover { border-color: var(--color-primary); }
-        &:focus {
-          border-color: var(--color-primary);
-          box-shadow: 0 0 0 3px rgba(47, 122, 82, 0.12);
-        }
+              &:hover {
+                  border-color: rgba(0, 83, 255, 0.3);
+              }
+          }
+
+          nz-form-control.first-control {
+              margin-bottom: 0.7rem;
+          }
+
+          nz-form-item.ant-form-item-has-error {
+              input.ng-invalid {
+                  border-color: #ff4d4f !important;
+              }
+          }
       }
 
-      nz-form-item.ant-form-item-has-error input.ng-invalid {
-        border-color: var(--color-danger) !important;
+      .btn-footer {
+          width: 100%;
+          border-radius: 5px;
+          border: 0;
+          background: #407F55;
+          margin-top: 1.5rem;
+          padding: 0.9rem;
+          color: #ffffff;
+          font-size: 1.1rem;
+          cursor: pointer;
+          transition: all .3s ease-in-out;
       }
-    }
-
-    .btn-footer {
-      width: 100%;
-      border-radius: var(--radius-sm);
-      border: 0;
-      background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
-      margin-top: 20px;
-      padding: 14px;
-      color: var(--color-text-on-brand);
-      font-size: var(--text-base);
-      font-weight: 600;
-      cursor: pointer;
-      transition: all var(--duration-base) var(--ease-out);
-
-      &:hover {
-        transform: translateY(-1px);
-        box-shadow: var(--shadow-brand);
-      }
-    }
   }
 }
