@@ -20,7 +20,7 @@ type LoginType = 'REGISTER' | 'LOGIN';
 })
 export class JoinToAppComponent implements OnInit {
 
-  usersList: UserRO[] = JSON.parse(localStorage.getItem(LocalStorage.USER_LIST));
+  usersList: UserRO[] = JSON.parse(localStorage.getItem(LocalStorage.USER_LIST)) ?? [];
 
   joinAppForm: FormGroup;
   loginMethod: LoginType = 'LOGIN';

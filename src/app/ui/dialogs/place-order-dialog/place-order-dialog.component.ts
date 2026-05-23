@@ -39,7 +39,7 @@ export class PlaceOrderDialogComponent implements OnInit {
   deliveryUpdateDTO: DeliveryDTO = new DeliveryDTO();
   placeOrderForm: FormGroup;
   paymentForm: FormGroup;
-  userList: UserRO[] = JSON.parse(localStorage.getItem(LocalStorage.USER_LIST));
+  userList: UserRO[] = JSON.parse(localStorage.getItem(LocalStorage.USER_LIST)) ?? [];
   room: RoomRO = this.storage.getSelectedRoom();
 
   splitMoneyOptions: SplitMoneyModel[] = [

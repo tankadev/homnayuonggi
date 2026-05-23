@@ -25,7 +25,7 @@ export class CreateDeliveryFormComponent implements OnInit {
   @Output() onClose = new EventEmitter<boolean>();
 
   createDeliveryForm: FormGroup;
-  userList: UserRO[] = JSON.parse(localStorage.getItem(LocalStorage.USER_LIST));
+  userList: UserRO[] = JSON.parse(localStorage.getItem(LocalStorage.USER_LIST)) ?? [];
   isShowSpinner: boolean = false;
 
   constructor(
