@@ -1,0 +1,51 @@
+.cancel-preview {
+  background: color-mix(in oklab, var(--danger) 7%, var(--surface-2));
+  border: 1px dashed color-mix(in oklab, var(--danger) 35%, var(--line));
+  border-radius: 12px;
+  padding: 12px 14px;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+.cancel-preview-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  background: var(--danger);
+  color: white;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+.cancel-preview-body {
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--ink-2);
+}
+.cancel-preview-body b {
+  color: var(--ink);
+  font-weight: 700;
+}
+.cancel-stats {
+  display: flex;
+  gap: 6px;
+  margin-top: 8px;
+  flex-wrap: wrap;
+}
+.cancel-stat-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  font-size: 11px;
+  color: var(--ink-2);
+  font-weight: 600;
+}
+.cancel-stat-chip b {
+  color: var(--danger);
+  font-family: var(--mono);
+  font-weight: 700;
+}

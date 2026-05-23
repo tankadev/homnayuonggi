@@ -1,0 +1,259 @@
+:host {
+  display: contents;
+}
+
+.room-card {
+  background: var(--surface);
+  border: 1px solid var(--line-soft);
+  border-radius: 18px;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  transition: 0.2s ease;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  text-align: left;
+  font-family: inherit;
+  appearance: none;
+  min-height: 230px;
+}
+.room-card:hover {
+  border-color: var(--primary);
+  transform: translateY(-3px);
+  box-shadow: 0 14px 32px -16px color-mix(in oklab, var(--primary) 35%, transparent);
+}
+.room-card.is-active {
+  border-color: color-mix(in oklab, var(--primary) 35%, var(--line));
+}
+
+.rc-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 8px;
+}
+.rc-badges {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.rc-mine-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 18px;
+  border-radius: 999px;
+  background: color-mix(in oklab, var(--amber) 22%, var(--surface));
+  color: color-mix(in oklab, var(--amber) 80%, var(--ink));
+  border: 1px solid color-mix(in oklab, var(--amber) 35%, var(--line));
+}
+.rc-avatar {
+  width: 54px;
+  height: 54px;
+  border-radius: 16px;
+  display: grid;
+  place-items: center;
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: 19px;
+  letter-spacing: -0.03em;
+  color: white;
+  position: relative;
+  background: linear-gradient(135deg, var(--av-a, #4a6a4a), var(--av-b, #2c4a2c));
+  box-shadow: 0 4px 10px -4px rgba(0, 0, 0, 0.18);
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.rc-avatar.has-shop {
+  padding: 3px;
+  background: white;
+  box-shadow: 0 4px 10px -4px rgba(0, 0, 0, 0.15);
+  border: 1px solid var(--line-soft);
+}
+.rc-avatar.has-shop .rc-avatar-inner {
+  width: 100%;
+  height: 100%;
+  border-radius: 13px;
+  background: linear-gradient(135deg, var(--av-a), var(--av-b));
+  display: grid;
+  place-items: center;
+  font-size: 22px;
+  position: relative;
+  overflow: hidden;
+}
+.rc-avatar.has-shop .rc-avatar-inner::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 30% 25%, rgba(255, 255, 255, 0.22), transparent 55%),
+    repeating-linear-gradient(45deg, transparent 0 4px, rgba(255, 255, 255, 0.05) 4px 5px);
+}
+.rc-avatar.has-photo {
+  padding: 0;
+  background: var(--bg-2);
+  border: 1px solid var(--line-soft);
+}
+.rc-avatar-photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  border-radius: inherit;
+}
+
+.rc-vis-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 3px 8px 3px 6px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  background: var(--primary-soft);
+  color: var(--primary-ink);
+  border: 1px solid color-mix(in oklab, var(--primary) 18%, transparent);
+}
+.rc-vis-badge.private {
+  background: var(--bg-2);
+  color: var(--ink-2);
+  border-color: var(--line);
+}
+
+.rc-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 2px 8px 2px 6px;
+  border-radius: 999px;
+  align-self: flex-start;
+  white-space: nowrap;
+}
+.rc-status.live {
+  background: color-mix(in oklab, var(--accent) 14%, transparent);
+  color: var(--accent);
+}
+.rc-status.live .dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+  animation: pulse 1.4s ease-in-out infinite;
+}
+.rc-status.editing {
+  background: color-mix(in oklab, var(--amber) 18%, transparent);
+  color: color-mix(in oklab, var(--amber) 75%, var(--ink));
+}
+.rc-status.editing .dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--amber);
+  animation: pulse 1.4s ease-in-out infinite;
+}
+.rc-status.completed {
+  background: color-mix(in oklab, var(--primary) 14%, transparent);
+  color: var(--primary-ink);
+}
+.rc-status.completed .dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--primary);
+}
+.rc-status.idle {
+  background: var(--bg-2);
+  color: var(--muted);
+}
+.rc-status.idle .dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--muted);
+  opacity: 0.6;
+}
+
+.rc-info {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.rc-shop {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--primary-ink);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.rc-name {
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: 17px;
+  line-height: 1.15;
+  letter-spacing: -0.025em;
+  color: var(--ink);
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  min-height: 40px;
+}
+.rc-desc {
+  font-size: 11.5px;
+  color: var(--muted);
+  margin: 0;
+  line-height: 1.45;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  min-height: 34px;
+}
+.rc-desc.empty {
+  font-style: italic;
+  color: color-mix(in oklab, var(--muted) 70%, transparent);
+}
+
+.rc-foot {
+  margin-top: auto;
+  padding-top: 10px;
+  border-top: 1px dashed var(--line);
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+.rc-join {
+  appearance: none;
+  border: 0;
+  background: var(--primary);
+  color: white;
+  padding: 7px 12px;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 11.5px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: 0.15s;
+  flex-shrink: 0;
+}
+.room-card:hover .rc-join {
+  padding-right: 14px;
+  box-shadow: 0 6px 14px -6px color-mix(in oklab, var(--primary) 75%, transparent);
+}
+.rc-join app-icon { transition: transform 0.18s; }
+.room-card:hover .rc-join app-icon { transform: translateX(2px); }
+
+.room-card.idle .rc-name {
+  color: var(--ink-2);
+}

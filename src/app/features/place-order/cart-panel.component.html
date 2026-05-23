@@ -1,0 +1,151 @@
+<aside class="cart">
+  <div class="cart-head">
+    <div class="cart-title-row">
+      <h3 class="card-title">Đã chọn</h3>
+      <span class="cart-count">{{ itemCount }} phần · {{ grouped.length }} món</span>
+    </div>
+    <span class="card-sub">
+      <span class="people-tip" tabindex="0">
+        <b>{{ peopleCount }} người</b>
+        <span *ngIf="orderers.length" class="people-tip-pop" role="tooltip">
+          <span class="ptp-head">Đã đặt món ({{ orderers.length }})</span>
+          <ul class="ptp-list">
+            <li *ngFor="let m of orderers" [class.me]="m.me">
+              <span class="ptp-av">{{ m.initial }}</span>
+              <span class="ptp-name">
+                {{ m.name }}<em *ngIf="m.me"> · bạn</em><em *ngIf="m.owner && !m.me"> · người đặt</em>
+              </span>
+            </li>
+          </ul>
+        </span>
+      </span>
+      đã đặt — mỗi người tự thêm phần của mình
+    </span>
+  </div>
+
+  <div class="cart-body">
+    <ng-container *ngIf="!empty; else emptyState">
+      <ul class="cart-groups">
+        <li *ngFor="let g of grouped; trackBy: trackByDish" class="cart-group">
+          <div class="cg-head">
+            <div class="cg-thumb" [style.--img-a]="g.dish.img[0]" [style.--img-b]="g.dish.img[1]">
+              <span class="cg-thumb-placeholder" aria-hidden="true">🍽️</span>
+              <img
+                *ngIf="g.dish.photoUrl && !thumbFailed[g.dish.id]"
+                class="cg-thumb-photo"
+                [class.loaded]="thumbLoaded[g.dish.id]"
+                [src]="g.dish.photoUrl"
+                [alt]="g.dish.name"
+                loading="lazy"
+                (load)="thumbLoaded[g.dish.id] = true"
+                (error)="thumbFailed[g.dish.id] = true"
+              />
+            </div>
+            <div class="cg-info">
+              <div class="cg-name">{{ g.dish.name }}</div>
+              <div class="cg-meta">{{ g.qty }} phần · {{ g.dish.price | vnd }}đ/phần</div>
+            </div>
+            <div class="cg-price">{{ g.subtotal | vnd }}<span>đ</span></div>
+          </div>
+          <ul class="cg-lines">
+            <li
+              *ngFor="let l of g.lines; trackBy: trackByLine"
+              class="cg-line"
+              [class.me]="memberMap[l.memberId]?.me"
+              [class.owner]="memberMap[l.memberId]?.owner"
+            >
+              <span class="cgl-avatar">
+                {{ memberMap[l.memberId]?.initial || '?' }}
+                <span *ngIf="memberMap[l.memberId]?.owner" class="cgl-crown" title="Người được chỉ định đặt đơn">
+                  <app-icon name="crown" [size]="10" [filled]="true"></app-icon>
+                </span>
+              </span>
+              <div class="cgl-info">
+                <div class="cgl-who">
+                  {{ memberMap[l.memberId]?.name || l.memberId }}<em *ngIf="memberMap[l.memberId]?.me"> · bạn</em><em *ngIf="memberMap[l.memberId]?.owner && !memberMap[l.memberId]?.me" class="role"> · người đặt</em>
+
+                  <span *ngIf="memberMap[l.memberId]?.me; else readonlyQty" class="cgl-stepper" (click)="$event.stopPropagation()">
+                    <button type="button" title="Bớt 1 phần" (click)="minusItem.emit(l.dishId)">
+                      <app-icon name="minus" [size]="11"></app-icon>
+                    </button>
+                    <span>{{ l.qty }}</span>
+                    <button type="button" title="Thêm 1 phần" (click)="addItem.emit(l.dishId)">
+                      <app-icon name="plus" [size]="11"></app-icon>
+                    </button>
+                  </span>
+                  <ng-template #readonlyQty>
+                    <span class="cgl-qty">×{{ l.qty }}</span>
+                  </ng-template>
+                </div>
+
+                <button
+                  *ngIf="memberMap[l.memberId]?.me; else readonlyNote"
+                  type="button"
+                  class="cgl-note-btn"
+                  (click)="editNote.emit(l)"
+                >
+                  <app-icon name="pencil" [size]="11"></app-icon>
+                  <span class="nb-text" [class.has-value]="l.note" [class.placeholder]="!l.note">
+                    {{ l.note ? '"' + l.note + '"' : 'Thêm ghi chú gửi quán…' }}
+                  </span>
+                </button>
+                <ng-template #readonlyNote>
+                  <div *ngIf="l.note" class="cgl-note">"{{ l.note }}"</div>
+                </ng-template>
+              </div>
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </ng-container>
+    <ng-template #emptyState>
+      <div class="cart-empty">
+        <div class="empty-illo big"><app-icon name="cart" [size]="28"></app-icon></div>
+        <p>Chưa chọn món nào</p>
+        <span>Bấm nút <span class="kbd"><app-icon name="plus" [size]="11"></app-icon></span> trên món để thêm vào đơn</span>
+      </div>
+    </ng-template>
+  </div>
+
+  <div class="cart-foot">
+    <div class="timer-strip" [class.expired]="expired">
+      <span class="pulse"></span>
+      <span class="timer-label">{{ expired ? 'Bình chọn đã' : 'Thời gian bình chọn' }}</span>
+      <span class="timer-val" *ngIf="!expired">
+        {{ hours | pad }}<span>:</span>{{ minutes | pad }}<span>:</span>{{ seconds | pad }}
+      </span>
+      <span class="timer-val expired-tag" *ngIf="expired">Hết giờ</span>
+    </div>
+
+    <div class="totals">
+      <div class="row total">
+        <span>Tổng cộng</span>
+        <b>{{ total | vnd }}<span>đ</span></b>
+      </div>
+    </div>
+
+    <div class="cart-actions" [class.solo]="!isOrderer">
+      <button
+        class="btn-ghost"
+        type="button"
+        title="Hủy toàn bộ bình chọn"
+        (click)="clearAll.emit()"
+      >Hủy đơn</button>
+      <button
+        *ngIf="isOrderer"
+        class="btn-primary"
+        type="button"
+        [disabled]="empty"
+        [title]="empty ? 'Cần ít nhất 1 món' : 'Chốt đơn và chia tiền'"
+        (click)="submit.emit()"
+      >
+        <app-icon name="check" [size]="16"></app-icon>
+        Chốt đơn
+      </button>
+      <div *ngIf="!isOrderer" class="cart-only-orderer">
+        <app-icon name="crown" [size]="12" [filled]="true"></app-icon>
+        Chờ <b>{{ ordererName || 'người đặt' }}</b> chốt đơn
+      </div>
+    </div>
+  </div>
+</aside>

@@ -1,0 +1,162 @@
+:host { display: block; }
+
+.h-card {
+  background: var(--surface);
+  border: 1px solid var(--line-soft);
+  border-radius: var(--r-lg);
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.h-card-title {
+  font-family: var(--display);
+  font-weight: var(--display-weight);
+  font-size: 13.5px;
+  letter-spacing: var(--display-spacing);
+  margin: 0;
+  color: var(--ink);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.h-card-title .right {
+  margin-left: auto;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  font-weight: 700;
+  color: var(--muted);
+  background: var(--surface-2);
+  padding: 2px 8px;
+  border-radius: 999px;
+}
+
+.h-pairs-empty {
+  font-size: 11.5px;
+  color: var(--muted);
+  text-align: center;
+  padding: 10px 0;
+}
+
+.h-pairs {
+  display: flex;
+  flex-direction: column;
+}
+.h-pair {
+  display: grid;
+  grid-template-columns: 30px 1fr auto;
+  gap: 10px;
+  align-items: center;
+  padding: 9px 2px;
+  border-bottom: 1px dashed var(--line-soft);
+}
+.h-pair:last-child {
+  border-bottom: 0;
+}
+.h-pair-avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: var(--primary-soft);
+  color: var(--primary-ink);
+  display: grid;
+  place-items: center;
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: 12.5px;
+  border: 1px solid var(--line);
+}
+.h-pair-info {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+.h-pair-info .nm {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 12.5px;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+.h-pair-info .sub {
+  font-size: 10px;
+  color: var(--muted);
+}
+.h-pair-amt {
+  text-align: right;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 1px;
+}
+.h-pair-amt .v {
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: 13px;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 1px;
+}
+.h-pair-amt .v span {
+  font-size: 10px;
+  color: var(--muted);
+  font-weight: 600;
+}
+.h-pair-amt .v.pos {
+  color: var(--primary);
+}
+.h-pair-amt .v.neg {
+  color: var(--rose);
+}
+.h-pair-amt .tag {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.h-pair-amt .v.pos + .tag { color: var(--primary-ink); }
+.h-pair-amt .v.neg + .tag { color: var(--rose); }
+
+.h-pair-actions {
+  grid-column: 1 / -1;
+  display: flex;
+  gap: 5px;
+  margin-top: 4px;
+  padding-top: 4px;
+}
+.h-pair-mini-btn {
+  appearance: none;
+  flex: 1;
+  height: 26px;
+  padding: 0 10px;
+  border-radius: 7px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--ink-2);
+  font-family: inherit;
+  font-weight: 600;
+  font-size: 11px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  cursor: pointer;
+  transition: 0.15s;
+}
+.h-pair-mini-btn:hover {
+  background: var(--bg-2);
+  color: var(--ink);
+  border-color: var(--ink-2);
+}
+.h-pair-mini-btn.primary {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: white;
+}
+.h-pair-mini-btn.primary:hover {
+  background: color-mix(in oklab, var(--primary) 80%, var(--ink));
+}

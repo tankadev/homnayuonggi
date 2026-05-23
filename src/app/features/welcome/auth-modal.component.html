@@ -1,0 +1,171 @@
+<div class="wel-modal" (mousedown)="onBackdrop($event)" (keydown)="onEsc($event)" tabindex="0">
+  <div class="wel-modal-card" role="dialog" aria-label="Phương thức đăng nhập" (mousedown)="$event.stopPropagation()">
+
+    <div class="wm-head">
+      <div class="wm-head-info">
+        <h2 class="wm-title">
+          <ng-container *ngIf="step === 3; else stepTitle">
+            {{ mode === 'register' ? 'Chào mừng tới phòng tiệc 🎉' : 'Đăng nhập thành công' }}
+          </ng-container>
+          <ng-template #stepTitle>Phương thức đăng nhập</ng-template>
+        </h2>
+        <p class="wm-sub">
+          <ng-container *ngIf="step === 1">Chọn cách bắt đầu — chỉ cần một bước duy nhất.</ng-container>
+          <ng-container *ngIf="step === 2">Đặt tên mọi người sẽ thấy trong phòng.</ng-container>
+          <ng-container *ngIf="step === 3">
+            {{ mode === 'register'
+                ? 'Tài khoản đã sẵn sàng. Bắt đầu chọn quán cùng đồng đội!'
+                : 'Đưa bạn về phòng chốt món thôi.' }}
+          </ng-container>
+        </p>
+      </div>
+      <button type="button" class="wm-close" [disabled]="submitting" (click)="closed.emit()">Đóng</button>
+    </div>
+
+    <div class="wm-progress" aria-hidden="true">
+      <span *ngFor="let i of progress" class="wm-prog-step"
+            [class.active]="progressClass(i) === 'active'"
+            [class.done]="progressClass(i) === 'done'"></span>
+    </div>
+
+    <div class="wm-body">
+      <div *ngIf="step === 1" class="wm-step" [class.dir-back]="stepDir === 'back'">
+        <div class="wm-info">
+          <span class="wm-info-ic">i</span>
+          <span *ngIf="mode === 'register'; else loginInfo">
+            Để đăng ký bạn chỉ cần nhập vào <b>Tài khoản</b> và <b>Tên hiển thị</b>.
+          </span>
+          <ng-template #loginInfo>
+            <span>Bạn chỉ cần nhập đúng <b>Tài khoản</b> là có thể đăng nhập.</span>
+          </ng-template>
+        </div>
+
+        <div class="wm-modes" role="radiogroup" aria-label="Phương thức">
+          <button type="button" class="wm-mode" [class.active]="mode === 'register'"
+                  [disabled]="submitting" (click)="setMode('register')" role="radio" [attr.aria-checked]="mode === 'register'">
+            <span class="wm-mode-title">
+              <span class="check"><app-icon name="check" [size]="12" [sw]="2.6"></app-icon></span>
+              Đăng ký
+            </span>
+            <span class="wm-mode-sub">Bạn chưa có tài khoản?</span>
+          </button>
+          <button type="button" class="wm-mode" [class.active]="mode === 'login'"
+                  [disabled]="submitting" (click)="setMode('login')" role="radio" [attr.aria-checked]="mode === 'login'">
+            <span class="wm-mode-title">
+              <span class="check"><app-icon name="check" [size]="12" [sw]="2.6"></app-icon></span>
+              Đăng nhập
+            </span>
+            <span class="wm-mode-sub">Bạn đã có tài khoản rồi?</span>
+          </button>
+        </div>
+
+        <div class="wm-field">
+          <label class="wm-field-label" for="auth-user">
+            <span>Tài khoản <span class="req">*</span></span>
+            <span class="hint">tối thiểu 3 ký tự, chữ thường / số / gạch dưới</span>
+          </label>
+          <div class="wm-input-wrap">
+            <span class="leading-ic"><app-icon name="at" [size]="15"></app-icon></span>
+            <input #userInput id="auth-user" class="wm-input"
+                   placeholder="Vd: vitkute"
+                   autocomplete="off" spellcheck="false"
+                   maxlength="32"
+                   [disabled]="submitting"
+                   [(ngModel)]="username" name="username"
+                   (keydown.enter)="advance()"/>
+          </div>
+          <div *ngIf="userErr" class="wm-field-err">
+            <app-icon name="info" [size]="12"></app-icon>
+            Tài khoản tối thiểu 3 ký tự — chỉ chữ thường, số hoặc dấu gạch dưới.
+          </div>
+          <div *ngIf="error && !userErr" class="wm-field-err">
+            <app-icon name="info" [size]="12"></app-icon> {{ error }}
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="step === 2" class="wm-step" [class.dir-back]="stepDir === 'back'">
+        <div class="wm-info">
+          <span class="wm-info-ic">i</span>
+          <span>
+            Tài khoản <b>{{ '@' + cleanUser }}</b> sẵn sàng — đặt thêm <b>Tên hiển thị</b>
+            cho cả phòng nhận ra bạn nhé!
+          </span>
+        </div>
+
+        <div class="wm-field">
+          <label class="wm-field-label" for="auth-name">
+            <span>Tên hiển thị <span class="req">*</span></span>
+            <span class="hint">cả phòng sẽ thấy tên này</span>
+          </label>
+          <div class="wm-input-wrap">
+            <span class="leading-ic"><app-icon name="user" [size]="15" [filled]="true"></app-icon></span>
+            <input #nameInput id="auth-name" class="wm-input"
+                   placeholder="Vd: Chick Trần"
+                   autocomplete="off"
+                   maxlength="32"
+                   [disabled]="submitting"
+                   [(ngModel)]="displayName" name="displayName"
+                   (keydown.enter)="advance()"/>
+          </div>
+          <div *ngIf="nameErr" class="wm-field-err">
+            <app-icon name="info" [size]="12"></app-icon> Vui lòng nhập tên hiển thị.
+          </div>
+          <div *ngIf="error && !nameErr" class="wm-field-err">
+            <app-icon name="info" [size]="12"></app-icon> {{ error }}
+          </div>
+        </div>
+
+        <div class="wm-id-card">
+          <span class="wm-id-av">{{ (cleanName[0] || cleanUser[0] || '?').toUpperCase() }}</span>
+          <span class="wm-id-info">
+            <b>{{ cleanName || 'Tên hiển thị' }}</b>
+            <span>{{ '@' + cleanUser }}</span>
+          </span>
+        </div>
+      </div>
+
+      <div *ngIf="step === 3" class="wm-step wm-success" [class.dir-back]="stepDir === 'back'">
+        <div class="wm-success-orb"><app-icon name="check" [size]="40" [sw]="2.6"></app-icon></div>
+        <h3 class="wm-success-title">
+          {{ mode === 'register' ? 'Hello, ' + finalName + '!' : 'Chào lại, ' + finalName + '!' }}
+        </h3>
+        <p class="wm-success-sub">
+          <ng-container *ngIf="mode === 'register'; else loginSub">
+            Tài khoản <b>{{ '@' + cleanUser }}</b> đã được tạo. Bấm tiếp tục để vào danh sách phòng đang mở.
+          </ng-container>
+          <ng-template #loginSub>
+            Đã xác minh <b>{{ '@' + cleanUser }}</b>. Đưa bạn về phòng chốt món ngay đây.
+          </ng-template>
+        </p>
+        <div class="wm-id-card">
+          <span class="wm-id-av">{{ initial }}</span>
+          <span class="wm-id-info">
+            <b>{{ finalName }}</b>
+            <span>{{ '@' + cleanUser }}</span>
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <div class="wm-foot">
+      <button *ngIf="step > 1 && step < 3" type="button" class="wm-back"
+              [disabled]="submitting" (click)="back()">
+        <app-icon name="chevron-l" [size]="14"></app-icon> Quay lại
+      </button>
+      <button *ngIf="step < 3" type="button" class="wm-primary grow"
+              [disabled]="currentDisabled" (click)="advance()">
+        <ng-container *ngIf="submitting; else readyTpl">
+          <span class="wm-spinner"></span> Đang xử lý…
+        </ng-container>
+        <ng-template #readyTpl>
+          {{ step === 1 ? (mode === 'register' ? 'Tiếp tục' : 'Xác nhận') : 'Hoàn tất đăng ký' }}
+          <app-icon name="arrow-r" [size]="16"></app-icon>
+        </ng-template>
+      </button>
+      <button *ngIf="step === 3" type="button" class="wm-primary grow" (click)="finish()">
+        Vào danh sách phòng <app-icon name="arrow-r" [size]="16"></app-icon>
+      </button>
+    </div>
+  </div>
+</div>

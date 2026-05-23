@@ -1,0 +1,310 @@
+.panel {
+  background: var(--surface);
+  border-radius: var(--r-lg);
+  border: 1px solid var(--line-soft);
+  padding: 14px 16px;
+}
+.panel-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+.card-title {
+  font-family: var(--display);
+  font-weight: var(--display-weight);
+  font-size: 15px;
+  letter-spacing: var(--display-spacing);
+  margin: 0;
+  color: var(--ink);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.menu-title {
+  font-size: 17px;
+}
+.card-sub {
+  display: block;
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+.dishes {
+  display: grid;
+  gap: 6px;
+}
+.dish {
+  display: grid;
+  grid-template-columns: 84px 1fr;
+  gap: 10px;
+  padding: 8px;
+  border-radius: 12px;
+  border: 1px solid var(--line-soft);
+  background: var(--surface);
+  transition: 0.18s ease;
+  position: relative;
+}
+.dish:hover {
+  border-color: var(--primary);
+  box-shadow: 0 8px 24px -12px color-mix(in oklab, var(--primary) 30%, transparent);
+  transform: translateY(-1px);
+}
+.dish.in-cart {
+  border-color: var(--primary);
+  background: color-mix(in oklab, var(--primary-soft) 50%, var(--surface));
+}
+.dish.out {
+  opacity: 0.55;
+}
+.dish.out:hover {
+  transform: none;
+  box-shadow: none;
+  border-color: var(--line-soft);
+}
+
+.dish-img {
+  width: 84px;
+  height: 84px;
+  border-radius: 10px;
+  position: relative;
+  overflow: hidden;
+  flex-shrink: 0;
+  background: linear-gradient(135deg, var(--img-a, #8c5a37), var(--img-b, #5a3a22));
+}
+.vote-badge {
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 2px 7px 2px 5px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(8px);
+  color: var(--ink);
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  box-shadow: 0 2px 6px -2px rgba(0, 0, 0, 0.25);
+}
+.vote-badge app-icon {
+  color: var(--rose);
+}
+.dish-img-bg {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, var(--img-a, #8c5a37), var(--img-b, #5a3a22));
+  transition: transform 0.4s ease;
+}
+.dish:hover .dish-img-bg {
+  transform: scale(1.08);
+}
+.dish-img-overlay {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 30% 25%, rgba(255, 255, 255, 0.18), transparent 50%),
+    repeating-linear-gradient(45deg, transparent 0 6px, rgba(255, 255, 255, 0.05) 6px 7px);
+  pointer-events: none;
+}
+.dish.out .dish-img {
+  filter: grayscale(1);
+}
+.dish-img-photo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 0.25s ease, transform 0.4s ease;
+  z-index: 1;
+}
+.dish-img-photo.loaded {
+  opacity: 1;
+}
+.dish:hover .dish-img-photo.loaded {
+  transform: scale(1.06);
+}
+.dish-img-placeholder {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-size: 28px;
+  color: rgba(255, 255, 255, 0.55);
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.25));
+  pointer-events: none;
+  z-index: 0;
+}
+
+.dish-info {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 4px;
+}
+.dish-name {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 13px;
+  line-height: 1.2;
+  margin: 0 0 2px;
+  letter-spacing: -0.015em;
+  color: var(--ink);
+}
+.dish-desc {
+  font-size: 11px;
+  color: var(--muted);
+  margin: 0;
+  line-height: 1.3;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.dish-bottom {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.dish-meta {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+.dish-opt {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 7px;
+  border-radius: 999px;
+  background: var(--primary-soft);
+  color: var(--primary-ink);
+  font-size: 10.5px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+.dish-out-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 7px;
+  border-radius: 999px;
+  background: var(--bg-2);
+  color: var(--muted);
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.dish-buy {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.dish-price {
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: 16px;
+  letter-spacing: -0.025em;
+  color: var(--ink);
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  white-space: nowrap;
+}
+.dish-price .now {
+  display: inline-flex;
+  align-items: baseline;
+}
+.dish-price .currency {
+  font-weight: 600;
+  font-size: 11px;
+  margin-left: 1px;
+  color: var(--muted);
+}
+.dish-price.discounted .now {
+  color: var(--rose, #c14e63);
+}
+.dish-price .orig {
+  font-family: var(--display);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--muted);
+  text-decoration: line-through;
+  text-decoration-color: color-mix(in oklab, var(--muted) 75%, transparent);
+  letter-spacing: -0.01em;
+}
+.dish.in-cart .dish-price:not(.discounted) {
+  color: var(--primary-ink);
+}
+
+.add-btn {
+  appearance: none;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border-radius: 50%;
+  border: 0;
+  background: var(--primary);
+  color: white;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 0;
+  transition: 0.15s;
+  box-shadow: 0 6px 14px -6px color-mix(in oklab, var(--primary) 70%, transparent);
+}
+.add-btn app-icon {
+  display: inline-flex;
+  line-height: 0;
+}
+.add-btn:hover {
+  transform: scale(1.1) rotate(90deg);
+  transform-origin: center center;
+  box-shadow: 0 10px 20px -6px color-mix(in oklab, var(--primary) 70%, transparent);
+}
+.qty-stepper {
+  display: inline-flex;
+  align-items: center;
+  background: var(--primary);
+  color: white;
+  border-radius: 999px;
+  padding: 2px;
+  height: 30px;
+}
+.qty-stepper button {
+  appearance: none;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: white;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 0;
+  transition: 0.12s;
+}
+.qty-stepper button:hover {
+  background: rgba(255, 255, 255, 0.18);
+}
+.qty-stepper .count {
+  width: 24px;
+  text-align: center;
+  font-weight: 700;
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+}

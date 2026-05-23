@@ -1,0 +1,43 @@
+<button type="button" class="room-card" [class.is-active]="isLive || isEditing" [class.idle]="isIdle"
+        (click)="join.emit(room)" [title]="'Vào phòng &quot;' + room.name + '&quot;'">
+  <div class="rc-top">
+    <div class="rc-avatar" [class.has-shop]="hasShop" [class.has-photo]="!!room.shopPhoto"
+         [style.--av-a]="room.color[0]" [style.--av-b]="room.color[1]">
+      <img *ngIf="room.shopPhoto; else iconOrInitialTpl" class="rc-avatar-photo"
+           [src]="room.shopPhoto" [alt]="room.shop || room.name" loading="lazy"/>
+      <ng-template #iconOrInitialTpl>
+        <div *ngIf="hasShop; else initialTpl" class="rc-avatar-inner">{{ room.icon }}</div>
+        <ng-template #initialTpl><span>{{ initial }}</span></ng-template>
+      </ng-template>
+    </div>
+    <div class="rc-badges">
+      <span *ngIf="room.isMine" class="rc-mine-badge" title="Bạn là chủ phòng">
+        <app-icon name="crown" [size]="10" [filled]="true"></app-icon>
+      </span>
+      <div class="rc-vis-badge" [class.private]="room.private"
+           [title]="room.private ? 'Phòng riêng tư' : 'Phòng công khai'">
+        <app-icon [name]="room.private ? 'lock' : 'globe'" [size]="10"></app-icon>
+        {{ room.private ? 'Riêng' : 'Công khai' }}
+      </div>
+    </div>
+  </div>
+
+  <div class="rc-info">
+    <span class="rc-status" [class.live]="isLive" [class.editing]="isEditing"
+          [class.completed]="isCompleted" [class.idle]="isIdle">
+      <span class="dot"></span>
+      {{ statusLabel }}
+    </span>
+    <div *ngIf="hasShop" class="rc-shop" [title]="room.shop">{{ room.shop }}</div>
+    <h3 class="rc-name">{{ room.name }}</h3>
+    <p class="rc-desc" [class.empty]="!room.desc">
+      {{ room.desc || 'Chưa có mô tả phòng' }}
+    </p>
+  </div>
+
+  <div class="rc-foot">
+    <span class="rc-join">
+      Vào phòng <app-icon name="arrow-r" [size]="13"></app-icon>
+    </span>
+  </div>
+</button>

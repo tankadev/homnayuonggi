@@ -1,0 +1,126 @@
+<div class="pr-main">
+  <aside class="pr-col">
+    <app-order-info-card
+      [order]="order"
+      [subtotal]="subtotal"
+      [grand]="grand"
+      [participantCount]="members.length"
+      [splitMode]="splitMode"
+      [isOwner]="isOwner"
+      (splitChange)="setSplitMode($event)"
+    ></app-order-info-card>
+
+    <app-roster-card [payers]="payers" [paidMap]="paidMap"></app-roster-card>
+  </aside>
+
+  <main class="pr-col scroll">
+    <section class="pr-banner">
+      <div class="pr-banner-l">
+        <span class="pr-status-chip">
+          <span class="dot"></span> Đơn đã chốt · Chờ thanh toán
+        </span>
+        <h1 class="pr-banner-title">Đối soát &amp; đánh dấu thanh toán</h1>
+        <div class="pr-banner-sub">
+          <b>{{ members.length }} người</b> tham gia · tổng <b>{{ grand | vnd }}đ</b> ·
+          Người đặt đơn có thể đánh dấu <b>"Đã trả"</b> cho từng thành viên.
+        </div>
+      </div>
+      <div class="pr-progress-wrap">
+        <div class="pr-progress-num">
+          <b>{{ paidCount }}</b><span>/ {{ totalPayers }} người đã trả</span>
+        </div>
+        <div class="pr-progress-bar">
+          <div class="pr-progress-fill" [style.width.%]="pct"></div>
+        </div>
+        <span class="pr-progress-note">
+          Còn lại <b>{{ unpaidTotal | vnd }}đ</b> cần thu
+        </span>
+      </div>
+    </section>
+
+    <div class="pr-filter-bar">
+      <span class="lbl">
+        <app-icon name="filter" [size]="12"></app-icon> Lọc:
+      </span>
+      <div class="pr-tabs">
+        <button type="button" class="pr-tab" [class.active]="filter === 'all'" (click)="setFilter('all')">
+          Tất cả <span class="num">{{ shares.length }}</span>
+        </button>
+        <button type="button" class="pr-tab" [class.active]="filter === 'unpaid'" (click)="setFilter('unpaid')">
+          Chưa trả <span class="num">{{ totalPayers - paidCount }}</span>
+        </button>
+        <button type="button" class="pr-tab" [class.active]="filter === 'paid'" (click)="setFilter('paid')">
+          Đã trả <span class="num">{{ paidCount }}</span>
+        </button>
+      </div>
+      <span class="pr-filter-hint">Bạn được xếp lên đầu danh sách</span>
+    </div>
+
+    <ul class="pr-members">
+      <ng-container *ngIf="filtered.length; else emptyTpl">
+        <app-pr-member-card
+          *ngFor="let m of filtered; trackBy: trackByMember"
+          [member]="m"
+          [splitMode]="splitMode"
+          [paid]="!!paidMap[m.id]"
+          [paidAt]="paidAtFor(m.id)"
+          [isOwner]="isOwner"
+          (togglePaid)="onTogglePaid($event)"
+        ></app-pr-member-card>
+      </ng-container>
+      <ng-template #emptyTpl>
+        <li class="pr-empty">
+          <app-icon name="check-circle" [size]="28"></app-icon>
+          <b>Không có ai trong nhóm này</b>
+          <span>Thử đổi bộ lọc khác.</span>
+        </li>
+      </ng-template>
+    </ul>
+  </main>
+
+  <aside class="pr-col">
+    <app-you-pay-card
+      *ngIf="me"
+      [me]="me"
+      [myPaid]="myPaid"
+      [order]="order"
+      [grandTotal]="grand"
+      [unpaidTotal]="payersTotal"
+      [totalPayers]="totalPayers"
+    ></app-you-pay-card>
+  </aside>
+</div>
+
+<div *ngIf="isOwner" class="pr-fab-stack">
+  <button
+    *ngIf="isAllPaid"
+    type="button"
+    class="pr-fab-new-order pr-fab-confirm"
+    title="Xác nhận tất cả thành viên đã trả — sẽ xoá ghi nhận thanh toán"
+    (click)="confirmFullyPaid()"
+  >
+    <span class="pr-fab-icon"><app-icon name="check-circle" [size]="16"></app-icon></span>
+    <span class="pr-fab-label">
+      <b>Xác nhận thanh toán đủ</b>
+      <em>Mọi người đã trả</em>
+    </span>
+  </button>
+
+  <button type="button" class="pr-fab-new-order" title="Tạo đơn mới ở quán khác" (click)="openNewOrder()">
+    <span class="pr-fab-icon"><app-icon name="sparkle" [size]="16" [filled]="true"></app-icon></span>
+    <span class="pr-fab-label">
+      <b>Tạo đơn mới</b>
+      <em>ở quán khác</em>
+    </span>
+  </button>
+</div>
+
+<app-new-order-modal
+  *ngIf="newOrderOpen"
+  [roomName]="roomName"
+  [memberCount]="members.length"
+  [shopName]="order.shop"
+  [previousTotal]="grand"
+  (confirm)="confirmNewOrder()"
+  (closed)="newOrderOpen = false"
+></app-new-order-modal>

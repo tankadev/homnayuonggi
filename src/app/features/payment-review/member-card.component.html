@@ -1,0 +1,109 @@
+<li class="pr-member" [class.paid]="paid" [class.is-me]="member.me">
+  <div class="pr-mem-head">
+    <div class="pr-mem-avatar" [class.me]="member.me" [class.owner]="member.owner">
+      {{ member.initial }}
+    </div>
+
+    <div class="pr-mem-name">
+      <b>
+        {{ member.name }}
+        <span *ngIf="member.owner" class="pr-mem-role" title="Người đặt đơn">
+          <app-icon name="crown" [size]="9" [filled]="true"></app-icon> Người đặt đơn
+        </span>
+        <span *ngIf="member.me" class="pr-mem-role me">Bạn</span>
+      </b>
+      <span class="pr-mem-sub">
+        <span class="phone"><app-icon name="phone" [size]="10"></app-icon> {{ member.phone }}</span>
+        <span class="sep">·</span>
+        <span>{{ totalQty }} món</span>
+        <ng-container *ngIf="member.owner">
+          <span class="sep">·</span>
+          <span>Người nhận tiền</span>
+        </ng-container>
+      </span>
+    </div>
+
+    <div class="pr-mem-amount">
+      <span class="amt">{{ member.share | vnd }}<span>đ</span></span>
+      <span class="lbl">
+        Tạm tính <strong>{{ member.sub | vnd }}đ</strong>
+        <ng-container *ngIf="splitMode === 'equal'; else byItem"> + phí chia đều</ng-container>
+        <ng-template #byItem> + phí theo tỉ lệ</ng-template>
+      </span>
+    </div>
+
+    <ng-container *ngIf="member.owner; else paidActions">
+      <span class="pr-paid-static paid" title="Người đặt đơn là người nhận tiền">
+        <app-icon name="check" [size]="13" [sw]="2.4"></app-icon> Người đặt đơn
+      </span>
+    </ng-container>
+    <ng-template #paidActions>
+      <ng-container *ngIf="isOwner; else readonlyPaid">
+        <button class="pr-paid-toggle" [class.is-paid]="paid" (click)="togglePaid.emit(member.id)">
+          <span class="pill-circle"><app-icon name="check" [size]="12" [sw]="2.4"></app-icon></span>
+          {{ paid ? 'Đã trả' : 'Chưa trả' }}
+        </button>
+      </ng-container>
+      <ng-template #readonlyPaid>
+        <span class="pr-paid-static" [class.paid]="paid" [class.unpaid]="!paid">
+          <ng-container *ngIf="paid; else unpaidStatic">
+            <app-icon name="check" [size]="13" [sw]="2.4"></app-icon> Đã trả
+          </ng-container>
+          <ng-template #unpaidStatic>
+            <app-icon name="clock" [size]="13"></app-icon> Chưa trả
+          </ng-template>
+        </span>
+      </ng-template>
+    </ng-template>
+  </div>
+
+  <div class="pr-mem-body">
+    <div class="pr-mem-items">
+      <div class="pr-mem-items-title"><app-icon name="receipt" [size]="11"></app-icon> Món đã đặt</div>
+      <ul class="pr-item-list">
+        <li *ngFor="let it of member.items" class="pr-item">
+          <span class="pr-item-qty">×{{ it.qty }}</span>
+          <div>
+            <div class="pr-item-name">{{ it.name }}</div>
+            <div *ngIf="it.note" class="pr-item-note">"{{ it.note }}"</div>
+          </div>
+          <span class="pr-item-price">{{ it.qty * it.price | vnd }}đ</span>
+        </li>
+      </ul>
+    </div>
+
+    <div class="pr-mem-breakdown">
+      <div class="pr-mem-items-title right"><app-icon name="wallet" [size]="11"></app-icon> Phải trả</div>
+      <div class="pr-bd-row">
+        <span class="l"><app-icon name="receipt" [size]="11"></app-icon> Tạm tính món</span>
+        <span class="v">{{ member.sub | vnd }}đ</span>
+      </div>
+      <div class="pr-bd-row">
+        <span class="l"><app-icon name="truck" [size]="11"></app-icon> Phí vận chuyển</span>
+        <span class="v">+{{ member.ship | vnd }}đ</span>
+      </div>
+      <div class="pr-bd-row">
+        <span class="l"><app-icon name="sparkle" [size]="11" [filled]="true"></app-icon> Phí dịch vụ</span>
+        <span class="v">+{{ member.service | vnd }}đ</span>
+      </div>
+      <div class="pr-bd-row discount">
+        <span class="l"><app-icon name="ticket" [size]="11"></app-icon> Giảm giá</span>
+        <span class="v">{{ member.disc | vnd }}đ</span>
+      </div>
+      <div class="pr-bd-row total">
+        <span class="l">Tiền {{ member.me ? 'bạn ' : '' }}phải trả</span>
+        <span class="v">{{ member.share | vnd }}<span>đ</span></span>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="paid && !member.owner" class="pr-mem-paid-foot">
+    <span class="who">
+      <app-icon name="check-circle" [size]="13"></app-icon>
+      Đã đánh dấu trả tiền · {{ paidAt || '12:42, 23/05' }}
+    </span>
+    <button *ngIf="isOwner" type="button" class="undo" (click)="togglePaid.emit(member.id)">
+      <app-icon name="undo" [size]="11"></app-icon> Huỷ đánh dấu
+    </button>
+  </div>
+</li>

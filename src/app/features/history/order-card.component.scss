@@ -1,0 +1,517 @@
+:host { display: contents; }
+
+.h-order {
+  background: var(--surface);
+  border: 1px solid var(--line-soft);
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  transition: 0.18s ease;
+}
+.h-order:hover { border-color: var(--line); }
+.h-order.is-settled {
+  background: color-mix(in oklab, var(--primary-soft) 25%, var(--surface));
+  border-color: color-mix(in oklab, var(--primary) 18%, var(--line-soft));
+}
+
+.h-order-head {
+  display: grid;
+  grid-template-columns: 40px 1fr auto auto auto;
+  gap: 12px;
+  align-items: center;
+  padding: 12px 16px;
+  border-bottom: 1px dashed var(--line-soft);
+  cursor: pointer;
+  user-select: none;
+}
+.h-order-shop-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #8c5a37, #5a3a22);
+  display: grid;
+  place-items: center;
+  font-size: 18px;
+  flex-shrink: 0;
+  position: relative;
+  overflow: hidden;
+}
+.h-order-shop-icon::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(45deg, transparent 0 5px, rgba(255, 255, 255, 0.06) 5px 6px);
+  pointer-events: none;
+}
+.h-order-shop-icon.has-photo {
+  background: var(--bg-2);
+}
+.h-order-shop-icon.has-photo::after { display: none; }
+.h-order-shop-photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.h-order-info {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.h-order-shop {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 13.5px;
+  letter-spacing: -0.015em;
+  color: var(--ink);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.h-order-shop .o-time {
+  font-family: var(--mono);
+  font-weight: 600;
+  font-size: 10.5px;
+  color: var(--muted);
+  letter-spacing: 0;
+}
+.h-order-meta {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  color: var(--muted);
+  flex-wrap: wrap;
+}
+.h-order-meta .sep { color: color-mix(in oklab, var(--muted) 60%, transparent); }
+.h-order-meta .room-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 1px 7px;
+  background: var(--surface-2);
+  border: 1px solid var(--line-soft);
+  border-radius: 999px;
+  font-weight: 600;
+  color: var(--ink-2);
+  font-size: 10.5px;
+}
+.h-order-meta .owner-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 1px 8px 1px 4px;
+  background: color-mix(in oklab, var(--amber) 14%, transparent);
+  color: color-mix(in oklab, var(--amber) 80%, var(--ink));
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 10.5px;
+}
+.h-order-meta .owner-chip .av {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--amber);
+  color: #4a2a05;
+  display: grid;
+  place-items: center;
+  font-size: 9px;
+  font-weight: 800;
+  font-family: var(--display);
+}
+.h-order-meta .owner-chip.is-me {
+  background: var(--primary-soft);
+  color: var(--primary-ink);
+}
+.h-order-meta .owner-chip.is-me .av {
+  background: var(--primary);
+  color: white;
+}
+
+.h-order-amount {
+  text-align: right;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+.h-order-amount .v {
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: 17px;
+  letter-spacing: -0.025em;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+  line-height: 1.1;
+  display: inline-flex;
+  align-items: baseline;
+}
+.h-order-amount .v span {
+  font-size: 10.5px;
+  color: var(--muted);
+  font-weight: 600;
+  margin-left: 2px;
+}
+.h-order-amount .lbl {
+  font-size: 9.5px;
+  color: var(--muted);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
+.h-order-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px 4px 8px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.h-order-status.pending {
+  background: color-mix(in oklab, var(--accent) 12%, transparent);
+  color: var(--accent);
+}
+.h-order-status.partial {
+  background: color-mix(in oklab, var(--amber) 18%, transparent);
+  color: color-mix(in oklab, var(--amber) 80%, var(--ink));
+}
+.h-order-status.settled {
+  background: color-mix(in oklab, var(--primary) 14%, transparent);
+  color: var(--primary-ink);
+}
+.h-order-status .progress-mini {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 700;
+  padding: 1px 5px;
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 999px;
+}
+.h-order-status .dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.h-order-chev {
+  margin-left: 4px;
+  display: inline-grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--surface-2);
+  border: 1px solid var(--line-soft);
+  color: var(--muted);
+  transition: transform 0.2s;
+}
+.h-order.is-open .h-order-chev {
+  transform: rotate(180deg);
+}
+
+/* body */
+.h-order-body {
+  padding: 6px 16px 12px;
+  display: flex;
+  flex-direction: column;
+}
+
+.h-pay-row {
+  display: grid;
+  grid-template-columns: 26px 1fr auto auto auto;
+  gap: 10px;
+  align-items: center;
+  padding: 7px 0;
+  border-bottom: 1px dashed var(--line-soft);
+}
+.h-pay-row:last-child { border-bottom: 0; }
+.h-pay-row.is-me {
+  background: color-mix(in oklab, var(--primary) 4%, transparent);
+  margin: 0 -8px;
+  padding: 7px 8px;
+  border-radius: 8px;
+  border-bottom: 1px dashed color-mix(in oklab, var(--primary) 15%, var(--line-soft));
+}
+.h-pay-row.is-me:last-child { border-bottom: 0; }
+.h-pay-row.is-owner {
+  border-bottom: 1px solid var(--line-soft);
+  padding-bottom: 9px;
+}
+.h-pay-row.is-owner + .h-pay-row {
+  padding-top: 9px;
+}
+
+.h-pay-avatar {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--surface-2);
+  color: var(--ink-2);
+  display: grid;
+  place-items: center;
+  font-family: var(--display);
+  font-size: 11.5px;
+  font-weight: 800;
+  border: 1px solid var(--line);
+}
+.h-pay-row.is-me .h-pay-avatar {
+  background: var(--primary);
+  color: white;
+  border-color: var(--primary);
+}
+.h-pay-row.is-owner .h-pay-avatar {
+  background: var(--amber);
+  color: #4a2a05;
+  border-color: color-mix(in oklab, var(--amber) 50%, var(--ink));
+  box-shadow: 0 0 0 2px color-mix(in oklab, var(--amber) 22%, transparent);
+}
+.h-pay-row.is-owner.is-me .h-pay-avatar {
+  background: var(--primary);
+  color: white;
+  border-color: var(--amber);
+}
+
+.h-pay-name {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+.h-pay-name b {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--ink);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.h-pay-name b em {
+  font-style: normal;
+  font-size: 9.5px;
+  color: var(--primary);
+  font-weight: 700;
+}
+.h-pay-name .owner-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 9.5px;
+  font-weight: 700;
+  padding: 1px 6px;
+  border-radius: 999px;
+  background: color-mix(in oklab, var(--amber) 18%, transparent);
+  color: color-mix(in oklab, var(--amber) 80%, var(--ink));
+}
+.h-pay-name .sub {
+  font-size: 10.5px;
+  color: var(--muted);
+}
+.h-pay-name .sub.late {
+  color: var(--rose);
+  font-weight: 600;
+}
+.h-pay-name .mono-ink {
+  color: var(--ink-2);
+  font-family: var(--mono);
+  font-weight: 700;
+}
+
+.h-pay-amt {
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: 13px;
+  letter-spacing: -0.02em;
+  color: var(--ink-2);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.h-pay-amt span {
+  font-size: 10px;
+  color: var(--muted);
+  font-weight: 600;
+  margin-left: 1px;
+}
+.h-pay-row.paid .h-pay-amt {
+  color: var(--muted);
+  text-decoration: line-through;
+  text-decoration-color: color-mix(in oklab, var(--muted) 50%, transparent);
+}
+
+.h-pay-when {
+  font-size: 10px;
+  font-family: var(--mono);
+  color: var(--muted);
+  text-align: right;
+  white-space: nowrap;
+}
+
+.h-pay-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 9px 3px 7px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.h-pay-status.paid {
+  background: color-mix(in oklab, var(--primary) 14%, transparent);
+  color: var(--primary-ink);
+}
+.h-pay-status.unpaid {
+  background: var(--surface-2);
+  color: var(--muted);
+  border: 1px dashed var(--line);
+}
+.h-pay-status.unpaid.overdue {
+  background: color-mix(in oklab, var(--rose) 10%, transparent);
+  color: var(--rose);
+  border-color: color-mix(in oklab, var(--rose) 35%, transparent);
+}
+.h-pay-status.owner {
+  background: color-mix(in oklab, var(--amber) 18%, transparent);
+  color: color-mix(in oklab, var(--amber) 80%, var(--ink));
+}
+
+.h-pay-toggle {
+  appearance: none;
+  height: 26px;
+  padding: 0 10px 0 6px;
+  border-radius: 999px;
+  border: 1.5px solid var(--line);
+  background: var(--surface);
+  color: var(--ink-2);
+  font-family: inherit;
+  font-weight: 600;
+  font-size: 11px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
+  transition: 0.18s;
+  flex-shrink: 0;
+}
+.h-pay-toggle:hover {
+  background: var(--bg-2);
+  border-color: var(--ink-2);
+  color: var(--ink);
+}
+.h-pay-toggle .circle {
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background: var(--surface-2);
+  border: 1.5px solid var(--line);
+  display: grid;
+  place-items: center;
+  transition: 0.18s;
+  color: transparent;
+}
+.h-pay-toggle.is-paid {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: white;
+}
+.h-pay-toggle.is-paid .circle {
+  background: white;
+  border-color: white;
+  color: var(--primary);
+}
+
+/* footer */
+.h-order-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 6px;
+  padding: 8px 12px;
+  background: var(--surface-2);
+  border: 1px dashed var(--line);
+  border-radius: 10px;
+  font-size: 11px;
+  color: var(--muted);
+  flex-wrap: wrap;
+}
+.h-order-foot .ledger {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.h-order-foot .ledger b {
+  color: var(--ink-2);
+  font-family: var(--mono);
+  font-weight: 700;
+  font-size: 11px;
+}
+.h-order-foot .ledger .arr {
+  font-family: var(--mono);
+  color: var(--muted);
+}
+.h-order-foot .progress-bar {
+  width: 90px;
+  height: 5px;
+  border-radius: 999px;
+  background: var(--bg-2);
+  overflow: hidden;
+}
+.h-order-foot .progress-bar > span {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, var(--primary), color-mix(in oklab, var(--primary) 70%, var(--amber)));
+  border-radius: inherit;
+  transition: width 0.3s ease;
+}
+.h-order-foot-actions {
+  display: inline-flex;
+  gap: 6px;
+}
+.h-order-mini-btn {
+  appearance: none;
+  height: 26px;
+  padding: 0 10px;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--ink-2);
+  font-family: inherit;
+  font-weight: 600;
+  font-size: 11px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
+  transition: 0.15s;
+}
+.h-order-mini-btn:hover {
+  background: var(--bg-2);
+  color: var(--ink);
+  border-color: var(--ink-2);
+}
+.h-order-mini-btn.primary {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: white;
+  box-shadow: 0 4px 10px -4px color-mix(in oklab, var(--primary) 70%, transparent);
+}
+.h-order-mini-btn.primary:hover {
+  background: color-mix(in oklab, var(--primary) 85%, var(--ink));
+  color: white;
+}
+.h-order-mini-btn.settle {
+  background: var(--accent, #c14e63);
+  border-color: var(--accent, #c14e63);
+  color: white;
+  box-shadow: 0 4px 10px -4px color-mix(in oklab, var(--accent, #c14e63) 70%, transparent);
+}
+.h-order-mini-btn.settle:hover {
+  background: color-mix(in oklab, var(--accent, #c14e63) 85%, var(--ink));
+  color: white;
+}

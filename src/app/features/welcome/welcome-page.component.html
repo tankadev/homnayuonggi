@@ -1,0 +1,212 @@
+<div class="wel-app">
+  <!-- Background bubbles + emoji confetti -->
+  <div class="wel-bg" aria-hidden="true">
+    <span class="wel-blob b1"></span>
+    <span class="wel-blob b2"></span>
+    <span class="wel-blob b3"></span>
+  </div>
+  <div class="wel-confetti" aria-hidden="true">
+    <span *ngFor="let c of confetti" class="wel-conf-item"
+          [style.left]="c.left" [style.top]="c.top"
+          [style.--r]="c.rot" [style.animation-delay]="c.delay">{{ c.emoji }}</span>
+  </div>
+
+  <!-- Custom header (no room pill) -->
+  <header class="wel-header">
+    <div class="wel-header-inner">
+      <div class="wel-brand">
+        <div class="brand-mark">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor"
+               stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="bm-icon">
+            <path d="M5 9 L17 9 L15.9 18.4 C 15.75 19.6 14.75 20.5 13.55 20.5 L 8.45 20.5 C 7.25 20.5 6.25 19.6 6.1 18.4 Z"
+                  fill="currentColor" stroke="none"/>
+            <path d="M17 11.5 C 19.8 11.5 21 13.4 21 14.7 C 21 16 19.8 17.8 17 17.8"/>
+            <path d="M9.4 5.6 C 8.4 4.6 9.4 4 8.4 3"/>
+            <path d="M13.4 5.6 C 12.4 4.6 13.4 4 12.4 3"/>
+          </svg>
+        </div>
+        <div class="wel-brand-block">
+          <span class="wel-source">
+            <span class="src-mark">
+              <svg viewBox="0 0 24 24" width="10" height="10" fill="currentColor">
+                <path d="M12 2 L14 8 L20 8 L15 12 L17 18 L12 14 L7 18 L9 12 L4 8 L10 8 Z"/>
+              </svg>
+            </span>
+            ShopeeFood
+          </span>
+          <span class="wel-name">Today Uống <span class="q">Gì?</span></span>
+        </div>
+      </div>
+      <div></div>
+      <div class="wel-actions">
+        <app-theme-switcher></app-theme-switcher>
+        <button type="button" class="wel-reload" title="Tải lại" (click)="reload()" [disabled]="refreshing">
+          <app-icon name="refresh" [size]="16"></app-icon>
+        </button>
+        <button type="button" class="wel-login-btn" (click)="openAuth('login')">
+          <app-icon name="user" [size]="14" [filled]="true"></app-icon> Đăng nhập
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <main class="wel-main">
+    <section class="wel-hero">
+      <div class="wel-copy">
+        <span class="wel-eyebrow">
+          <span class="eb-dot"><app-icon name="sparkle" [size]="12" [filled]="true"></app-icon></span>
+          <span class="eb-live">Live</span>
+          <span>· hơn 12 phòng đang chốt món</span>
+        </span>
+
+        <h1 class="wel-title">
+          <span class="wt-line">Hôm nay</span>
+          <span class="wt-line">cả phòng <span class="wt-accent">uống</span></span>
+          <span class="wt-line">
+            <span class="wt-rotate">
+              <span class="wt-rotate-inner" [attr.data-w]="currentWord">{{ currentWord }}</span>
+            </span>
+          </span>
+        </h1>
+
+        <p class="wel-sub">
+          Mở phòng, mời đồng đội, chốt món chung chỉ trong <b>vài phút</b>.
+          Đặt qua <b>ShopeeFood</b>, chia tiền tự động — không còn vụ
+          <i>"ai trả phần ai?"</i>.
+        </p>
+
+        <div class="wel-cta-row">
+          <button type="button" class="wel-btn-primary" (click)="openAuth('login')">
+            Đăng nhập để tiếp tục
+            <span class="ic-bg"><app-icon name="arrow-r" [size]="14" [sw]="2.2"></app-icon></span>
+          </button>
+          <button type="button" class="wel-btn-ghost" (click)="openAuth('register')">
+            hoặc <u>tạo tài khoản mới</u>
+          </button>
+        </div>
+
+        <div class="wel-features">
+          <div class="wel-feat">
+            <span class="wel-feat-ic"><app-icon name="users" [size]="16" [filled]="true"></app-icon></span>
+            <b>Chọn món chung</b>
+            <span>Cả phòng vote món, hệ thống tự gộp đơn.</span>
+          </div>
+          <div class="wel-feat">
+            <span class="wel-feat-ic"><app-icon name="bolt" [size]="16" [filled]="true"></app-icon></span>
+            <b>Chia tiền tự động</b>
+            <span>Mỗi người chỉ trả đúng phần của mình.</span>
+          </div>
+          <div class="wel-feat">
+            <span class="wel-feat-ic"><app-icon name="heart" [size]="16" [filled]="true"></app-icon></span>
+            <b>Lưu lịch sử</b>
+            <span>Xem lại quán đã ăn, mã đơn, voucher đã dùng.</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="wel-vis">
+        <div class="wel-float f1">
+          <span class="wel-float-ic fic-primary">☕</span>
+          <span class="wel-float-info">
+            <b>Cà phê sữa</b>
+            <span>30 phòng đã chốt</span>
+          </span>
+        </div>
+        <div class="wel-float f2">
+          <span class="wel-float-ic fic-accent">🥤</span>
+          <span class="wel-float-info">
+            <b>Trà đào · còn 12 phút</b>
+            <span>2 người đang vote</span>
+          </span>
+        </div>
+        <div class="wel-float f3">
+          <span class="wel-float-ic fic-amber">🍜</span>
+          <span class="wel-float-info">
+            <b>Phở bò tái</b>
+            <span>Hot · top 1 hôm nay</span>
+          </span>
+        </div>
+
+        <div class="wel-card">
+          <div class="wel-card-top">
+            <span class="wel-pill"><span class="dot"></span> Phòng <b>An Khánh</b></span>
+            <span class="wel-card-tag">
+              <app-icon name="sparkle" [size]="11" [filled]="true"></app-icon> Trending
+            </span>
+          </div>
+
+          <div class="wel-cheers" aria-hidden="true">
+            <svg viewBox="0 0 280 240">
+              <g class="cheers-glass left">
+                <path d="M62 38 Q 62 110 110 122 Q 158 110 158 38 Z"
+                      fill="none" stroke="var(--ink)" stroke-width="5" stroke-linejoin="round"/>
+                <path d="M70 46 Q 75 100 110 112 Q 145 100 150 46 Z"
+                      fill="var(--accent)" opacity="0.85"/>
+                <ellipse cx="110" cy="48" rx="44" ry="6" fill="var(--surface)" opacity="0.8"/>
+                <path d="M110 122 L 110 198" stroke="var(--ink)" stroke-width="5" stroke-linecap="round"/>
+                <path d="M82 220 Q 110 200 138 220" fill="none" stroke="var(--ink)"
+                      stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+              </g>
+              <g class="cheers-glass right">
+                <path d="M122 38 Q 122 110 170 122 Q 218 110 218 38 Z"
+                      fill="none" stroke="var(--ink)" stroke-width="5" stroke-linejoin="round"/>
+                <path d="M130 46 Q 135 100 170 112 Q 205 100 210 46 Z"
+                      fill="var(--primary)" opacity="0.92"/>
+                <ellipse cx="170" cy="48" rx="44" ry="6" fill="var(--surface)" opacity="0.8"/>
+                <path d="M170 122 L 170 198" stroke="var(--ink)" stroke-width="5" stroke-linecap="round"/>
+                <path d="M142 220 Q 170 200 198 220" fill="none" stroke="var(--ink)"
+                      stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+              </g>
+              <g stroke="var(--amber)" stroke-width="3.5" stroke-linecap="round" opacity="0.9">
+                <path d="M140 8 L140 22"/>
+                <path d="M125 14 L132 24"/>
+                <path d="M155 14 L148 24"/>
+              </g>
+            </svg>
+            <span class="cheers-spark s1">🍋</span>
+            <span class="cheers-spark s2">✨</span>
+            <span class="cheers-spark s3">🥂</span>
+          </div>
+
+          <div class="wel-card-foot">
+            <div class="wel-card-foot-row">
+              <span class="label">Quán đang xét</span>
+              <span class="val">Cơm Thanh Hồng</span>
+            </div>
+            <div class="wel-card-foot-row">
+              <span class="label">Đã chốt</span>
+              <span class="wel-avatars">
+                <span class="wel-av" style="background: var(--primary)">C</span>
+                <span class="wel-av" style="background: var(--accent)">M</span>
+                <span class="wel-av" style="background: oklch(0.55 0.16 25)">L</span>
+                <span class="wel-av" style="background: var(--ink-2)">+3</span>
+              </span>
+            </div>
+            <div class="wel-card-foot-row">
+              <span class="label">Tổng tạm tính</span>
+              <span class="val">386.000<span class="ccy">đ</span></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="wel-foot">
+    <span class="wel-foot-pill">
+      <b>Phiên bản 3.0.0</b>
+      <span class="sep"></span>
+      <span>© 2026 TodayUongGi?</span>
+      <span class="sep"></span>
+      <span>Nguồn dữ liệu: ShopeeFood</span>
+    </span>
+  </footer>
+
+  <app-auth-modal
+    *ngIf="authOpen"
+    [initialMode]="authMode"
+    (done)="onAuthDone($event)"
+    (closed)="closeAuth()"
+  ></app-auth-modal>
+</div>

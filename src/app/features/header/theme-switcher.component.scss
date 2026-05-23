@@ -1,0 +1,125 @@
+:host {
+  position: relative;
+  display: inline-flex;
+}
+
+.theme-trigger {
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 32px;
+  padding: 0 8px 0 4px;
+  border-radius: 999px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  color: var(--ink-2);
+  font-weight: 500;
+  font-size: 12px;
+  transition: 0.15s;
+}
+.theme-trigger:hover {
+  background: var(--bg-2);
+  border-color: var(--ink-2);
+  color: var(--ink);
+}
+.theme-trigger-name {
+  font-weight: 600;
+  color: var(--ink);
+}
+.theme-trigger app-icon:last-child {
+  color: var(--muted);
+}
+
+.theme-swatches {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px;
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+}
+.ts-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 1.5px solid var(--surface);
+  margin-left: -5px;
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.05);
+}
+.ts-dot:first-child {
+  margin-left: 0;
+}
+
+.theme-pop {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  z-index: 100;
+  width: 280px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  box-shadow: 0 16px 40px -12px rgba(0, 0, 0, 0.18), 0 0 0 1px rgba(0, 0, 0, 0.02);
+  padding: 6px;
+  animation: tp-in 0.14s ease-out;
+}
+
+.theme-pop-head {
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  padding: 8px 12px 6px;
+}
+
+.theme-pop-list {
+  display: flex;
+  flex-direction: column;
+  max-height: 60vh;
+  overflow-y: auto;
+}
+
+.theme-opt {
+  appearance: none;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  background: transparent;
+  border: 0;
+  border-radius: 10px;
+  text-align: left;
+  color: var(--ink-2);
+  transition: 0.1s;
+  cursor: pointer;
+}
+.theme-opt:hover {
+  background: var(--surface-2);
+}
+.theme-opt.active {
+  background: var(--primary-soft);
+  color: var(--primary-ink);
+}
+.theme-opt-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+.theme-opt-info b {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink);
+}
+.theme-opt-info span {
+  font-size: 11px;
+  color: var(--muted);
+}
+.theme-opt > app-icon {
+  color: var(--primary);
+  flex-shrink: 0;
+}

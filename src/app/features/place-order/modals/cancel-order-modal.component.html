@@ -1,0 +1,32 @@
+<app-modal size="sm" (closed)="closed.emit()">
+  <div class="modal-head">
+    <div>
+      <h2 class="modal-title">Hủy bình chọn quán?</h2>
+      <p class="modal-sub">Toàn bộ thông tin đặt món của cả phòng sẽ bị xóa.</p>
+    </div>
+    <button type="button" class="modal-close" (click)="closed.emit()" aria-label="Đóng">
+      <app-icon name="x" [size]="14"></app-icon>
+    </button>
+  </div>
+
+  <div class="modal-body">
+    <div class="cancel-preview">
+      <span class="cancel-preview-icon"><app-icon name="trash" [size]="16"></app-icon></span>
+      <div class="cancel-preview-body">
+        Hành động này <b>không thể hoàn tác</b>. Cả phòng sẽ trở lại trạng thái chưa đặt món.
+        <div class="cancel-stats">
+          <span class="cancel-stat-chip"><b>{{ dishCount }}</b> món sẽ mất</span>
+          <span class="cancel-stat-chip"><b>{{ partCount }}</b> phần</span>
+          <span class="cancel-stat-chip"><b>{{ peopleCount }}</b> người đã đặt</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-foot split-2">
+    <button type="button" class="btn-ghost" (click)="closed.emit()">Giữ lại đơn</button>
+    <button type="button" class="btn-danger btn-grow" (click)="confirm.emit()">
+      <app-icon name="trash" [size]="14"></app-icon> Hủy bình chọn
+    </button>
+  </div>
+</app-modal>

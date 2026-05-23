@@ -1,0 +1,79 @@
+<app-modal size="sm" (closed)="closed.emit()">
+  <form (submit)="onSubmit($event)">
+    <div class="modal-head">
+      <div>
+        <h2 class="modal-title">Tham gia phòng riêng</h2>
+        <p class="modal-sub">Nhập mật khẩu chủ phòng đã chia sẻ.</p>
+      </div>
+      <button type="button" class="modal-close" (click)="closed.emit()" aria-label="Đóng">
+        <app-icon name="x" [size]="14"></app-icon>
+      </button>
+    </div>
+
+    <div class="modal-body">
+      <div class="join-room-card">
+        <div class="jrc-avatar" [class.has-shop]="hasShop"
+             [style.--av-a]="room.color[0]" [style.--av-b]="room.color[1]">
+          <div *ngIf="hasShop; else initialTpl" class="jrc-avatar-inner">{{ room.icon }}</div>
+          <ng-template #initialTpl><span>{{ initial }}</span></ng-template>
+          <span class="jrc-lock"><app-icon name="lock" [size]="10"></app-icon></span>
+        </div>
+        <div class="jrc-info">
+          <div *ngIf="hasShop" class="jrc-shop">{{ room.shop }}</div>
+          <div class="jrc-name">{{ room.name }}</div>
+          <div class="jrc-desc">
+            {{ room.desc || '' }}
+            <span *ngIf="!room.desc" class="muted">Chưa có mô tả phòng</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="field-label" for="jrm-pwd">
+          Mật khẩu phòng <span class="req">*</span>
+        </label>
+        <div class="pwd-wrap">
+          <input
+            #pwdInput
+            id="jrm-pwd"
+            name="pwd"
+            class="field-input"
+            style="padding-right: 40px; width: 100%;"
+            [class.error]="pwdEmpty || !!error"
+            [type]="showPwd ? 'text' : 'password'"
+            placeholder="Nhập mật khẩu phòng"
+            [ngModel]="pwd"
+            (ngModelChange)="onChange($event)"
+            [disabled]="submitting"
+          />
+          <button type="button" class="pwd-toggle" (click)="showPwd = !showPwd" [attr.aria-label]="showPwd ? 'Ẩn mật khẩu' : 'Hiện mật khẩu'">
+            <app-icon [name]="showPwd ? 'eye-off' : 'eye'" [size]="14"></app-icon>
+          </button>
+        </div>
+        <div *ngIf="pwdEmpty" class="field-error">
+          <app-icon name="info" [size]="12"></app-icon> Vui lòng nhập mật khẩu phòng
+        </div>
+        <div *ngIf="error" class="field-error">
+          <app-icon name="info" [size]="12"></app-icon> {{ error }}
+        </div>
+        <div *ngIf="!pwdEmpty && !error" class="field-help">
+          Mật khẩu do <b>chủ phòng</b> tạo và chia sẻ riêng.
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-foot">
+      <button type="button" class="btn-ghost" style="flex: 1" (click)="closed.emit()" [disabled]="submitting">
+        Đóng
+      </button>
+      <button type="submit" class="btn-primary" style="flex: 1.7" [disabled]="!pwd.trim() || submitting">
+        <ng-container *ngIf="submitting; else readyTpl">
+          <span class="spinner"></span> Đang kiểm tra…
+        </ng-container>
+        <ng-template #readyTpl>
+          <app-icon name="check" [size]="15"></app-icon> Tham gia phòng
+        </ng-template>
+      </button>
+    </div>
+  </form>
+</app-modal>

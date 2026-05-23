@@ -1,0 +1,61 @@
+:host {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+}
+
+.placeholder-main {
+  flex: 1;
+  display: grid;
+  place-items: center;
+  padding: 40px 24px;
+}
+
+.card {
+  max-width: 520px;
+  background: var(--surface);
+  border: 1px solid var(--line-soft);
+  border-radius: var(--r-lg);
+  padding: 32px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: center;
+}
+.badge {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  padding: 4px 10px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  border-radius: 999px;
+}
+h1 {
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: 22px;
+  letter-spacing: -0.025em;
+  color: var(--ink);
+  margin: 0;
+  line-height: 1.3;
+}
+h1 code {
+  font-family: var(--mono);
+  font-size: 14px;
+  background: var(--surface-2);
+  padding: 2px 8px;
+  border-radius: 6px;
+  color: var(--primary-ink);
+}
+p {
+  margin: 0;
+  font-size: 13.5px;
+  color: var(--ink-2);
+  line-height: 1.55;
+}
+p b {
+  color: var(--primary-ink);
+}

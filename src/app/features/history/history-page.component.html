@@ -1,0 +1,136 @@
+<div class="h-main">
+  <aside class="h-col scroll">
+    <app-h-summary-card
+      [balance]="balance"
+      [owedOrderCount]="owedOrderCount"
+      [oweOrderCount]="oweOrderCount"
+    ></app-h-summary-card>
+
+    <app-h-filters-card
+      [range]="range"
+      [memberFilter]="memberFilter"
+      [roomFilter]="roomFilter"
+      [shopFilter]="shopFilter"
+      [members]="memberOptions"
+      [rooms]="roomOptions"
+      [shops]="shopOptions"
+      (rangeChange)="range = $event"
+      (memberFilterChange)="memberFilter = $event"
+      (roomFilterChange)="roomFilter = $event"
+      (shopFilterChange)="shopFilter = $event"
+    ></app-h-filters-card>
+
+    <section class="h-tip">
+      <app-icon name="info" [size]="13"></app-icon>
+      <span>
+        <b>Mẹo đối soát</b><br/>
+        Bấm vào từng đơn để mở danh sách thành viên. <b>Chủ đơn</b> có thể đánh dấu
+        <b>"Đã trả"</b> cho từng người.
+      </span>
+    </section>
+  </aside>
+
+  <main class="h-col scroll">
+    <section class="h-banner">
+      <div class="h-banner-l">
+        <span class="h-status-chip">
+          <span class="dot"></span> Lịch sử thanh toán
+        </span>
+        <h1 class="h-banner-title">Ai đang thiếu tiền ai</h1>
+        <div class="h-banner-sub">
+          <b>{{ totalOrders }} đơn</b> ở <b>{{ roomsCount }} phòng</b> bạn từng tham gia ·
+          <b>{{ settledOrders }}</b> đơn đã đối soát xong ·
+          <b>{{ totalOrders - settledOrders }}</b> đơn đang đợi thanh toán.
+        </div>
+      </div>
+      <div class="h-banner-r">
+        <div class="h-netbal-card owe-you">
+          <span class="lbl">Bạn được nhận</span>
+          <span class="val">+{{ balance.totalOwedToMe | vnd }}<span>đ</span></span>
+        </div>
+        <div class="h-netbal-card you-owe">
+          <span class="lbl">Bạn cần trả</span>
+          <span class="val">−{{ balance.totalIOwe | vnd }}<span>đ</span></span>
+        </div>
+      </div>
+    </section>
+
+    <div class="h-list-tabs">
+      <span class="lbl"><app-icon name="filter" [size]="11"></app-icon> Lọc:</span>
+      <button type="button" class="h-list-tab" [class.active]="filter === 'all'" (click)="setFilter('all')">
+        Tất cả <span class="num">{{ counts.all }}</span>
+      </button>
+      <button type="button" class="h-list-tab" [class.active]="filter === 'owe'" (click)="setFilter('owe')">
+        Bạn cần trả <span class="num">{{ counts.owe }}</span>
+      </button>
+      <button type="button" class="h-list-tab" [class.active]="filter === 'owed'" (click)="setFilter('owed')">
+        Bạn cần thu <span class="num">{{ counts.owed }}</span>
+      </button>
+      <button type="button" class="h-list-tab" [class.active]="filter === 'settled'" (click)="setFilter('settled')">
+        Đã xong <span class="num">{{ counts.settled }}</span>
+      </button>
+      <span class="h-search">
+        <app-icon name="search" [size]="13"></app-icon>
+        <input placeholder="Tìm quán…" [(ngModel)]="search" name="search"/>
+      </span>
+    </div>
+
+    <ng-container *ngIf="groups.length; else emptyTpl">
+      <section *ngFor="let g of groups; trackBy: trackByGroup" class="h-day-group">
+        <div class="h-day-head">
+          <span class="h-day-title">{{ g.label }}</span>
+          <span class="h-day-sub">{{ g.weekday }} · {{ g.pretty }}</span>
+          <span class="h-day-line"></span>
+          <span class="h-day-amt">{{ g.orders.length }} đơn · {{ g.total | vnd }}đ</span>
+        </div>
+        <app-h-order-card
+          *ngFor="let o of g.orders; trackBy: trackByOrder"
+          [order]="o"
+          [meId]="meId"
+          [members]="membersMap"
+          [open]="isOpen(o.id)"
+          (toggleOpen)="onToggleOpen($event)"
+          (togglePaid)="onTogglePaid($event)"
+          (confirmFullyPaid)="onConfirmFullyPaid($event)"
+        ></app-h-order-card>
+      </section>
+    </ng-container>
+    <ng-template #emptyTpl>
+      <div class="h-empty">
+        <div class="h-empty-icon"><app-icon name="receipt" [size]="20"></app-icon></div>
+        <b>Chưa có đơn nào</b>
+        <span>Thử thay đổi bộ lọc hoặc tìm theo tên quán khác.</span>
+      </div>
+    </ng-template>
+  </main>
+
+  <aside class="h-col scroll">
+    <app-h-pairs-card
+      title="Cần thu từ"
+      icon="arrow-lr"
+      direction="positive"
+      [pairs]="owedPairs"
+      emptyText="Không ai đang nợ bạn 🎉"
+    ></app-h-pairs-card>
+
+    <app-h-pairs-card
+      title="Bạn cần trả"
+      icon="wallet"
+      direction="negative"
+      [pairs]="owePairs"
+      emptyText="Bạn không nợ ai 🎉"
+    ></app-h-pairs-card>
+
+    <section *ngIf="allClearMembers.length" class="h-card">
+      <h3 class="h-card-title h-small-title">
+        <app-icon name="check" [size]="13" [sw]="2.4"></app-icon> Đã sòng phẳng
+      </h3>
+      <div class="h-clear-chips">
+        <span *ngFor="let m of allClearMembers; trackBy: trackByMember" class="h-clear-chip">
+          <span class="av">{{ m.initial }}</span>
+          {{ m.name }}
+        </span>
+      </div>
+    </section>
+  </aside>
+</div>

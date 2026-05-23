@@ -1,0 +1,94 @@
+:host { display: block; }
+
+.h-card {
+  background: var(--surface);
+  border: 1px solid var(--line-soft);
+  border-radius: var(--r-lg);
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.h-card-title {
+  font-family: var(--display);
+  font-weight: var(--display-weight);
+  font-size: 13.5px;
+  letter-spacing: var(--display-spacing);
+  margin: 0;
+  color: var(--ink);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.h-filter-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+.h-filter-row {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.h-flt-lbl {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.h-seg {
+  display: inline-flex;
+  background: var(--surface-2);
+  border: 1px solid var(--line-soft);
+  border-radius: 8px;
+  padding: 2px;
+  gap: 2px;
+}
+.h-seg button {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  flex: 1;
+  font-family: inherit;
+  font-weight: 600;
+  font-size: 11px;
+  color: var(--muted);
+  padding: 5px 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 0.12s;
+}
+.h-seg button:hover { color: var(--ink); }
+.h-seg button.active {
+  background: var(--surface);
+  color: var(--ink);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+.h-select {
+  appearance: none;
+  background: var(--surface-2)
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'><path d='M1 1l4 4 4-4' stroke='%238a9088' stroke-width='1.5' fill='none' stroke-linecap='round'/></svg>")
+    no-repeat right 10px center;
+  border: 1px solid var(--line-soft);
+  border-radius: 8px;
+  padding: 7px 28px 7px 12px;
+  font-family: inherit;
+  font-size: 12px;
+  color: var(--ink);
+  cursor: pointer;
+  width: 100%;
+  transition: 0.12s;
+}
+.h-select:hover { border-color: var(--ink-2); }
+.h-select:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--primary) 12%, transparent);
+}

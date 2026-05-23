@@ -1,0 +1,43 @@
+<section class="voucher-strip">
+  <div class="voucher-strip-label">
+    <app-icon name="ticket" [size]="14" [filled]="true"></app-icon>
+    <span>Mã giảm giá</span>
+    <span class="voucher-strip-count">{{ vouchers.length }}</span>
+  </div>
+  <button
+    *ngIf="overflows"
+    type="button"
+    class="voucher-nav prev"
+    [disabled]="atStart"
+    title="Cuộn lùi"
+    (click)="scroll(-1)"
+  >
+    <app-icon name="chevron-l" [size]="12"></app-icon>
+  </button>
+
+  <div #chipsScroll class="voucher-chips">
+    <div *ngFor="let v of vouchers" class="voucher-chip"
+         [title]="v.desc + (v.expired ? ' · HSD ' + v.expired : '')">
+      <div class="voucher-chip-top">
+        <b class="voucher-code">{{ v.code }}</b>
+        <span *ngIf="v.highlight" class="voucher-amt">−{{ v.highlight }}</span>
+      </div>
+      <div *ngIf="v.desc" class="voucher-desc">{{ v.desc }}</div>
+      <div *ngIf="v.expired" class="voucher-expired">
+        <app-icon name="calendar" [size]="10"></app-icon>
+        HSD {{ v.expired }}
+      </div>
+    </div>
+  </div>
+
+  <button
+    *ngIf="overflows"
+    type="button"
+    class="voucher-nav next"
+    [disabled]="atEnd"
+    title="Cuộn tới"
+    (click)="scroll(1)"
+  >
+    <app-icon name="chevron-r" [size]="12"></app-icon>
+  </button>
+</section>

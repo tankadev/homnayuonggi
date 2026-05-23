@@ -1,0 +1,80 @@
+<header class="topbar" [class.tb-no-room]="isHistory">
+  <div class="brand">
+    <div class="brand-mark">
+      <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor"
+           stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="bm-icon">
+        <path d="M5 9 L17 9 L15.9 18.4 C 15.75 19.6 14.75 20.5 13.55 20.5 L 8.45 20.5 C 7.25 20.5 6.25 19.6 6.1 18.4 Z"
+              fill="currentColor" stroke="none"/>
+        <path d="M17 11.5 C 19.8 11.5 21 13.4 21 14.7 C 21 16 19.8 17.8 17 17.8"/>
+        <path d="M9.4 5.6 C 8.4 4.6 9.4 4 8.4 3"/>
+        <path d="M13.4 5.6 C 12.4 4.6 13.4 4 12.4 3"/>
+      </svg>
+    </div>
+    <div class="brand-block">
+      <div class="brand-name">Today Uống <span class="q">Gì?</span></div>
+      <div class="brand-source">
+        <ng-container *ngIf="!isHistory; else historySub">
+          Nguồn dữ liệu · <b>ShopeeFood</b>
+        </ng-container>
+        <ng-template #historySub>{{ brandSubtitle }}</ng-template>
+      </div>
+    </div>
+  </div>
+
+  <ng-container *ngIf="!isHistory">
+    <div class="room-pill" *ngIf="room; else noRoom">
+      <button class="lock" type="button" title="{{ isPrivate ? 'Phòng riêng' : 'Phòng công khai' }}">
+        <app-icon name="lock" [size]="15"></app-icon>
+      </button>
+      <span class="room-name">{{ roomName }}</span>
+      <button
+        *ngIf="canEditRoom"
+        class="edit"
+        type="button"
+        aria-label="Sửa phòng"
+        (click)="editRoom.emit()"
+      >
+        <app-icon name="pencil" [size]="13"></app-icon>
+      </button>
+    </div>
+    <ng-template #noRoom>
+      <div class="room-pill room-pill-empty">
+        <span class="room-name">Chưa chọn phòng</span>
+      </div>
+    </ng-template>
+  </ng-container>
+
+  <div class="top-actions">
+    <app-theme-switcher></app-theme-switcher>
+
+    <button *ngIf="isHistory" class="icon-btn" type="button" title="Về danh sách phòng" (click)="backToRooms.emit()">
+      <app-icon name="arrow-l" [size]="16"></app-icon>
+    </button>
+
+    <button class="icon-btn" type="button" [class.is-active]="isHistory" title="Lịch sử thanh toán" (click)="openHistory.emit()">
+      <app-icon name="history" [size]="16"></app-icon>
+    </button>
+
+    <button class="icon-btn" type="button" title="Tải lại API URL" (click)="onRefreshApi()" [disabled]="refreshing">
+      <app-icon name="refresh" [size]="16"></app-icon>
+    </button>
+
+    <div class="me-pill" *ngIf="isLoggedIn">
+      <span class="avatar me">{{ (user?.displayName || user?.username || '?').charAt(0).toUpperCase() }}</span>
+      <span>{{ user?.displayName || user?.username }}</span>
+    </div>
+    <button *ngIf="!isLoggedIn" class="btn-leave" type="button" (click)="login.emit()">Đăng nhập</button>
+
+    <button *ngIf="room && !isHistory" class="btn-leave" type="button" (click)="onLeaveRoom()">Thoát phòng</button>
+
+    <button
+      *ngIf="isLoggedIn"
+      class="icon-btn icon-btn-danger"
+      type="button"
+      title="Đăng xuất"
+      (click)="onLogout()"
+    >
+      <app-icon name="logout" [size]="16"></app-icon>
+    </button>
+  </div>
+</header>

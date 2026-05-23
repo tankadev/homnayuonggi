@@ -1,0 +1,143 @@
+:host {
+  display: block;
+}
+
+.voucher-strip {
+  background: var(--surface);
+  border-radius: 14px;
+  border: 1px solid var(--line-soft);
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: nowrap;
+  min-width: 0;
+}
+.voucher-strip-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink-2);
+  flex-shrink: 0;
+}
+.voucher-strip-label app-icon {
+  color: var(--accent);
+}
+.voucher-nav {
+  appearance: none;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--ink-2);
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 0;
+  flex-shrink: 0;
+  cursor: pointer;
+  transition: 0.15s;
+}
+.voucher-nav:hover:not(:disabled) {
+  background: var(--primary-soft);
+  border-color: var(--primary);
+  color: var(--primary-ink);
+}
+.voucher-nav:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+.voucher-strip-count {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  font-weight: 700;
+  color: var(--muted);
+  padding: 1px 6px;
+  background: var(--surface-2);
+  border-radius: 999px;
+  margin-left: 2px;
+}
+.voucher-chips {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 6px;
+  flex: 1;
+  min-width: 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: var(--line) transparent;
+  scroll-snap-type: x proximity;
+  /* Avoid the scrollbar nudging the chips vertically. */
+  padding-bottom: 2px;
+}
+.voucher-chips::-webkit-scrollbar {
+  height: 6px;
+}
+.voucher-chips::-webkit-scrollbar-thumb {
+  background: var(--line);
+  border-radius: 3px;
+}
+.voucher-chips::-webkit-scrollbar-thumb:hover {
+  background: var(--ink-2);
+}
+.voucher-chip {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1px;
+  padding: 4px 6px;
+  background: var(--surface-2);
+  border: 1px dashed var(--line);
+  border-radius: 6px;
+  font-size: 10px;
+  max-width: 220px;
+  flex-shrink: 0;
+  scroll-snap-align: start;
+}
+.voucher-chip-top {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.voucher-chip .voucher-code {
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.03em;
+  color: var(--ink);
+  background: white;
+  padding: 1px 4px;
+  border-radius: 4px;
+  border: 1px solid var(--line);
+  line-height: 1.2;
+}
+.voucher-chip .voucher-amt {
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: 10.5px;
+  letter-spacing: -0.02em;
+  color: var(--accent);
+}
+.voucher-desc {
+  font-size: 9.5px;
+  color: var(--ink-2);
+  line-height: 1.25;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.voucher-expired {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 8.5px;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+}

@@ -1,0 +1,267 @@
+:host {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  flex-direction: column;
+}
+
+.rooms-main {
+  max-width: 1400px;
+  margin: 0 auto;
+  width: 100%;
+  padding: 22px 26px 0;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 100%;
+}
+
+/* ─── Hero ─────────────────────────────────────────────────────── */
+.rooms-hero {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 24px;
+  align-items: end;
+  padding: 4px 2px 18px;
+}
+.rooms-hero-title {
+  font-family: var(--display);
+  font-weight: var(--display-weight);
+  font-size: 28px;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  margin: 0 0 6px;
+  color: var(--ink);
+}
+.rooms-hero-title .q {
+  color: var(--primary);
+}
+.rooms-hero-sub {
+  font-size: 12.5px;
+  color: var(--muted);
+  max-width: 520px;
+  line-height: 1.5;
+  margin: 0;
+}
+.rooms-hero-sub b {
+  color: var(--ink-2);
+  font-weight: 600;
+}
+
+.rooms-stats {
+  display: flex;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  border-radius: 12px;
+  overflow: hidden;
+}
+.stat-cell {
+  padding: 10px 14px;
+  border-right: 1px solid var(--line-soft);
+  text-align: right;
+  min-width: 80px;
+}
+.stat-cell:last-child {
+  border-right: 0;
+}
+.stat-cell b {
+  display: block;
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: 19px;
+  letter-spacing: -0.025em;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+.stat-cell span {
+  font-size: 9.5px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* ─── Toolbar ─────────────────────────────────────────────────── */
+.rooms-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 14px;
+  padding: 2px;
+  flex-wrap: wrap;
+}
+.filter-chips {
+  display: inline-flex;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 3px;
+}
+.filter-chip {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 12px;
+  color: var(--muted);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  transition: 0.15s;
+  cursor: pointer;
+}
+.filter-chip:hover {
+  color: var(--ink-2);
+}
+.filter-chip.active {
+  background: var(--ink);
+  color: white;
+}
+.filter-count {
+  font-family: var(--mono);
+  font-size: 9.5px;
+  padding: 1px 6px;
+  background: color-mix(in oklab, white 22%, transparent);
+  border-radius: 999px;
+  font-weight: 700;
+}
+.filter-chip:not(.active) .filter-count {
+  background: var(--bg-2);
+  color: var(--ink-2);
+}
+
+.search-room {
+  flex: 1;
+  min-width: 200px;
+  max-width: 320px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  color: var(--muted);
+  transition: 0.15s;
+}
+.search-room:focus-within {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 4px color-mix(in oklab, var(--primary) 12%, transparent);
+}
+.search-room input {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  outline: none;
+  font: inherit;
+  font-size: 12.5px;
+  color: var(--ink);
+  flex: 1;
+  min-width: 0;
+}
+.search-room input::placeholder {
+  color: var(--muted);
+}
+
+.btn-create {
+  appearance: none;
+  border: 0;
+  background: var(--primary);
+  color: white;
+  height: 34px;
+  padding: 0 16px;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 12.5px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: auto;
+  transition: 0.18s;
+  cursor: pointer;
+  font-family: inherit;
+  box-shadow: 0 8px 18px -8px color-mix(in oklab, var(--primary) 80%, transparent);
+}
+.btn-create:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 12px 22px -8px color-mix(in oklab, var(--primary) 90%, transparent);
+}
+
+/* ─── Grid + add-room tile ────────────────────────────────────── */
+.room-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 14px;
+}
+.room-card.add-room {
+  background: transparent;
+  border: 2px dashed var(--line);
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 24px 16px;
+  gap: 8px;
+  min-height: 230px;
+  color: var(--ink-2);
+  cursor: pointer;
+  appearance: none;
+  font-family: inherit;
+  display: flex;
+  flex-direction: column;
+  border-radius: 18px;
+  transition: 0.2s;
+}
+.room-card.add-room:hover {
+  background: var(--primary-soft);
+  border-color: var(--primary);
+  border-style: solid;
+  color: var(--primary-ink);
+}
+.add-room-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--primary-soft);
+  color: var(--primary-ink);
+  display: grid;
+  place-items: center;
+  transition: 0.2s;
+}
+.room-card.add-room:hover .add-room-icon {
+  background: var(--primary);
+  color: white;
+  transform: rotate(90deg) scale(1.08);
+}
+.add-room-title {
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: 15px;
+  letter-spacing: -0.02em;
+  color: inherit;
+}
+.add-room-sub {
+  font-size: 11.5px;
+  color: var(--muted);
+  line-height: 1.4;
+  max-width: 200px;
+}
+
+/* ─── Footer ─────────────────────────────────────────────────── */
+.rooms-footer {
+  margin-top: auto;
+  text-align: center;
+  font-size: 11px;
+  color: var(--muted);
+  padding: 28px 0 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  flex-shrink: 0;
+}
+.rooms-footer b {
+  color: var(--ink-2);
+  font-weight: 700;
+}

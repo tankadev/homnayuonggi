@@ -1,0 +1,85 @@
+<section class="panel menu">
+  <div class="panel-head">
+    <div>
+      <h3 class="card-title menu-title">{{ section.name }}</h3>
+      <span class="card-sub">{{ section.items.length }} món · giá từ {{ minPrice | vnd }}đ</span>
+    </div>
+  </div>
+
+  <div class="dishes">
+    <article
+      *ngFor="let d of section.items"
+      class="dish"
+      [class.out]="d.out"
+      [class.in-cart]="qtyFor(d.id) > 0"
+      [style.--img-a]="d.img[0]"
+      [style.--img-b]="d.img[1]"
+    >
+      <div class="dish-img">
+        <!-- placeholder always behind: gradient + utensils glyph -->
+        <div class="dish-img-bg"></div>
+        <div class="dish-img-overlay"></div>
+        <span class="dish-img-placeholder" aria-hidden="true">🍽️</span>
+
+        <!-- real photo, fades in once it loads; on error it stays hidden so placeholder shows -->
+        <img
+          *ngIf="d.photoUrl && !failed[d.id]"
+          class="dish-img-photo"
+          [class.loaded]="loaded[d.id]"
+          [src]="d.photoUrl"
+          [alt]="d.name"
+          loading="lazy"
+          (load)="onImgLoaded(d.id)"
+          (error)="onImgError(d.id)"
+        />
+
+        <span *ngIf="(d.votes || 0) > 0"
+              class="vote-badge"
+              [title]="d.votes + ' lượt yêu thích từ ShopeeFood'">
+          <app-icon name="heart" [size]="10" [filled]="true"></app-icon>
+          <span>{{ d.votes }}</span>
+        </span>
+      </div>
+
+      <div class="dish-info">
+        <div>
+          <h4 class="dish-name">{{ d.name }}</h4>
+          <p class="dish-desc">{{ d.desc }}</p>
+        </div>
+        <div class="dish-bottom">
+          <div class="dish-meta">
+            <span *ngIf="d.options" class="dish-opt">Tùy chọn: {{ d.options }}</span>
+            <span *ngIf="d.out" class="dish-out-badge">Hết hàng</span>
+          </div>
+          <div class="dish-buy">
+            <div class="dish-price" [class.discounted]="d.originalPrice">
+              <span *ngIf="d.originalPrice" class="orig"
+                    [title]="'Giá gốc ' + (d.originalPrice | vnd) + 'đ'">
+                {{ d.originalPrice | vnd }}đ
+              </span>
+              <span class="now">
+                <span class="amt">{{ d.price | vnd }}</span>
+                <span class="currency">đ</span>
+              </span>
+            </div>
+
+            <ng-container *ngIf="!d.out">
+              <ng-container *ngIf="qtyFor(d.id) === 0; else stepper">
+                <button class="add-btn" type="button" title="Thêm vào đơn" (click)="add.emit(d.id)">
+                  <app-icon name="plus" [size]="16"></app-icon>
+                </button>
+              </ng-container>
+              <ng-template #stepper>
+                <div class="qty-stepper">
+                  <button type="button" (click)="minus.emit(d.id)"><app-icon name="minus" [size]="14"></app-icon></button>
+                  <span class="count">{{ qtyFor(d.id) }}</span>
+                  <button type="button" (click)="add.emit(d.id)"><app-icon name="plus" [size]="14"></app-icon></button>
+                </div>
+              </ng-template>
+            </ng-container>
+          </div>
+        </div>
+      </div>
+    </article>
+  </div>
+</section>

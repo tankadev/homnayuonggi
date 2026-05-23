@@ -1,0 +1,59 @@
+<section class="shop-card">
+  <div class="shop-header">
+    <div class="shop-avatar" [class.has-photo]="!!photoUrl">
+      <img *ngIf="photoUrl; else emojiTpl" class="shop-avatar-photo"
+           [src]="photoUrl" [alt]="name" loading="lazy"/>
+      <ng-template #emojiTpl>
+        <div class="shop-avatar-inner">{{ avatarEmoji }}</div>
+      </ng-template>
+    </div>
+    <div class="shop-name-block">
+      <h2 class="shop-name" [class.sm]="nameSizeClass === 'sm'" [class.xs]="nameSizeClass === 'xs'">{{ name }}</h2>
+      <div class="shop-rating">
+        <span class="stars" [attr.aria-label]="rating + ' sao'">
+          <ng-container *ngFor="let _ of fullStars">
+            <app-icon name="star" [size]="14" [filled]="true"></app-icon>
+          </ng-container>
+          <app-icon *ngIf="hasHalfStar" name="star-half" [size]="14" [filled]="true"></app-icon>
+          <ng-container *ngFor="let _ of emptyStars">
+            <span class="star-empty"><app-icon name="star" [size]="14" [filled]="true"></app-icon></span>
+          </ng-container>
+        </span>
+        <span class="rating-val">{{ rating }}</span>
+      </div>
+    </div>
+  </div>
+
+  <dl class="shop-meta">
+    <div class="meta-row">
+      <dt>Đánh giá</dt>
+      <dd><span class="pill-amber">{{ reviews }}</span> lượt đánh giá từ ShopeeFood</dd>
+    </div>
+    <div class="meta-row">
+      <dt><app-icon name="pin" [size]="12"></app-icon> Địa chỉ</dt>
+      <dd>{{ address }}</dd>
+    </div>
+    <div class="meta-row">
+      <dt><app-icon name="link" [size]="12"></app-icon> Link gốc</dt>
+      <dd><a [href]="url" target="_blank" rel="noopener">{{ url }}</a></dd>
+    </div>
+  </dl>
+
+  <div class="qr-wrap">
+    <div class="qr-frame">
+      <svg viewBox="0 0 21 21" width="84" height="84" shape-rendering="crispEdges">
+        <rect width="21" height="21" fill="white"/>
+        <rect *ngFor="let c of qrCells" [attr.x]="c.x" [attr.y]="c.y" width="1" height="1" fill="#1a1f1c"/>
+        <g *ngFor="let f of finders">
+          <rect [attr.x]="f[0]" [attr.y]="f[1]" width="7" height="7" fill="#1a1f1c"/>
+          <rect [attr.x]="f[0] + 1" [attr.y]="f[1] + 1" width="5" height="5" fill="white"/>
+          <rect [attr.x]="f[0] + 2" [attr.y]="f[1] + 2" width="3" height="3" fill="#1a1f1c"/>
+        </g>
+      </svg>
+    </div>
+    <div class="qr-info">
+      <b>Quét để mở quán</b>
+      <span>Hoàn tất đặt món ở app ShopeeFood</span>
+    </div>
+  </div>
+</section>

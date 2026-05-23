@@ -1,0 +1,73 @@
+<main class="rooms-main">
+  <div class="rooms-hero">
+    <div>
+      <h1 class="rooms-hero-title">
+        Chọn phòng để bắt đầu <span class="q">đặt món</span>
+      </h1>
+      <p class="rooms-hero-sub">
+        Vào một phòng đang hoạt động để cùng nhau bình chọn món,
+        hoặc <b>tạo phòng mới</b> rồi chia sẻ mật khẩu cho cả team.
+      </p>
+    </div>
+    <div class="rooms-stats">
+      <div class="stat-cell"><b>{{ stats.total }}</b><span>Tổng phòng</span></div>
+      <div class="stat-cell"><b>{{ stats.live }}</b><span>Đang hoạt động</span></div>
+      <div class="stat-cell"><b>{{ stats.private }}</b><span>Riêng tư</span></div>
+    </div>
+  </div>
+
+  <div class="rooms-toolbar">
+    <div class="filter-chips">
+      <button type="button" class="filter-chip" [class.active]="filter === 'all'" (click)="setFilter('all')">
+        Tất cả <span class="filter-count">{{ rooms.length }}</span>
+      </button>
+      <button type="button" class="filter-chip" [class.active]="filter === 'live'" (click)="setFilter('live')">
+        Đang hoạt động <span class="filter-count">{{ stats.live }}</span>
+      </button>
+      <button type="button" class="filter-chip" [class.active]="filter === 'idle'" (click)="setFilter('idle')">
+        Phòng trống <span class="filter-count">{{ stats.idle }}</span>
+      </button>
+      <button type="button" class="filter-chip" [class.active]="filter === 'private'" (click)="setFilter('private')">
+        Riêng tư <span class="filter-count">{{ stats.private }}</span>
+      </button>
+    </div>
+
+    <div class="search-room">
+      <app-icon name="search" [size]="14"></app-icon>
+      <input placeholder="Tìm phòng theo tên, mô tả, quán…" [(ngModel)]="query" name="query"/>
+    </div>
+
+    <button type="button" class="btn-create" (click)="openCreate()">
+      <app-icon name="plus" [size]="14"></app-icon> Tạo phòng
+    </button>
+  </div>
+
+  <div class="room-grid">
+    <app-room-card *ngFor="let r of filtered" [room]="r" (join)="onJoin($event)"></app-room-card>
+
+    <button type="button" class="room-card add-room" (click)="openCreate()">
+      <div class="add-room-icon"><app-icon name="plus" [size]="22"></app-icon></div>
+      <div class="add-room-title">Thêm phòng</div>
+      <div class="add-room-sub">Tạo một phòng mới để rủ team đặt món</div>
+    </button>
+  </div>
+
+  <div class="rooms-footer">
+    <span>Phiên bản <b>2.0.0</b></span>
+    <span>© 2026 TodayUongGi? · All rights reserved</span>
+  </div>
+</main>
+
+<app-create-room-modal
+  *ngIf="createOpen"
+  (create)="onCreate($event)"
+  (closed)="createOpen = false"
+></app-create-room-modal>
+
+<app-join-room-modal
+  *ngIf="joining"
+  [room]="joining"
+  [storedCipher]="cipherFor(joining.key)"
+  (joined)="onJoined($event)"
+  (closed)="joining = null"
+></app-join-room-modal>

@@ -1,0 +1,97 @@
+<app-modal size="md" (closed)="closed.emit()">
+  <form (submit)="onSubmit($event)">
+    <div class="modal-head">
+      <h2 class="modal-title">Tạo phòng mới</h2>
+      <button type="button" class="modal-close" (click)="closed.emit()" aria-label="Đóng">
+        <app-icon name="x" [size]="14"></app-icon>
+      </button>
+    </div>
+
+    <div class="modal-body">
+      <div class="info-banner">
+        <span class="info-banner-icon">i</span>
+        <span>Vui lòng đừng <b>spam tạo phòng</b> để tiết kiệm tài nguyên hệ thống.</span>
+      </div>
+
+      <div class="field">
+        <label class="field-label" for="crm-name">
+          Tên phòng <span class="req">*</span>
+        </label>
+        <input
+          #nameInput
+          id="crm-name"
+          name="name"
+          class="field-input"
+          [class.error]="nameError"
+          placeholder="VD: Cơm trưa team Eng"
+          [(ngModel)]="name"
+          [maxlength]="nameMax"
+        />
+        <div *ngIf="nameError" class="field-error">
+          <app-icon name="info" [size]="12"></app-icon> Vui lòng nhập tên phòng
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="field-label" for="crm-desc">Mô tả phòng</label>
+        <input
+          id="crm-desc"
+          name="desc"
+          class="field-input"
+          placeholder="Ăn gì? Ở đâu? Mấy giờ?"
+          [(ngModel)]="desc"
+          [maxlength]="descMax"
+        />
+        <div class="field-help">{{ desc.length }}/{{ descMax }} ký tự — tuỳ chọn</div>
+      </div>
+
+      <div class="toggle-row" [class.on]="priv">
+        <div class="tr-info">
+          <span class="tr-title">
+            <app-icon [name]="priv ? 'lock' : 'globe'" [size]="13"></app-icon>
+            Phòng riêng tư
+          </span>
+          <span class="tr-sub">
+            <ng-container *ngIf="priv; else publicTpl">Người mới cần mật khẩu mới vào được phòng.</ng-container>
+            <ng-template #publicTpl>Bất kỳ ai có link cũng có thể vào phòng.</ng-template>
+          </span>
+        </div>
+        <button type="button" class="switch" [class.on]="priv" (click)="priv = !priv" [attr.aria-pressed]="priv"></button>
+      </div>
+
+      <div *ngIf="priv" class="field">
+        <label class="field-label" for="crm-pwd">
+          Mật khẩu phòng <span class="req">*</span>
+        </label>
+        <div class="pwd-wrap">
+          <input
+            id="crm-pwd"
+            name="pwd"
+            class="field-input"
+            style="padding-right: 40px; width: 100%;"
+            [class.error]="pwdError"
+            [type]="showPwd ? 'text' : 'password'"
+            placeholder="Đặt mật khẩu cho phòng"
+            [(ngModel)]="pwd"
+          />
+          <button type="button" class="pwd-toggle" (click)="showPwd = !showPwd" [attr.aria-label]="showPwd ? 'Ẩn mật khẩu' : 'Hiện mật khẩu'">
+            <app-icon [name]="showPwd ? 'eye-off' : 'eye'" [size]="14"></app-icon>
+          </button>
+        </div>
+        <div *ngIf="pwdError" class="field-error">
+          <app-icon name="info" [size]="12"></app-icon> Vui lòng nhập mật khẩu phòng
+        </div>
+        <div *ngIf="!pwdError" class="field-help">
+          Chia sẻ mật khẩu này với người bạn muốn mời vào phòng.
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-foot split-2">
+      <button type="button" class="btn-ghost" (click)="closed.emit()">Đóng</button>
+      <button type="submit" class="btn-primary btn-grow" [disabled]="!canSubmit">
+        <app-icon name="check" [size]="15"></app-icon> Xác nhận
+      </button>
+    </div>
+  </form>
+</app-modal>

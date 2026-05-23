@@ -1,0 +1,236 @@
+<main class="main main-empty">
+  <section class="create-order-stage">
+    <!-- ─── Locked state: someone else is creating ───────────────── -->
+    <div *ngIf="view === 'locked'; else maybeEmpty" class="co-empty co-locked">
+      <span class="crumb crumb-locked">
+        <span class="crumb-dot"></span>
+        Phòng "{{ roomName }}" · đang có người tạo
+      </span>
+
+      <div class="co-lock-illus">
+        <span class="co-lock-shield"><app-icon name="lock" [size]="32"></app-icon></span>
+        <span class="co-lock-steam"><i></i><i></i><i></i></span>
+      </div>
+
+      <h1 class="co-empty-title"><b>{{ lockOwnerName }}</b> đang tạo bình chọn</h1>
+      <p class="co-empty-sub">
+        Vui lòng đợi vài giây — khi <b>{{ lockOwnerName }}</b> chốt link quán xong, bạn có thể vào chọn món ngay.
+      </p>
+
+      <div class="co-tips">
+        <div class="co-tip">
+          <span class="co-tip-step">01 · Chờ link quán</span>
+          <span class="co-tip-text">Người tạo đang dán <b>link ShopeeFood</b> và chọn thời gian</span>
+        </div>
+        <div class="co-tip">
+          <span class="co-tip-step">02 · Vào chọn món</span>
+          <span class="co-tip-text">Khi bình chọn mở, mọi người trong phòng sẽ <b>cùng vào chọn món</b></span>
+        </div>
+        <div class="co-tip">
+          <span class="co-tip-step">03 · Chốt &amp; trả</span>
+          <span class="co-tip-text">Chủ đơn chốt → mọi người <b>chia tiền</b> theo phần đã đặt</span>
+        </div>
+      </div>
+    </div>
+
+    <ng-template #maybeEmpty>
+    <!-- ─── Empty state ─────────────────────────────────────────── -->
+    <div *ngIf="view === 'empty'; else formCard" class="co-empty">
+      <span class="crumb">
+        <span class="crumb-dot"></span>
+        Phòng "{{ roomName }}" · chưa có đơn
+      </span>
+
+      <button type="button" class="co-cta" (click)="openForm()" aria-label="Tạo bình chọn món">
+        <span class="co-cta-steam"><i></i><i></i><i></i></span>
+        <span class="co-cta-cup">
+          <svg viewBox="0 0 200 240" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <defs>
+              <linearGradient id="cup-fill" x1="0" x2="0" y1="0" y2="1">
+                <stop offset="0%" stop-color="var(--primary-soft)" stop-opacity="0.9"/>
+                <stop offset="100%" stop-color="var(--primary-soft)" stop-opacity="0.4"/>
+              </linearGradient>
+              <linearGradient id="cup-stroke" x1="0" x2="0" y1="0" y2="1">
+                <stop offset="0%" stop-color="var(--primary)"/>
+                <stop offset="100%" stop-color="var(--primary-ink)"/>
+              </linearGradient>
+            </defs>
+            <path d="M 36 38 L 36 178 Q 36 220 78 220 L 122 220 Q 164 220 164 178 L 164 38 Z"
+                  fill="url(#cup-fill)" stroke="url(#cup-stroke)" stroke-width="3.5" stroke-linejoin="round"/>
+            <ellipse cx="100" cy="38" rx="64" ry="6"
+                     fill="var(--surface)" stroke="url(#cup-stroke)" stroke-width="3.5"/>
+            <path d="M 41 130 Q 100 142 159 130"
+                  stroke="var(--primary)" stroke-width="1.2" fill="none" opacity="0.35" stroke-dasharray="3 4"/>
+            <circle cx="68" cy="160" r="3" fill="var(--primary)" opacity="0.35"/>
+            <circle cx="84" cy="180" r="2" fill="var(--primary)" opacity="0.3"/>
+            <circle cx="132" cy="172" r="2.5" fill="var(--primary)" opacity="0.3"/>
+            <circle cx="118" cy="195" r="2" fill="var(--primary)" opacity="0.35"/>
+          </svg>
+        </span>
+        <span class="co-cta-label">
+          <span class="l-plus"><app-icon name="plus" [size]="16"></app-icon></span>
+          <span>TẠO</span>
+          <span>BÌNH CHỌN</span>
+        </span>
+      </button>
+
+      <h1 class="co-empty-title">Hôm nay cả phòng uống gì?</h1>
+      <p class="co-empty-sub">
+        Bấm chiếc ly để mở bình chọn. <b>{{ members.length }} thành viên</b> trong phòng sẽ
+        cùng chọn món — ai cũng có thể tạo, và bạn có thể tự gán người đặt hàng.
+      </p>
+
+      <div class="co-tips">
+        <div class="co-tip">
+          <span class="co-tip-step">01 · Mở quán</span>
+          <span class="co-tip-text">Dán link <b>ShopeeFood</b> của quán muốn đặt</span>
+        </div>
+        <div class="co-tip">
+          <span class="co-tip-step">02 · Hẹn giờ</span>
+          <span class="co-tip-text">Cho phòng <b>5–60 phút</b> để chọn món</span>
+        </div>
+        <div class="co-tip">
+          <span class="co-tip-step">03 · Người đặt</span>
+          <span class="co-tip-text">Tự đặt hoặc nhờ <b>người khác</b> đứng tên</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── Form card ───────────────────────────────────────────── -->
+    <ng-template #formCard>
+      <div class="co-card">
+        <div class="co-card-head">
+          <h2 class="co-card-title">Tạo bình chọn món</h2>
+          <p class="co-card-sub">Dán link quán, hẹn giờ, chọn người đứng tên đặt hàng.</p>
+        </div>
+
+        <div class="co-card-body">
+          <div class="co-form">
+            <!-- URL -->
+            <div class="field">
+              <label class="field-label">Link quán <span class="req">*</span></label>
+              <div class="co-input-wrap"
+                   [class.error]="touched && (!url.trim() || urlState === 'err')">
+                <span class="co-input-icon"><app-icon name="link" [size]="16"></app-icon></span>
+                <input class="co-input"
+                       placeholder="https://shopeefood.vn/can-tho/nuoc-mia-my-tho-mt68"
+                       [(ngModel)]="url" name="url" autofocus/>
+                <button *ngIf="url" type="button" class="co-input-clear" (click)="clearUrl()" aria-label="Xoá">
+                  <app-icon name="x" [size]="14"></app-icon>
+                </button>
+              </div>
+              <div *ngIf="urlState === 'ok'" class="co-url-hint ok">
+                <app-icon name="check" [size]="12" [sw]="2.4"></app-icon> Link ShopeeFood hợp lệ
+              </div>
+              <div *ngIf="urlState === 'warn'" class="co-url-hint hint">
+                <app-icon name="info" [size]="12"></app-icon> Link không phải ShopeeFood — vẫn dùng được
+              </div>
+              <div *ngIf="urlState === 'err'" class="co-url-hint err">
+                <app-icon name="alert" [size]="12"></app-icon> Link chưa đúng định dạng
+              </div>
+              <div *ngIf="!url" class="co-url-hint hint">
+                VD: <span class="co-url-example">https://shopeefood.vn/can-tho/nuoc-mia-my-tho-mt68</span>
+              </div>
+            </div>
+
+            <!-- Time -->
+            <div class="field">
+              <label class="field-label">Thời gian bình chọn <span class="req">*</span></label>
+              <div class="co-input-wrap">
+                <span class="co-input-icon"><app-icon name="timer" [size]="16"></app-icon></span>
+                <input class="co-input" type="number" inputmode="numeric" min="1" max="180"
+                       placeholder="10"
+                       [ngModel]="minutes" (ngModelChange)="setMinutes($event)" name="minutes"/>
+                <span class="co-input-suffix">Phút</span>
+              </div>
+              <div class="co-presets">
+                <button *ngFor="let p of presets" type="button" class="co-preset"
+                        [class.active]="minutes === p" (click)="setPreset(p)">
+                  {{ p }} phút
+                </button>
+              </div>
+            </div>
+
+            <!-- Orderer -->
+            <div class="co-orderer">
+              <div class="co-orderer-head">
+                <span class="co-orderer-title">
+                  <app-icon name="user" [size]="14" [filled]="true"></app-icon>
+                  Người đặt hàng
+                  <span class="req">*</span>
+                </span>
+                <div class="co-who-toggle">
+                  <button type="button" [class.active]="whoMode === 'me'" (click)="setWhoMode('me')">
+                    <app-icon name="user" [size]="11" [filled]="true"></app-icon> Tôi đặt
+                  </button>
+                  <button type="button" [class.active]="whoMode === 'other'" (click)="setWhoMode('other')">
+                    <app-icon name="users" [size]="11" [filled]="true"></app-icon> Người khác
+                  </button>
+                </div>
+              </div>
+
+              <ng-container *ngIf="whoMode === 'me'; else otherTpl">
+                <button type="button" class="co-member me active" aria-pressed="true">
+                  <span class="co-member-av">{{ me.initial }}</span>
+                  <span class="co-member-info">
+                    <span class="co-member-name">{{ me.name }}<em>· bạn</em></span>
+                    <span class="co-member-sub">Bạn sẽ đứng tên đặt và nhận tiền</span>
+                  </span>
+                  <span class="co-member-radio"></span>
+                </button>
+              </ng-container>
+
+              <ng-template #otherTpl>
+                <div *ngIf="others.length; else noOthers" class="co-select-wrap">
+                  <span class="co-select-av">{{ selectAvatarLabel }}</span>
+                  <select class="co-select" [(ngModel)]="pickedId" name="pickedId">
+                    <option *ngFor="let m of others; trackBy: trackByMember" [value]="m.id">
+                      {{ m.name }}
+                    </option>
+                  </select>
+                  <span class="co-select-chev"><app-icon name="chevron" [size]="14"></app-icon></span>
+                </div>
+                <ng-template #noOthers>
+                  <div class="co-no-others">
+                    Chưa có thành viên nào khác trong hệ thống — chọn "Tôi đặt" hoặc mời thêm người đăng ký.
+                  </div>
+                </ng-template>
+              </ng-template>
+            </div>
+          </div>
+        </div>
+
+        <div *ngIf="errorMsg" class="co-error">
+          <app-icon name="alert" [size]="14"></app-icon> {{ errorMsg }}
+        </div>
+
+        <div class="co-foot">
+          <button type="button" class="btn-confirm-big" (click)="submit()" [disabled]="!canSubmit">
+            <ng-container *ngIf="submitting; else readyTpl">
+              <span class="co-spinner"></span> Đang tạo bình chọn…
+            </ng-container>
+            <ng-template #readyTpl>
+              <app-icon name="check" [size]="18" [sw]="2.4"></app-icon> Xác nhận
+            </ng-template>
+          </button>
+          <button type="button" class="btn-cancel-big" (click)="cancelForm()" [disabled]="submitting">Hủy</button>
+        </div>
+      </div>
+    </ng-template>
+    </ng-template>
+  </section>
+
+  <div class="footer-text co-footer-text">
+    <span>Phiên bản 3.0.0</span>
+    <span>© 2026 TodayUongGi? · All rights reserved</span>
+  </div>
+</main>
+
+<div *ngIf="toast" class="co-toast">
+  <app-icon name="check" [size]="14" [sw]="2.4"></app-icon>
+  <span>
+    Đã tạo bình chọn —
+    <b>{{ toast.ordererIsMe ? 'bạn' : toast.ordererName }}</b>
+    đứng tên đặt · còn {{ toast.minutes }} phút
+  </span>
+</div>

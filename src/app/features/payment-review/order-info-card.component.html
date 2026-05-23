@@ -1,0 +1,90 @@
+<section class="pr-card">
+  <h3 class="pr-card-title">
+    <app-icon name="receipt" [size]="14"></app-icon> Đơn hàng
+  </h3>
+
+  <div class="pr-shop">
+    <div class="pr-shop-icon" [class.has-photo]="!!order.shopPhoto">
+      <img *ngIf="order.shopPhoto; else iconTpl" class="pr-shop-photo"
+           [src]="order.shopPhoto" [alt]="order.shop" loading="lazy"/>
+      <ng-template #iconTpl>{{ order.shopIcon }}</ng-template>
+    </div>
+    <div>
+      <div class="pr-shop-name">{{ order.shop }}</div>
+      <div class="pr-shop-sub">{{ order.shopSub }}</div>
+    </div>
+  </div>
+
+  <div class="pr-money">
+    <div class="pr-money-row">
+      <span class="l"><app-icon name="receipt" [size]="12"></app-icon> Tạm tính món</span>
+      <span class="v">{{ subtotal | vnd }}đ</span>
+    </div>
+    <div class="pr-money-row">
+      <span class="l"><app-icon name="truck" [size]="12"></app-icon> Phí vận chuyển</span>
+      <span class="v">+{{ order.shipFee | vnd }}đ</span>
+    </div>
+    <div class="pr-money-row">
+      <span class="l"><app-icon name="sparkle" [size]="12" [filled]="true"></app-icon> Phí dịch vụ</span>
+      <span class="v">+{{ order.serviceFee | vnd }}đ</span>
+    </div>
+    <div *ngIf="order.voucher" class="pr-money-row discount">
+      <span class="l"><app-icon name="ticket" [size]="12"></app-icon> Giảm giá voucher</span>
+      <span class="v">{{ order.voucher.amount | vnd }}đ</span>
+    </div>
+    <div class="pr-money-row total">
+      <span class="l">Tổng cộng</span>
+      <span class="v">{{ grand | vnd }}<span>đ</span></span>
+    </div>
+  </div>
+
+  <div *ngIf="order.voucher" class="pr-voucher-applied">
+    <app-icon name="ticket" [size]="13"></app-icon>
+    <span class="code">{{ order.voucher.code }}</span>
+    <span class="desc">{{ order.voucher.desc }}</span>
+    <span class="amt">{{ order.voucher.amount | vnd }}đ</span>
+  </div>
+
+  <div>
+    <div class="pr-section-head">
+      <h4 class="pr-section-title">
+        <app-icon name="users" [size]="13"></app-icon> Cách chia tiền
+      </h4>
+      <div class="pr-section-actions">
+        <button class="pr-mini-btn"
+                [class.active]="splitMode === 'items'"
+                [disabled]="!isOwner"
+                title="Phí giao + dịch vụ + voucher chia theo tỉ lệ tiền món của mỗi người"
+                (click)="setMode('items')">
+          Phí theo món
+        </button>
+        <button class="pr-mini-btn"
+                [class.active]="splitMode === 'equal'"
+                [disabled]="!isOwner"
+                title="Phí giao + dịch vụ + voucher chia đều cho cả phòng"
+                (click)="setMode('equal')">
+          Phí chia đều
+        </button>
+      </div>
+    </div>
+
+    <div class="pr-split-info">
+      <div class="pr-split-row">
+        <span class="l"><app-icon name="wallet" [size]="12"></app-icon> Hình thức</span>
+        <span class="v cash">{{ paymentLabel }}</span>
+      </div>
+      <div class="pr-split-row">
+        <span class="l"><app-icon name="info" [size]="12"></app-icon> Quy tắc</span>
+        <span class="v">
+          {{ splitMode === 'equal'
+              ? 'Trả tiền món của mình + chia đều phí cho ' + participantCount + ' người'
+              : 'Trả tiền món của mình + chia phí theo tỉ lệ tiền món' }}
+        </span>
+      </div>
+      <div class="pr-split-row">
+        <span class="l"><app-icon name="users" [size]="12"></app-icon> Số người tham gia</span>
+        <span class="v">{{ participantCount }} người</span>
+      </div>
+    </div>
+  </div>
+</section>

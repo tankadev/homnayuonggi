@@ -1,0 +1,130 @@
+:host { display: block; }
+
+.pr-transfer {
+  background: var(--surface-2);
+  border: 1px dashed var(--line);
+  border-radius: 12px;
+  padding: 10px;
+  display: grid;
+  grid-template-columns: 96px 1fr;
+  gap: 12px;
+  align-items: center;
+}
+.pr-transfer-qr {
+  width: 96px;
+  height: 96px;
+  background: white;
+  border-radius: 10px;
+  padding: 6px;
+  display: grid;
+  place-items: center;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+  flex-shrink: 0;
+}
+.pr-transfer-info {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+.t-lbl {
+  font-size: 10px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-weight: 700;
+}
+.pr-transfer-info .bank-name {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 13px;
+  color: var(--ink);
+  letter-spacing: -0.01em;
+}
+.pr-transfer-info .bank-name.acc-inline {
+  font-family: var(--mono);
+  font-weight: 700;
+  font-size: 13.5px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.pr-transfer-info .bank-name.acc-inline button {
+  appearance: none;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  color: var(--ink-2);
+  display: inline-grid;
+  place-items: center;
+  cursor: pointer;
+}
+.pr-transfer-info .bank-name.acc-inline button:hover {
+  background: var(--bg-2);
+  color: var(--primary);
+}
+.pr-transfer-info .acc {
+  font-family: var(--mono);
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--ink);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.pr-transfer-info .acc button {
+  appearance: none;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  color: var(--ink-2);
+  display: inline-grid;
+  place-items: center;
+  cursor: pointer;
+}
+.pr-transfer-info .acc button:hover {
+  background: var(--bg-2);
+  color: var(--primary);
+}
+.pr-transfer-info .holder {
+  font-size: 10.5px;
+  color: var(--muted);
+}
+
+.pr-transfer-cash {
+  grid-template-columns: 56px 1fr;
+}
+.pr-transfer-cash-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 14px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+
+.pr-momo-qr {
+  background: #d82d8b;
+  position: relative;
+}
+.pr-momo-qr::after {
+  content: 'MoMo';
+  position: absolute;
+  bottom: -4px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #d82d8b;
+  color: white;
+  font-family: var(--display);
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  padding: 2px 6px;
+  border-radius: 4px;
+}

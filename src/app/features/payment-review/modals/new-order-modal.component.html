@@ -1,0 +1,49 @@
+<app-modal size="sm" (closed)="closed.emit()">
+  <div class="modal-head">
+    <div>
+      <h3 class="modal-title">Tạo đơn mới?</h3>
+      <p class="modal-sub">
+        Đơn hiện tại sẽ được lưu lại, mọi người sẽ chuyển sang chọn món ở quán mới.
+      </p>
+    </div>
+    <button type="button" class="modal-close" (click)="closed.emit()" aria-label="Đóng">
+      <app-icon name="x" [size]="14"></app-icon>
+    </button>
+  </div>
+
+  <div class="modal-body">
+    <div class="no-preview">
+      <span class="no-preview-icon"><app-icon name="sparkle" [size]="16" [filled]="true"></app-icon></span>
+      <div class="no-preview-body">
+        <b>Bắt đầu đơn mới ở quán khác.</b><br/>
+        Bạn vẫn ở phòng <b>{{ roomName }}</b> với {{ memberCount }} thành viên.
+        Đơn cũ tại <b>{{ shopName }}</b> đã chốt vẫn được giữ trong lịch sử để đối soát.
+        <div class="no-stats">
+          <span class="no-chip primary">
+            <app-icon name="users" [size]="10" [filled]="true"></app-icon>
+            Giữ <b>{{ memberCount }} thành viên</b>
+          </span>
+          <span class="no-chip">
+            <app-icon name="receipt" [size]="10"></app-icon>
+            Đơn cũ <b>{{ previousTotal | vnd }}đ</b> lưu lại
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <div class="no-hint">
+      <app-icon name="info" [size]="13"></app-icon>
+      <span>
+        Các thành viên <b>chưa thanh toán</b> ở đơn cũ vẫn có thể bấm
+        "Báo đã chuyển" trong phần lịch sử phòng.
+      </span>
+    </div>
+  </div>
+
+  <div class="modal-foot split-2">
+    <button type="button" class="btn-ghost" (click)="closed.emit()">Để sau</button>
+    <button type="button" class="btn-primary btn-grow" (click)="confirm.emit()">
+      <app-icon name="sparkle" [size]="13" [filled]="true"></app-icon> Chọn quán mới
+    </button>
+  </div>
+</app-modal>

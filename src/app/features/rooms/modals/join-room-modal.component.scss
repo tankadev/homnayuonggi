@@ -1,0 +1,101 @@
+.join-room-card {
+  display: grid;
+  grid-template-columns: 52px 1fr;
+  gap: 12px;
+  align-items: center;
+  padding: 12px 14px;
+  background: var(--surface-2);
+  border: 1px solid var(--line-soft);
+  border-radius: 12px;
+}
+.jrc-avatar {
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  display: grid;
+  place-items: center;
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: 20px;
+  color: white;
+  background: linear-gradient(135deg, var(--av-a, #4a6a4a), var(--av-b, #2c4a2c));
+  box-shadow: 0 4px 10px -4px rgba(0, 0, 0, 0.18);
+  position: relative;
+  overflow: visible;
+}
+.jrc-avatar.has-shop {
+  padding: 3px;
+  background: white;
+  border: 1px solid var(--line-soft);
+}
+.jrc-avatar.has-shop .jrc-avatar-inner {
+  width: 100%;
+  height: 100%;
+  border-radius: 11px;
+  background: linear-gradient(135deg, var(--av-a), var(--av-b));
+  display: grid;
+  place-items: center;
+  font-size: 22px;
+  position: relative;
+  overflow: hidden;
+}
+.jrc-avatar.has-shop .jrc-avatar-inner::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 30% 25%, rgba(255, 255, 255, 0.22), transparent 55%),
+    repeating-linear-gradient(45deg, transparent 0 4px, rgba(255, 255, 255, 0.05) 4px 5px);
+}
+.jrc-lock {
+  position: absolute;
+  right: -3px;
+  bottom: -3px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: white;
+  display: grid;
+  place-items: center;
+  border: 2px solid var(--surface-2);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+}
+
+.jrc-info {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.jrc-shop {
+  font-size: 10.5px;
+  font-weight: 600;
+  color: var(--primary-ink);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.jrc-name {
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: 15px;
+  letter-spacing: -0.025em;
+  color: var(--ink);
+  line-height: 1.15;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.jrc-desc {
+  font-size: 11.5px;
+  color: var(--ink-2);
+  line-height: 1.4;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.jrc-desc .muted {
+  color: var(--muted);
+  font-style: italic;
+}

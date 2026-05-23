@@ -1,0 +1,35 @@
+<section class="pr-you">
+  <div class="pr-you-head">
+    <h3 class="pr-you-title">
+      <app-icon name="wallet" [size]="14"></app-icon> Bạn cần trả
+    </h3>
+    <span class="head-hint">{{ headerHint }}</span>
+  </div>
+
+  <div class="pr-you-amount" [class.is-paid]="isOwner || myPaid">
+    <span *ngIf="isOwner" class="pr-you-amount-stamp">
+      <app-icon name="crown" [size]="10" [filled]="true"></app-icon> Người đặt đơn
+    </span>
+    <span *ngIf="myPaid && !isOwner" class="pr-you-amount-stamp">
+      <app-icon name="check" [size]="11" [sw]="2.4"></app-icon> Đã trả
+    </span>
+    <span class="pr-you-amount-lbl">{{ amountLabel }}</span>
+    <span class="pr-you-amount-val">{{ amountShown | vnd }}<span>đ</span></span>
+    <span class="pr-you-amount-foot">
+      <ng-container *ngIf="isOwner; else memberFoot">
+        Cần thu lại <b>{{ unpaidTotal | vnd }}đ</b> từ {{ totalPayers }} thành viên
+      </ng-container>
+      <ng-template #memberFoot>
+        Cho <b>{{ myDishCount }} món</b> bạn đã đặt
+      </ng-template>
+    </span>
+  </div>
+
+  <app-payment-detail [order]="order"></app-payment-detail>
+
+  <div *ngIf="!isOwner && myPaid" class="pr-actions">
+    <button type="button" class="pr-btn primary" disabled style="opacity: 0.75">
+      <app-icon name="check-circle" [size]="14"></app-icon> Bạn đã được đánh dấu trả tiền
+    </button>
+  </div>
+</section>

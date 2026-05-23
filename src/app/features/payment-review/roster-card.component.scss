@@ -1,0 +1,133 @@
+:host { display: block; }
+
+.pr-card {
+  background: var(--surface);
+  border: 1px solid var(--line-soft);
+  border-radius: var(--r-lg);
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.pr-card-title {
+  font-family: var(--display);
+  font-weight: var(--display-weight);
+  font-size: 14px;
+  letter-spacing: var(--display-spacing);
+  margin: 0;
+  color: var(--ink);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.pr-card-title .right {
+  margin-left: auto;
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--muted);
+  background: var(--surface-2);
+  padding: 2px 7px;
+  border-radius: 999px;
+  letter-spacing: 0;
+}
+
+.pr-roster-list {
+  display: flex;
+  flex-direction: column;
+}
+.pr-roster-row {
+  display: grid;
+  grid-template-columns: 26px 1fr auto;
+  gap: 8px;
+  align-items: center;
+  padding: 7px 2px;
+  border-bottom: 1px dashed var(--line-soft);
+}
+.pr-roster-row:last-child {
+  border-bottom: 0;
+}
+.pr-roster-avatar {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  color: var(--ink-2);
+  display: grid;
+  place-items: center;
+  font-size: 10.5px;
+  font-weight: 700;
+  font-family: var(--display);
+}
+.pr-roster-row.is-me .pr-roster-avatar {
+  background: var(--primary);
+  color: white;
+  border-color: var(--primary);
+}
+.pr-roster-info {
+  min-width: 0;
+}
+.pr-roster-info b {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.pr-roster-info b em {
+  font-style: normal;
+  color: var(--primary);
+  font-size: 10px;
+  font-weight: 600;
+}
+.pr-roster-amt {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-2);
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.pr-roster-amt .badge {
+  display: inline-grid;
+  place-items: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  color: var(--muted);
+}
+.pr-roster-row.paid .pr-roster-amt .badge {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: white;
+}
+.pr-roster-row.paid .pr-roster-amt {
+  color: var(--muted);
+}
+.pr-roster-row.paid .pr-roster-info b {
+  color: var(--muted);
+  text-decoration: line-through;
+  text-decoration-color: color-mix(in oklab, var(--muted) 50%, transparent);
+}
+
+.pr-roster-foot {
+  font-size: 11px;
+  color: var(--muted);
+  line-height: 1.5;
+  padding: 8px 0 0;
+  border-top: 1px dashed var(--line-soft);
+  display: inline-flex;
+  align-items: flex-start;
+  gap: 4px;
+}
+.pr-roster-foot app-icon {
+  flex-shrink: 0;
+  margin-top: 1px;
+}

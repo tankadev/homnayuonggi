@@ -1,0 +1,26 @@
+<section class="pr-card roster">
+  <h3 class="pr-card-title">
+    <app-icon name="users" [size]="14"></app-icon> Tiến độ nhận tiền
+    <span class="right">{{ paidCount }}/{{ payers.length }}</span>
+  </h3>
+
+  <ul class="pr-roster-list">
+    <li *ngFor="let m of payers" class="pr-roster-row" [class.paid]="isPaid(m.id)" [class.is-me]="m.me">
+      <span class="pr-roster-avatar">{{ m.initial }}</span>
+      <div class="pr-roster-info">
+        <b>{{ m.name }}<em *ngIf="m.me"> · bạn</em></b>
+      </div>
+      <span class="pr-roster-amt">
+        <span>{{ m.share | vnd }}đ</span>
+        <span class="badge">
+          <app-icon *ngIf="isPaid(m.id)" name="check" [size]="11" [sw]="2.4"></app-icon>
+        </span>
+      </span>
+    </li>
+  </ul>
+
+  <div class="pr-roster-foot">
+    <app-icon name="info" [size]="11"></app-icon>
+    Người đặt đơn là người ứng tiền &amp; nhận lại từ thành viên.
+  </div>
+</section>

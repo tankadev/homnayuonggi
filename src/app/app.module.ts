@@ -1,92 +1,114 @@
-import { NgModule } from '@angular/core';
+import { NgModule, APP_INITIALIZER } from '@angular/core';
+import { BrowserModule } from '@angular/platform-browser';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+
 import { provideFirebaseApp, initializeApp } from '@angular/fire/app';
 import { getDatabase, provideDatabase } from '@angular/fire/database';
-import { getMessaging, provideMessaging } from '@angular/fire/messaging';
-import { provideRemoteConfig } from '@angular/fire/remote-config';
-import { getRemoteConfig } from 'firebase/remote-config';
-import { BrowserModule } from '@angular/platform-browser';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { registerLocaleData } from '@angular/common';
-import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import en from '@angular/common/locales/en';
+import { provideRemoteConfig, getRemoteConfig } from '@angular/fire/remote-config';
 
-import { NZ_I18N } from 'ng-zorro-antd/i18n';
-import { en_US } from 'ng-zorro-antd/i18n';
-import { QRCodeComponent } from 'angularx-qrcode';
+import { environment } from '../environments/environment';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { environment } from '../environments/environment';
-import { ZoroAntdModule } from './zoro.module';
-import { HeaderComponent } from './ui/header/header.component';
-import { JoinToAppComponent } from './ui/dialogs/join-to-app/join-to-app.component';
-import { ShareModule } from './share/share.module';
-import { CreateDeliveryComponent } from './ui/create-delivery/create-delivery.component';
-import { CreateDeliveryFormComponent } from './ui/create-delivery/create-delivery-form/create-delivery-form.component';
-import { NeedLoginComponent } from './ui/need-login/need-login.component';
-import { CatAnimateComponent } from './ui/cat-animate/cat-animate.component';
-import { PlaceOrderComponent } from './ui/place-order/place-order.component';
-import { ShopInfoComponent } from './ui/place-order/shop-info/shop-info.component';
-import { HistoryOrderComponent } from './ui/place-order/history-order/history-order.component';
-import { ListDishComponent } from './ui/place-order/list-dish/list-dish.component';
-import { ListOrderComponent } from './ui/place-order/list-order/list-order.component';
-import { ConfirmDialogComponent } from './ui/dialogs/confirm-dialog/confirm-dialog.component';
-import { NoteDialogComponent } from './ui/dialogs/note-dialog/note-dialog.component';
-import { PlaceOrderDialogComponent } from './ui/dialogs/place-order-dialog/place-order-dialog.component';
-import { SplitMoneyComponent } from './ui/split-money/split-money.component';
-import { InfoOrderComponent } from './ui/split-money/info-order/info-order.component';
-import { InfoUserPaymentComponent } from './ui/split-money/info-user-payment/info-user-payment.component';
-import { InfoPaymentComponent } from './ui/split-money/info-payment/info-payment.component';
-import { ListSplitMoneyComponent } from './ui/split-money/list-split-money/list-split-money.component';
-import { RoomsComponent } from './ui/rooms/rooms.component';
-import { CreateRoomComponent } from './ui/dialogs/create-room/create-room.component';
-import { DrinkAnimateComponent } from './ui/drink-animate/drink-animate.component';
-import { JoinRoomPwdComponent } from './ui/dialogs/join-room-pwd/join-room-pwd.component';
-import { UnpaidListComponent } from './ui/unpaid-list/unpaid-list.component';
+import { SharedModule } from './shared/shared.module';
 
-registerLocaleData(en);
+import { HeaderComponent } from './features/header/header.component';
+import { ThemeSwitcherComponent } from './features/header/theme-switcher.component';
+import { PlaceOrderPageComponent } from './features/place-order/place-order-page.component';
+import { ShopCardComponent } from './features/place-order/shop-card.component';
+import { HistoryCardComponent } from './features/place-order/history-card.component';
+import { VoucherStripComponent } from './features/place-order/voucher-strip.component';
+import { DishMenuComponent } from './features/place-order/dish-menu.component';
+import { CartPanelComponent } from './features/place-order/cart-panel.component';
+import { NoteEditModalComponent } from './features/place-order/modals/note-edit-modal.component';
+import { CancelOrderModalComponent } from './features/place-order/modals/cancel-order-modal.component';
+import { EditRoomModalComponent } from './features/place-order/modals/edit-room-modal.component';
+import { CompleteOrderModalComponent } from './features/place-order/modals/complete-order-modal.component';
+import { RoomsPageComponent } from './features/rooms/rooms-page.component';
+import { RoomCardComponent } from './features/rooms/room-card.component';
+import { CreateRoomModalComponent } from './features/rooms/modals/create-room-modal.component';
+import { JoinRoomModalComponent } from './features/rooms/modals/join-room-modal.component';
+import { PaymentReviewPageComponent } from './features/payment-review/payment-review-page.component';
+import { OrderInfoCardComponent } from './features/payment-review/order-info-card.component';
+import { RosterCardComponent } from './features/payment-review/roster-card.component';
+import { MemberCardComponent } from './features/payment-review/member-card.component';
+import { YouPayCardComponent } from './features/payment-review/you-pay-card.component';
+import { PaymentDetailComponent } from './features/payment-review/payment-detail.component';
+import { NewOrderModalComponent } from './features/payment-review/modals/new-order-modal.component';
+import { HistoryPageComponent } from './features/history/history-page.component';
+import { SummaryCardComponent } from './features/history/summary-card.component';
+import { FiltersCardComponent } from './features/history/filters-card.component';
+import { OrderCardComponent } from './features/history/order-card.component';
+import { PairsCardComponent } from './features/history/pairs-card.component';
+import { CreateOrderPageComponent } from './features/create-order/create-order-page.component';
+import { WelcomePageComponent } from './features/welcome/welcome-page.component';
+import { AuthModalComponent } from './features/welcome/auth-modal.component';
+import { PlaceholderPageComponent } from './features/placeholder/placeholder-page.component';
 
-@NgModule({ declarations: [
-        AppComponent,
-        CatAnimateComponent,
-        HeaderComponent,
-        JoinToAppComponent,
-        NeedLoginComponent,
-        CreateDeliveryComponent,
-        CreateDeliveryFormComponent,
-        PlaceOrderComponent,
-        ShopInfoComponent,
-        HistoryOrderComponent,
-        ListDishComponent,
-        ListOrderComponent,
-        ConfirmDialogComponent,
-        PlaceOrderDialogComponent,
-        NoteDialogComponent,
-        SplitMoneyComponent,
-        InfoOrderComponent,
-        InfoUserPaymentComponent,
-        InfoPaymentComponent,
-        ListSplitMoneyComponent,
-        RoomsComponent,
-        CreateRoomComponent,
-        DrinkAnimateComponent,
-        JoinRoomPwdComponent,
-        UnpaidListComponent
-    ],
-    bootstrap: [AppComponent], imports: [BrowserModule,
-        AppRoutingModule,
-        ZoroAntdModule,
-        FormsModule,
-        ReactiveFormsModule,
-        BrowserAnimationsModule,
-        ShareModule,
-        QRCodeComponent], providers: [
-        { provide: NZ_I18N, useValue: en_US },
-        provideFirebaseApp(() => initializeApp(environment.firebase)),
-        provideDatabase(() => getDatabase()),
-        provideMessaging(() => getMessaging()),
-        provideRemoteConfig(() => getRemoteConfig()),
-        provideHttpClient(withInterceptorsFromDi()),
-    ] })
-export class AppModule { }
+import { ThemeService } from './core/services/theme.service';
+
+export function initTheme(theme: ThemeService) {
+  return () => theme.init();
+}
+
+@NgModule({
+  declarations: [
+    AppComponent,
+    HeaderComponent,
+    ThemeSwitcherComponent,
+    PlaceOrderPageComponent,
+    ShopCardComponent,
+    HistoryCardComponent,
+    VoucherStripComponent,
+    DishMenuComponent,
+    CartPanelComponent,
+    NoteEditModalComponent,
+    CancelOrderModalComponent,
+    EditRoomModalComponent,
+    CompleteOrderModalComponent,
+    RoomsPageComponent,
+    RoomCardComponent,
+    CreateRoomModalComponent,
+    JoinRoomModalComponent,
+    PaymentReviewPageComponent,
+    OrderInfoCardComponent,
+    RosterCardComponent,
+    MemberCardComponent,
+    YouPayCardComponent,
+    PaymentDetailComponent,
+    NewOrderModalComponent,
+    HistoryPageComponent,
+    SummaryCardComponent,
+    FiltersCardComponent,
+    OrderCardComponent,
+    PairsCardComponent,
+    CreateOrderPageComponent,
+    WelcomePageComponent,
+    AuthModalComponent,
+    PlaceholderPageComponent,
+  ],
+  imports: [
+    BrowserModule,
+    BrowserAnimationsModule,
+    AppRoutingModule,
+    FormsModule,
+    ReactiveFormsModule,
+    SharedModule,
+  ],
+  providers: [
+    provideFirebaseApp(() => initializeApp(environment.firebase)),
+    provideDatabase(() => getDatabase()),
+    provideRemoteConfig(() => getRemoteConfig()),
+    provideHttpClient(withInterceptorsFromDi()),
+    {
+      provide: APP_INITIALIZER,
+      useFactory: initTheme,
+      deps: [ThemeService],
+      multi: true,
+    },
+  ],
+  bootstrap: [AppComponent],
+})
+export class AppModule {}

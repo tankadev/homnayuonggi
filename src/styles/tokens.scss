@@ -1,0 +1,38 @@
+/* ─── design tokens — default light surface ────────────────────────── */
+
+:root {
+  --bg: #f5f7f4;
+  --bg-2: #ebefe9;
+  --surface: #ffffff;
+  --surface-2: #f7f9f6;
+  --ink: #14181a;
+  --ink-2: #3a4148;
+  --muted: #8a9088;
+  --line: #e3e7e1;
+  --line-soft: #ecefe9;
+
+  --primary: oklch(0.55 0.13 152);
+  --primary-ink: oklch(0.40 0.12 152);
+  --primary-soft: oklch(0.95 0.04 152);
+  --accent: oklch(0.62 0.16 50);
+  --accent-soft: oklch(0.94 0.05 55);
+  --amber: oklch(0.82 0.16 85);
+  --amber-soft: oklch(0.94 0.10 85);
+  --rose: oklch(0.58 0.18 25);
+  --danger: oklch(0.58 0.17 25);
+
+  --sans: "Be Vietnam Pro", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --display: var(--sans);
+  --mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  --display-weight: 700;
+  --display-spacing: -0.025em;
+
+  --r-sm: 10px;
+  --r-md: 14px;
+  --r-lg: 22px;
+  --r-xl: 28px;
+
+  --topbar-h: 60px;
+  --gap: 14px;
+  --col-pad: 18px;
+}

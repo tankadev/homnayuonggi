@@ -1,25 +1,45 @@
-<div class="app-content-wrapper">
-  <header [userInfo]="userInfo" [unpaidList]="paymentsPaid | unPaidListByRoom:(deliveriesList | deliveryDetail):room"></header>
-  <ng-container *ngIf="isLoginIn; else showNeedLogin">
-
-    <ng-container *ngIf="isSelectedRoom; else noRoomSelected">
-      <ng-container *ngIf="(deliveriesList | deliveryDetail) && (deliveriesList | deliveryDetail).isCreate; else showCreateDelivery">
-        <place-order *ngIf="!(deliveriesList | deliveryDetail).isCompleted; else splitMoneyInformation" [deliveryInfo]="deliveriesList | deliveryDetail:room.key"></place-order>
-        <ng-template #splitMoneyInformation>
-          <split-money [deliveryInfo]="deliveriesList | deliveryDetail:room.key" [paymentPaid]="paymentsPaid | paymentPaidByRoom:room"></split-money>
-        </ng-template>
-      </ng-container>
-      <ng-template #showCreateDelivery>
-        <create-delivery [deliveryInfo]="deliveriesList | deliveryDetail:room.key" [user]="userInfo"></create-delivery>
-      </ng-template>
-    </ng-container>
-
-    <ng-template #noRoomSelected>
-      <rooms></rooms>
-    </ng-template>
+<div class="app">
+  <ng-container *ngIf="mode === 'welcome'; else appShell">
+    <app-welcome-page (authenticated)="onAuthenticated($event)"></app-welcome-page>
   </ng-container>
 
-  <ng-template #showNeedLogin>
-    <need-login></need-login>
+  <ng-template #appShell>
+    <app-header
+      [user]="user"
+      [room]="room"
+      [mode]="mode"
+      (editRoom)="openEditRoom()"
+      (leaveRoom)="leaveRoom()"
+      (openHistory)="openHistory()"
+      (backToRooms)="closeHistory()"
+      (logout)="logout()"
+    ></app-header>
+
+    <ng-container [ngSwitch]="mode">
+      <app-rooms-page *ngSwitchCase="'rooms'" (enter)="enterRoom($event)"></app-rooms-page>
+
+      <app-create-order-page
+        *ngSwitchCase="'create-order'"
+        [room]="room"
+        (created)="onCreateOrder()"
+      ></app-create-order-page>
+
+      <app-place-order
+        *ngSwitchCase="'place-order'"
+        [room]="room"
+        [editRoomTrigger]="editRoomTrigger"
+        (roomChanged)="onRoomChanged($event)"
+        (orderCompleted)="onOrderCompleted()"
+      ></app-place-order>
+
+      <app-payment-review-page
+        *ngSwitchCase="'payment-review'"
+        [room]="room"
+        [roomName]="room?.name || ''"
+        (newOrder)="onNewOrder()"
+      ></app-payment-review-page>
+
+      <app-history-page *ngSwitchCase="'history'"></app-history-page>
+    </ng-container>
   </ng-template>
 </div>

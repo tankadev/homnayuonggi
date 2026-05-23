@@ -1,0 +1,42 @@
+<app-modal size="sm" (closed)="closed.emit()">
+  <form (submit)="onSubmit($event)">
+    <div class="modal-head">
+      <div>
+        <h2 class="modal-title">Ghi chú món</h2>
+        <p class="modal-sub">"{{ dish.name }}" · phần của bạn</p>
+      </div>
+      <button type="button" class="modal-close" (click)="closed.emit()" aria-label="Đóng">
+        <app-icon name="x" [size]="14"></app-icon>
+      </button>
+    </div>
+
+    <div class="modal-body">
+      <div class="field">
+        <label class="field-label">Ghi chú gửi quán</label>
+        <input
+          #input
+          class="field-input"
+          placeholder="VD: ít cay, không hành, đường ít…"
+          [(ngModel)]="note"
+          name="note"
+          [maxlength]="maxLen"
+          (keydown.enter)="onSubmit($event)"
+        />
+        <div class="field-help">{{ note.length }}/{{ maxLen }} ký tự — gửi kèm khi chốt đơn</div>
+      </div>
+
+      <div class="quick-notes">
+        <button type="button" *ngFor="let q of quick" class="qn-chip" (click)="addQuick(q)">
+          <app-icon name="plus" [size]="11"></app-icon> {{ q }}
+        </button>
+      </div>
+    </div>
+
+    <div class="modal-foot split-2">
+      <button type="button" class="btn-ghost" (click)="closed.emit()">Hủy</button>
+      <button type="submit" class="btn-primary btn-grow">
+        <app-icon name="check" [size]="15"></app-icon> Lưu ghi chú
+      </button>
+    </div>
+  </form>
+</app-modal>

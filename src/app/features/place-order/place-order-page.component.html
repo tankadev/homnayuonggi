@@ -1,0 +1,81 @@
+<main class="main">
+  <aside class="col-left">
+    <app-shop-card
+      [name]="shop.name"
+      [rating]="shop.rating"
+      [reviews]="shop.reviews"
+      [address]="shop.address"
+      [url]="shop.url"
+      [avatarEmoji]="shop.avatarEmoji"
+      [photoUrl]="shop.photoUrl"
+    ></app-shop-card>
+
+    <app-history-card [entries]="history"></app-history-card>
+
+    <div class="footer-text">
+      <span>Phiên bản 3.0.0</span>
+      <span>© 2026 TodayUongGi? · All rights reserved</span>
+    </div>
+  </aside>
+
+  <section class="col-mid">
+    <app-voucher-strip [vouchers]="vouchers"></app-voucher-strip>
+    <app-dish-menu
+      *ngFor="let s of menu; trackBy: trackBySection"
+      [section]="s"
+      [myCart]="myCart"
+      (add)="onAdd($event)"
+      (minus)="onMinus($event)"
+    ></app-dish-menu>
+  </section>
+
+  <div class="col-right">
+    <app-cart-panel
+      [cart]="cart"
+      [members]="members"
+      [dishes]="allDishes"
+      [secondsLeft]="secondsLeft"
+      [totalSeconds]="totalSeconds"
+      [isOrderer]="isOrderer"
+      [ordererName]="ordererName"
+      (addItem)="onAdd($event)"
+      (minusItem)="onMinus($event)"
+      (editNote)="onEditNote($event)"
+      (clearAll)="askClear()"
+      (submit)="askSubmit()"
+    ></app-cart-panel>
+  </div>
+</main>
+
+<app-note-edit-modal
+  *ngIf="editingNote && dishMap[editingNote.dishId]"
+  [dish]="dishMap[editingNote.dishId]"
+  [line]="editingNote"
+  (save)="saveNote($event)"
+  (closed)="editingNote = null"
+></app-note-edit-modal>
+
+<app-cancel-order-modal
+  *ngIf="cancelOpen"
+  [cart]="cart"
+  (confirm)="confirmClear()"
+  (closed)="cancelOpen = false"
+></app-cancel-order-modal>
+
+<app-complete-order-modal
+  *ngIf="submitOpen"
+  [cart]="cart"
+  [dishMap]="dishMap"
+  [memberMap]="memberMap"
+  [subtotal]="subtotal"
+  (done)="onSubmitDone($event)"
+  (closed)="submitOpen = false"
+></app-complete-order-modal>
+
+<app-edit-room-modal
+  *ngIf="editRoomOpen"
+  [room]="roomDraft"
+  [hasOrders]="cart.length > 0"
+  (save)="saveRoom($event)"
+  (closed)="editRoomOpen = false"
+></app-edit-room-modal>

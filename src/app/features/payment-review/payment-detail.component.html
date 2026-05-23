@@ -1,0 +1,63 @@
+<ng-container [ngSwitch]="order.paymentMethod">
+  <div *ngSwitchCase="'cash'" class="pr-transfer pr-transfer-cash">
+    <div class="pr-transfer-cash-icon"><app-icon name="wallet" [size]="20"></app-icon></div>
+    <div class="pr-transfer-info">
+      <span class="t-lbl">Hình thức</span>
+      <span class="bank-name">Tiền mặt cho người đặt đơn</span>
+      <span class="holder">Gặp người đặt đơn để gửi trực tiếp, không cần chuyển khoản.</span>
+    </div>
+  </div>
+
+  <div *ngSwitchCase="'momo'" class="pr-transfer">
+    <div class="pr-transfer-qr pr-momo-qr">
+      <svg viewBox="0 0 21 21" width="84" height="84" shape-rendering="crispEdges">
+        <rect width="21" height="21" fill="white"/>
+        <rect *ngFor="let c of qrCells" [attr.x]="c.x" [attr.y]="c.y" width="1" height="1" fill="#1a1f1c"/>
+        <g *ngFor="let f of finders">
+          <rect [attr.x]="f[0]" [attr.y]="f[1]" width="7" height="7" fill="#1a1f1c"/>
+          <rect [attr.x]="f[0] + 1" [attr.y]="f[1] + 1" width="5" height="5" fill="white"/>
+          <rect [attr.x]="f[0] + 2" [attr.y]="f[1] + 2" width="3" height="3" fill="#1a1f1c"/>
+        </g>
+      </svg>
+    </div>
+    <div class="pr-transfer-info">
+      <span class="t-lbl">Ví MoMo</span>
+      <span class="bank-name acc-inline">
+        {{ order.momo.phone }}
+        <button type="button"
+                [title]="copiedKey === 'momo' ? 'Đã sao chép' : 'Sao chép số điện thoại'"
+                (click)="copy(order.momo.phone, 'momo')">
+          <app-icon [name]="copiedKey === 'momo' ? 'check' : 'copy'" [size]="12"></app-icon>
+        </button>
+      </span>
+      <span class="holder">{{ order.momo.holder }}</span>
+    </div>
+  </div>
+
+  <div *ngSwitchDefault class="pr-transfer">
+    <div class="pr-transfer-qr">
+      <svg viewBox="0 0 21 21" width="84" height="84" shape-rendering="crispEdges">
+        <rect width="21" height="21" fill="white"/>
+        <rect *ngFor="let c of qrCells" [attr.x]="c.x" [attr.y]="c.y" width="1" height="1" fill="#1a1f1c"/>
+        <g *ngFor="let f of finders">
+          <rect [attr.x]="f[0]" [attr.y]="f[1]" width="7" height="7" fill="#1a1f1c"/>
+          <rect [attr.x]="f[0] + 1" [attr.y]="f[1] + 1" width="5" height="5" fill="white"/>
+          <rect [attr.x]="f[0] + 2" [attr.y]="f[1] + 2" width="3" height="3" fill="#1a1f1c"/>
+        </g>
+      </svg>
+    </div>
+    <div class="pr-transfer-info">
+      <span class="t-lbl">Chuyển khoản đến</span>
+      <span class="bank-name">{{ order.bank.name }}</span>
+      <span class="acc">
+        {{ order.bank.acc }}
+        <button type="button"
+                [title]="copiedKey === 'bank' ? 'Đã sao chép' : 'Sao chép số tài khoản'"
+                (click)="copy(order.bank.acc, 'bank')">
+          <app-icon [name]="copiedKey === 'bank' ? 'check' : 'copy'" [size]="11"></app-icon>
+        </button>
+      </span>
+      <span class="holder">{{ order.bank.holder }} · {{ order.bank.branch }}</span>
+    </div>
+  </div>
+</ng-container>

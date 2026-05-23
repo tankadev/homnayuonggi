@@ -1,0 +1,42 @@
+<section class="history-card">
+  <div class="history-head">
+    <h3 class="card-title"><app-icon name="history" [size]="14"></app-icon> Hoạt động phòng</h3>
+    <span class="card-sub">Nhật ký chọn / huỷ món của cả phòng</span>
+  </div>
+  <div class="history-body">
+    <ng-container *ngIf="entries.length; else emptyState">
+      <ul class="history-list">
+        <li
+          *ngFor="let h of entries"
+          class="history-item"
+          [class.act-add]="h.action === 'add'"
+          [class.act-remove]="h.action === 'remove'"
+          [class.act-edit]="h.action === 'edit'"
+          [class.me]="h.me"
+        >
+          <span class="hist-avatar">{{ h.who.charAt(0) }}</span>
+          <div class="hist-info">
+            <div class="hist-line">
+              <span class="hist-who">{{ h.who }}<em *ngIf="h.me"> · bạn</em></span>
+              <span class="hist-act" [class.act-add]="h.action === 'add'" [class.act-remove]="h.action === 'remove'" [class.act-edit]="h.action === 'edit'">
+                <app-icon *ngIf="h.action === 'add'" name="plus" [size]="10"></app-icon>
+                <app-icon *ngIf="h.action === 'remove'" name="minus" [size]="10"></app-icon>
+                <app-icon *ngIf="h.action === 'edit'" name="pencil" [size]="10"></app-icon>
+                {{ label(h.action) }}
+              </span>
+              <span class="hist-what">{{ h.what }}</span>
+            </div>
+            <div class="hist-note" *ngIf="h.note">"{{ h.note }}"</div>
+          </div>
+          <span class="hist-when">{{ h.when }}</span>
+        </li>
+      </ul>
+    </ng-container>
+    <ng-template #emptyState>
+      <div class="history-empty">
+        <div class="empty-illo big"><app-icon name="cart" [size]="26"></app-icon></div>
+        <p>Chưa có hoạt động</p>
+      </div>
+    </ng-template>
+  </div>
+</section>

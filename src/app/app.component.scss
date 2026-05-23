@@ -1,3 +1,6 @@
-:host ::ng-deep .app-content-wrapper {
-  background-color: #EDF0F5;
+.app {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }

@@ -1,0 +1,48 @@
+<section class="h-card">
+  <h3 class="h-card-title">
+    <app-icon name="filter" [size]="14"></app-icon> Bộ lọc
+  </h3>
+
+  <div class="h-filter-grid">
+    <div class="h-filter-row">
+      <span class="h-flt-lbl">
+        <app-icon name="calendar" [size]="10"></app-icon> Khoảng thời gian
+      </span>
+      <div class="h-seg">
+        <button type="button" [class.active]="range === '7d'" (click)="rangeChange.emit('7d')">7 ngày</button>
+        <button type="button" [class.active]="range === '30d'" (click)="rangeChange.emit('30d')">30 ngày</button>
+        <button type="button" [class.active]="range === 'all'" (click)="rangeChange.emit('all')">Tất cả</button>
+      </div>
+    </div>
+
+    <div class="h-filter-row">
+      <span class="h-flt-lbl">
+        <app-icon name="users" [size]="10"></app-icon> Lọc theo người
+      </span>
+      <select class="h-select" [ngModel]="memberFilter" (ngModelChange)="memberFilterChange.emit($event)" name="member">
+        <option value="all">Tất cả thành viên</option>
+        <option *ngFor="let m of members" [value]="m.id">{{ m.name }}</option>
+      </select>
+    </div>
+
+    <div class="h-filter-row">
+      <span class="h-flt-lbl">
+        <app-icon name="users" [size]="10"></app-icon> Lọc theo phòng
+      </span>
+      <select class="h-select" [ngModel]="roomFilter" (ngModelChange)="roomFilterChange.emit($event)" name="room">
+        <option value="all">Tất cả phòng</option>
+        <option *ngFor="let r of rooms" [value]="r">{{ r }}</option>
+      </select>
+    </div>
+
+    <div class="h-filter-row">
+      <span class="h-flt-lbl">
+        <app-icon name="store" [size]="10"></app-icon> Quán
+      </span>
+      <select class="h-select" [ngModel]="shopFilter" (ngModelChange)="shopFilterChange.emit($event)" name="shop">
+        <option value="all">Tất cả quán</option>
+        <option *ngFor="let s of shops" [value]="s">{{ s }}</option>
+      </select>
+    </div>
+  </div>
+</section>

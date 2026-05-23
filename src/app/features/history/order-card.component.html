@@ -1,0 +1,129 @@
+<article class="h-order" [class.is-open]="open" [class.is-settled]="status.tag === 'settled'">
+  <header class="h-order-head" (click)="onToggle()">
+    <div class="h-order-shop-icon" [class.has-photo]="!!order.shopPhoto">
+      <img *ngIf="order.shopPhoto; else iconTpl" class="h-order-shop-photo"
+           [src]="order.shopPhoto" [alt]="order.shop" loading="lazy"/>
+      <ng-template #iconTpl>{{ order.shopIcon }}</ng-template>
+    </div>
+    <div class="h-order-info">
+      <div class="h-order-shop">
+        {{ order.shop }}
+        <span class="o-time">· {{ order.time }}</span>
+      </div>
+      <div class="h-order-meta">
+        <span class="room-chip">
+          <app-icon name="users" [size]="10"></app-icon> Phòng {{ order.room }}
+        </span>
+        <span class="sep">·</span>
+        <span class="owner-chip" [class.is-me]="isOwnerMe"
+              [title]="isOwnerMe ? 'Bạn là chủ đơn' : owner.name + ' ứng tiền'">
+          <span class="av">{{ owner.initial }}</span>
+          {{ isOwnerMe ? 'Bạn ứng tiền' : owner.name + ' ứng tiền' }}
+        </span>
+        <span class="sep">·</span>
+        <span>{{ order.payers.length }} người chia</span>
+      </div>
+    </div>
+    <div class="h-order-amount">
+      <span class="v">{{ order.total | vnd }}<span>đ</span></span>
+      <span class="lbl">Tổng đơn</span>
+    </div>
+    <span class="h-order-status" [class.pending]="status.tag === 'pending'"
+          [class.partial]="status.tag === 'partial'" [class.settled]="status.tag === 'settled'">
+      <span class="dot"></span>
+      {{ status.label }}
+      <span *ngIf="status.tag !== 'settled'" class="progress-mini">{{ status.paid }}/{{ status.total }}</span>
+    </span>
+    <span class="h-order-chev"><app-icon name="chevron" [size]="14"></app-icon></span>
+  </header>
+
+  <div *ngIf="open" class="h-order-body">
+    <ng-container *ngFor="let row of rows; trackBy: trackByRow">
+      <ng-container *ngTemplateOutlet="payRow; context: { row: row }"></ng-container>
+    </ng-container>
+
+    <div class="h-order-foot">
+      <div class="ledger">
+        <span>Đã thu</span>
+        <b>{{ collectedAmt | vnd }}đ</b>
+        <span class="arr">/</span>
+        <b>{{ payerTotal | vnd }}đ</b>
+        <span class="progress-bar"><span [style.width.%]="pct"></span></span>
+      </div>
+
+      <button
+        *ngIf="canConfirmFullyPaid"
+        type="button"
+        class="h-order-mini-btn primary settle"
+        title="Xác nhận đã thu đủ — sẽ xoá đơn này khỏi danh sách lịch sử"
+        (click)="onConfirmFullyPaid($event)"
+      >
+        <app-icon name="check-circle" [size]="12"></app-icon> Thanh toán đủ
+      </button>
+    </div>
+  </div>
+</article>
+
+<ng-template #payRow let-row="row">
+  <div class="h-pay-row"
+       [class.is-me]="isMe(row.memberId)"
+       [class.is-owner]="row.isOwnerRow"
+       [class.paid]="row.paid && !row.isOwnerRow">
+    <div class="h-pay-avatar">{{ memberFor(row.memberId).initial }}</div>
+    <div class="h-pay-name">
+      <b>
+        {{ memberFor(row.memberId).name }}<em *ngIf="isMe(row.memberId)">· bạn</em>
+        <span *ngIf="row.isOwnerRow" class="owner-tag">
+          <app-icon name="crown" [size]="9" [filled]="true"></app-icon> Chủ đơn
+        </span>
+      </b>
+      <span class="sub" [class.late]="row.overdue && !row.paid">
+        <ng-container *ngIf="row.isOwnerRow; else nonOwnerSub">
+          Ứng <b class="mono-ink">{{ order.total | vnd }}đ</b> cho cả nhóm
+        </ng-container>
+        <ng-template #nonOwnerSub>
+          <ng-container *ngIf="row.paid">Đã trả · {{ row.paidAt }}</ng-container>
+          <ng-container *ngIf="!row.paid && row.overdue">Quá hạn · chưa thanh toán</ng-container>
+          <ng-container *ngIf="!row.paid && !row.overdue">Chưa thanh toán</ng-container>
+        </ng-template>
+      </span>
+    </div>
+    <span class="h-pay-amt">{{ row.share | vnd }}<span>đ</span></span>
+    <span class="h-pay-when">{{ !row.isOwnerRow && !row.paid ? '—' : '' }}</span>
+
+    <ng-container *ngIf="row.isOwnerRow; else nonOwnerAction">
+      <span class="h-pay-status owner">
+        <app-icon name="crown" [size]="11" [filled]="true"></app-icon> Người thu
+      </span>
+    </ng-container>
+    <ng-template #nonOwnerAction>
+      <ng-container *ngIf="isOwnerMe">
+        <button type="button" class="h-pay-toggle" [class.is-paid]="row.paid"
+                (click)="onTogglePaid(row, !row.paid, $event)">
+          <span class="circle"><app-icon name="check" [size]="10" [sw]="2.4"></app-icon></span>
+          {{ row.paid ? 'Đã trả' : 'Đánh dấu' }}
+        </button>
+      </ng-container>
+      <ng-container *ngIf="!isOwnerMe && isMe(row.memberId)">
+        <span class="h-pay-status" [class.paid]="row.paid" [class.unpaid]="!row.paid">
+          <ng-container *ngIf="row.paid; else mePending">
+            <app-icon name="check" [size]="11" [sw]="2.4"></app-icon> Bạn đã trả
+          </ng-container>
+          <ng-template #mePending>
+            <app-icon name="clock" [size]="11"></app-icon> Chưa thanh toán
+          </ng-template>
+        </span>
+      </ng-container>
+      <ng-container *ngIf="!isOwnerMe && !isMe(row.memberId)">
+        <span class="h-pay-status"
+              [class.paid]="row.paid"
+              [class.unpaid]="!row.paid"
+              [class.overdue]="!row.paid && row.overdue">
+          <ng-container *ngIf="row.paid"><app-icon name="check" [size]="11" [sw]="2.4"></app-icon> Đã trả</ng-container>
+          <ng-container *ngIf="!row.paid && row.overdue"><app-icon name="clock" [size]="11"></app-icon> Quá hạn</ng-container>
+          <ng-container *ngIf="!row.paid && !row.overdue"><app-icon name="clock" [size]="11"></app-icon> Chưa</ng-container>
+        </span>
+      </ng-container>
+    </ng-template>
+  </div>
+</ng-template>

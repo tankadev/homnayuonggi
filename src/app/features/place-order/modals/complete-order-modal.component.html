@@ -1,0 +1,199 @@
+<app-modal [size]="isDone ? 'sm' : 'lg'" (closed)="closed.emit()">
+  <ng-container *ngIf="!isDone; else success">
+    <div class="modal-head">
+      <div>
+        <h2 class="modal-title">Hoàn thành đơn hàng</h2>
+        <p class="modal-sub">
+          {{ step === 1 ? 'Xác nhận đơn và chọn cách chia tiền' : 'Thông tin chuyển khoản cho người nhận tiền' }}
+        </p>
+      </div>
+      <button type="button" class="modal-close" (click)="closed.emit()" aria-label="Đóng">
+        <app-icon name="x" [size]="14"></app-icon>
+      </button>
+    </div>
+
+    <div class="modal-body">
+      <div class="stepper">
+        <div class="step" [class.active]="step === 1" [class.done]="step !== 1">
+          <span class="step-num">{{ step === 1 ? '1' : '' }}</span>
+          Đơn hàng
+        </div>
+        <div class="step" [class.active]="step === 2">
+          <span class="step-num">2</span>
+          Thanh toán
+        </div>
+      </div>
+
+      <ng-container *ngIf="step === 1">
+        <div class="order-summary">
+          <div class="order-summary-row">
+            <span>Tạm tính ({{ itemCount }} phần · {{ dishCount }} món)</span>
+            <span>{{ subtotal | vnd }}đ</span>
+          </div>
+          <div class="order-summary-row">
+            <span>Phí giao hàng</span>
+            <span>+ {{ shipping | vnd }}đ</span>
+          </div>
+          <div class="order-summary-row">
+            <span>Phí dịch vụ</span>
+            <span>+ {{ serviceFee | vnd }}đ</span>
+          </div>
+          <div class="order-summary-row">
+            <span>Voucher giảm giá</span>
+            <span class="discount">− {{ discount | vnd }}đ</span>
+          </div>
+          <div class="order-summary-row total">
+            <span>Tổng thanh toán</span>
+            <b>{{ total | vnd }}<span>đ</span></b>
+          </div>
+        </div>
+
+        <div class="field">
+          <span class="field-label">Phí kèm theo</span>
+          <div class="fee-fields">
+            <div class="fee-field">
+              <div class="fee-field-label">
+                <span class="ttl">Phí giao hàng</span>
+                <span class="sub">Cước từ ShopeeFood</span>
+              </div>
+              <input class="fee-field-input" type="number" inputmode="numeric"
+                     [ngModel]="shipping" (ngModelChange)="setFee('shipping', $event)"
+                     name="shipping"/>
+            </div>
+            <div class="fee-field">
+              <div class="fee-field-label">
+                <span class="ttl">Phí dịch vụ</span>
+                <span class="sub">Phụ thu / đóng gói</span>
+              </div>
+              <input class="fee-field-input" type="number" inputmode="numeric"
+                     [ngModel]="serviceFee" (ngModelChange)="setFee('serviceFee', $event)"
+                     name="serviceFee"/>
+            </div>
+            <div class="fee-field">
+              <div class="fee-field-label">
+                <span class="ttl">Voucher giảm giá</span>
+                <span class="sub">Trừ vào tổng đơn</span>
+              </div>
+              <input class="fee-field-input" type="number" inputmode="numeric"
+                     [ngModel]="discount" (ngModelChange)="setFee('discount', $event)"
+                     name="discount"/>
+            </div>
+          </div>
+        </div>
+
+        <div class="field">
+          <span class="field-label">Cách chia tiền</span>
+          <div class="split-modes">
+            <button type="button" class="split-mode" [class.active]="splitMode === 'equal'" (click)="splitMode = 'equal'">
+              <span class="sm-icon"><app-icon name="users" [size]="14" [filled]="true"></app-icon></span>
+              <span class="sm-title">Chia đều</span>
+              <span class="sm-sub">Mỗi người trả như nhau</span>
+            </button>
+            <button type="button" class="split-mode" [class.active]="splitMode === 'sponsor'" (click)="splitMode = 'sponsor'">
+              <span class="sm-icon"><app-icon name="crown" [size]="14" [filled]="true"></app-icon></span>
+              <span class="sm-title">Người đặt tài trợ</span>
+              <span class="sm-sub">Bao 100% cho cả phòng</span>
+            </button>
+          </div>
+        </div>
+      </ng-container>
+
+      <ng-container *ngIf="step === 2">
+        <div class="field">
+          <span class="field-label">Phương thức nhận tiền</span>
+          <div class="pay-tabs">
+            <button type="button" class="pay-tab" [class.active]="pay.method === 'bank'" (click)="setMethod('bank')">
+              <span class="pt-icon bank"><app-icon name="wallet" [size]="14"></app-icon></span>
+              <span class="pt-name">Ngân hàng</span>
+            </button>
+            <button type="button" class="pay-tab" [class.active]="pay.method === 'momo'" (click)="setMethod('momo')">
+              <span class="pt-icon momo">M</span>
+              <span class="pt-name">Ví MoMo</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="pay-form" *ngIf="pay.method === 'bank'">
+          <div class="field">
+            <label class="field-label" for="pay-bank">Ngân hàng <span class="req">*</span></label>
+            <select id="pay-bank" class="field-input"
+                    [ngModel]="pay.bankName" (ngModelChange)="onPayInput('bankName', $event)"
+                    name="bankName">
+              <option value="">— Chọn ngân hàng —</option>
+              <option *ngFor="let b of banks" [value]="b">{{ b }}</option>
+            </select>
+          </div>
+          <div class="field">
+            <label class="field-label" for="pay-acc">Số tài khoản <span class="req">*</span></label>
+            <input id="pay-acc" name="bankAccount" class="field-input" inputmode="numeric"
+                   placeholder="VD: 1015 7234 8829"
+                   [ngModel]="pay.bankAccount" (ngModelChange)="onPayInput('bankAccount', $event)"/>
+          </div>
+        </div>
+
+        <div class="pay-form" *ngIf="pay.method === 'momo'">
+          <div class="field">
+            <label class="field-label" for="pay-phone">Số điện thoại MoMo <span class="req">*</span></label>
+            <input id="pay-phone" name="momoPhone" class="field-input" inputmode="tel"
+                   placeholder="VD: 0901 234 567"
+                   [ngModel]="pay.momoPhone" (ngModelChange)="onPayInput('momoPhone', $event)"/>
+            <div class="field-help">Người nhận tiền sẽ nhận thông báo qua app MoMo.</div>
+          </div>
+        </div>
+
+        <div *ngIf="pay.method === 'bank'" class="field">
+          <label class="field-label" for="pay-holder">Tên chủ tài khoản</label>
+          <input id="pay-holder" name="holder" class="field-input"
+                 placeholder="VD: NGUYEN VAN A"
+                 [ngModel]="pay.holder" (ngModelChange)="onPayInput('holder', $event)"/>
+        </div>
+      </ng-container>
+    </div>
+
+    <div class="modal-foot split-2">
+      <ng-container *ngIf="step === 1">
+        <button type="button" class="btn-ghost" (click)="closed.emit()">Quay lại</button>
+        <button type="button" class="btn-primary btn-grow" (click)="next()">
+          Tiếp theo <app-icon name="chevron-r" [size]="14"></app-icon>
+        </button>
+      </ng-container>
+      <ng-container *ngIf="step === 2">
+        <button type="button" class="btn-ghost" (click)="back()">
+          <app-icon name="chevron-l" [size]="14"></app-icon> Quay lại
+        </button>
+        <button type="button" class="btn-primary btn-grow" (click)="finish()">
+          <app-icon name="check" [size]="15"></app-icon> Xác nhận chốt đơn
+        </button>
+      </ng-container>
+    </div>
+  </ng-container>
+
+  <ng-template #success>
+    <div class="modal-head">
+      <div>
+        <h2 class="modal-title">Đã chốt đơn 🎉</h2>
+        <p class="modal-sub">Mã đơn đã gửi cho cả phòng — nhận hàng vui vẻ!</p>
+      </div>
+      <button type="button" class="modal-close" (click)="acknowledgeDone()" aria-label="Đóng">
+        <app-icon name="x" [size]="14"></app-icon>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="success-block">
+        <div class="success-block-icon"><app-icon name="check" [size]="24"></app-icon></div>
+        <div>
+          <b>Đặt hàng thành công</b>
+          <span>
+            Mã đơn <span class="success-code">#{{ orderCode }}</span> · {{ memberIds.length }} người ·
+            tổng <b class="success-total">{{ total | vnd }}đ</b>
+          </span>
+        </div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button type="button" class="btn-primary" style="width: 100%" (click)="acknowledgeDone()">
+        <app-icon name="check" [size]="15"></app-icon> Hoàn tất &amp; về trang chính
+      </button>
+    </div>
+  </ng-template>
+</app-modal>
