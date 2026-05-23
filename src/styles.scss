@@ -1,118 +1,317 @@
+@import './styles/tokens';
+
+// =====================================================
+// Fonts (Dosis)
+// =====================================================
+
 @font-face {
-    font-family: "Dosis";
-    src: url("./assets/fonts/Dosis-ExtraLight.ttf") format("truetype");
-    font-weight: 200;
-    font-style: normal;
+  font-family: 'Dosis';
+  src: url('./assets/fonts/Dosis-ExtraLight.ttf') format('truetype');
+  font-weight: 200;
+  font-style: normal;
+  font-display: swap;
 }
 
 @font-face {
-    font-family: "Dosis";
-    src: url("./assets/fonts/Dosis-Light.ttf") format("truetype");
-    font-weight: 300;
-    font-style: normal;
+  font-family: 'Dosis';
+  src: url('./assets/fonts/Dosis-Light.ttf') format('truetype');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
 }
 
 @font-face {
-    font-family: "Dosis";
-    src: url("./assets/fonts/Dosis-Regular.ttf") format("truetype");
-    font-weight: normal;
-    font-style: normal;
+  font-family: 'Dosis';
+  src: url('./assets/fonts/Dosis-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
 }
 
 @font-face {
-    font-family: "Dosis";
-    src: url("./assets/fonts/Dosis-Medium.ttf") format("truetype");
-    font-weight: 500;
-    font-style: normal;
+  font-family: 'Dosis';
+  src: url('./assets/fonts/Dosis-Medium.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
 }
 
 @font-face {
-    font-family: "Dosis";
-    src: url("./assets/fonts/Dosis-SemiBold.ttf") format("truetype");
-    font-weight: 600;
-    font-style: normal;
+  font-family: 'Dosis';
+  src: url('./assets/fonts/Dosis-SemiBold.ttf') format('truetype');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
 }
-
 
 @font-face {
-    font-family: "Dosis";
-    src: url("./assets/fonts/Dosis-Bold.ttf") format("truetype");
-    font-weight: bold;
-    font-style: normal;
+  font-family: 'Dosis';
+  src: url('./assets/fonts/Dosis-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
 }
 
-.ant-modal-header {
-    border-radius: 20px 20px 0 0 !important;
-    background: #F7E0E5 !important;
+// =====================================================
+// Base
+// =====================================================
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  line-height: var(--leading-base);
+  color: var(--color-text);
+  background-color: var(--color-bg);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  background-image:
+    radial-gradient(circle at 0% 0%, rgba(255, 123, 107, 0.06) 0, transparent 40%),
+    radial-gradient(circle at 100% 100%, rgba(47, 122, 82, 0.05) 0, transparent 40%);
+  min-height: 100vh;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  color: var(--color-text);
+  margin: 0;
+}
+
+a {
+  color: var(--color-primary);
+  text-decoration: none;
+  transition: color var(--duration-fast) var(--ease-out);
+
+  &:hover { color: var(--color-primary-hover); }
+}
+
+::selection {
+  background: var(--color-primary-soft);
+  color: var(--color-primary-dark);
+}
+
+// Scrollbar
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: var(--color-border-strong);
+  border-radius: var(--radius-pill);
+  border: 2px solid var(--color-bg);
+}
+::-webkit-scrollbar-thumb:hover { background: var(--color-text-muted); }
+
+// =====================================================
+// ng-zorro overrides
+// =====================================================
+
+// --- Modal
+.ant-modal {
+  .ant-modal-content {
+    border-radius: var(--radius-lg) !important;
+    box-shadow: var(--shadow-lg) !important;
+    overflow: hidden;
+  }
+
+  .ant-modal-header {
+    background: var(--color-surface) !important;
+    border-bottom: 1px solid var(--color-divider) !important;
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0 !important;
+    padding: var(--space-5) var(--space-6) !important;
 
     .ant-modal-title {
-        color: #C73050;
+      font-family: var(--font-display);
+      font-weight: 600;
+      color: var(--color-text);
+      font-size: var(--text-md);
     }
+  }
+
+  .ant-modal-body { padding: 0 !important; }
+
+  .ant-modal-close {
+    top: var(--space-3);
+    right: var(--space-3);
+    color: var(--color-text-muted);
+
+    &:hover { color: var(--color-text); }
+  }
 }
 
-.ant-modal-body {
-  padding: 0 !important;
+// --- Buttons (native + nz-button)
+button.ant-btn,
+.ant-btn {
+  border-radius: var(--radius-sm) !important;
+  font-family: var(--font-body) !important;
+  font-weight: 600 !important;
+  transition: all var(--duration-base) var(--ease-out) !important;
+  box-shadow: none !important;
+
+  &:hover { transform: translateY(-1px); }
+  &:active { transform: translateY(0); }
 }
 
-.ant-modal-content {
-    border-radius: 20px !important;
+.ant-btn-primary {
+  background: var(--color-primary) !important;
+  border-color: var(--color-primary) !important;
+  color: var(--color-text-on-brand) !important;
+
+  &:hover, &:focus {
+    background: var(--color-primary-hover) !important;
+    border-color: var(--color-primary-hover) !important;
+    box-shadow: var(--shadow-brand) !important;
+  }
+}
+
+.ant-btn-danger,
+.ant-btn-dangerous {
+  background: var(--color-danger) !important;
+  border-color: var(--color-danger) !important;
+}
+
+// --- Inputs / Select
+.ant-input,
+.ant-input-affix-wrapper,
+.ant-input-number,
+.ant-input-number-input {
+  border-radius: var(--radius-sm) !important;
+  border-color: var(--color-border) !important;
+  background-color: var(--color-surface-alt) !important;
+  color: var(--color-text) !important;
+  transition: all var(--duration-base) var(--ease-out) !important;
+  font-family: var(--font-body) !important;
+
+  &:hover { border-color: var(--color-primary) !important; }
+  &:focus, &.ant-input-focused, &-focused {
+    border-color: var(--color-primary) !important;
+    box-shadow: 0 0 0 3px rgba(47, 122, 82, 0.12) !important;
+    background-color: var(--color-surface) !important;
+  }
+}
+
+.ant-input {
+  padding: 10px 14px !important;
 }
 
 nz-select .ant-select-selector {
   height: auto !important;
-  padding: 0.5rem 0.5rem 0.5rem 1rem !important;
-  background-color: #F9FAFE !important;
-  border: 1px solid #ECF3FE !important;
-  transition: all 0.3s ease-in-out !important;
-  animation-duration: 0.1s !important;
-  animation-name: showOut !important;
-  animation-timing-function: ease-in-out !important;
+  padding: 8px 12px 8px 14px !important;
+  background-color: var(--color-surface-alt) !important;
+  border: 1px solid var(--color-border) !important;
+  border-radius: var(--radius-sm) !important;
+  transition: all var(--duration-base) var(--ease-out) !important;
 
-  &:hover {
-    border-color: rgba(0, 83, 255, 0.3) !important;
-  }
+  &:hover { border-color: var(--color-primary) !important; }
 
   input { height: 100% !important; }
 }
 
-.ant-drawer-body {
-  padding-top: 0 !important;
+.ant-select-focused:not(.ant-select-disabled).ant-select:not(.ant-select-customize-input) .ant-select-selector {
+  border-color: var(--color-primary) !important;
+  box-shadow: 0 0 0 3px rgba(47, 122, 82, 0.12) !important;
 }
 
-// body {
-// 	// font-family: "Dosis", -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
-// 	// 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
-// 	// 'Noto Color Emoji' !important;
-//     background-image: url("./assets/images/app_bg.jpg");
+// --- Form
+.ant-form-item-label > label {
+  color: var(--color-text-soft) !important;
+  font-family: var(--font-body) !important;
+  font-size: var(--text-sm) !important;
+  font-weight: 500 !important;
+}
 
-// 	/* Add the blur effect */
-// 	filter: blur(8px);
-// 	-webkit-filter: blur(8px);
+.ant-form-item-explain-error {
+  font-size: var(--text-xs);
+  color: var(--color-danger);
+  margin-top: 4px;
+}
 
-// 	/* Full height */
-// 	height: 100%;
+// --- Checkbox / Radio
+.ant-checkbox-checked .ant-checkbox-inner,
+.ant-radio-checked .ant-radio-inner {
+  background-color: var(--color-primary) !important;
+  border-color: var(--color-primary) !important;
+}
 
-// 	/* Center and scale the image nicely */
-// 	background-position: center;
-// 	background-repeat: no-repeat;
-// 	background-size: cover;
-// }
+.ant-checkbox-wrapper:hover .ant-checkbox-inner,
+.ant-radio-wrapper:hover .ant-radio-inner {
+  border-color: var(--color-primary) !important;
+}
+
+// --- Drawer
+.ant-drawer-body { padding-top: 0 !important; }
+.ant-drawer-content {
+  border-top-left-radius: var(--radius-lg);
+  border-bottom-left-radius: var(--radius-lg);
+}
+
+// --- Notification & message
+.ant-notification-notice {
+  border-radius: var(--radius-md) !important;
+  box-shadow: var(--shadow-lg) !important;
+  font-family: var(--font-body);
+}
+
+// --- Tabs
+.ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn {
+  color: var(--color-primary) !important;
+  font-weight: 600;
+}
+
+.ant-tabs-ink-bar { background: var(--color-primary) !important; }
+
+// --- Steps
+.ant-steps-item-finish .ant-steps-item-icon,
+.ant-steps-item-process .ant-steps-item-icon {
+  background-color: var(--color-primary) !important;
+  border-color: var(--color-primary) !important;
+}
+
+.ant-steps-item-finish > .ant-steps-item-container > .ant-steps-item-tail::after {
+  background-color: var(--color-primary) !important;
+}
+
+// --- Tooltip
+.ant-tooltip-inner {
+  background: var(--color-text) !important;
+  border-radius: var(--radius-xs) !important;
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+}
+
+// =====================================================
+// Reusable utilities
+// =====================================================
+
+.card-surface {
+  background: var(--color-surface);
+  border: 1px solid var(--color-divider);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+}
+
+// =====================================================
+// Animations
+// =====================================================
+
 @keyframes showOut {
-  from {
-    transform: scale(0);
-  }
-  to {
-    transform: scale(1);
-  }
+  from { transform: scale(0.9); opacity: 0; }
+  to   { transform: scale(1); opacity: 1; }
 }
 
 @keyframes moveIn {
-  from {
-    transform: translateX(70px);
-    opacity: 0.4;
-  }
-  to {
-    transform: translateX(0);
-    opacity: 1;
-  }
+  from { transform: translateX(40px); opacity: 0; }
+  to   { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
 }

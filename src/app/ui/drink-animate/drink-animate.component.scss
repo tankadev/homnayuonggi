@@ -1,7 +1,7 @@
 /* Styles des verres */
-.fill--blue { fill:#407F55; }
+.fill--blue { fill:var(--color-primary); }
 .fill--dark-blue { fill:#092F45; }
-.fill--pink { fill:#E9735C; }
+.fill--pink { fill:var(--color-accent); }
 .outline--dark-blue {
   fill:none;
   stroke:#092F45;

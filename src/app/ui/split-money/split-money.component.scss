@@ -1,24 +1,35 @@
 :host ::ng-deep .split-money-container {
-    height: calc(100vh - 64px);
-    animation-duration: 0.1s;
-    animation-name: showOut;
-    animation-timing-function: ease-in-out;
-  
-    .version-box {
-      text-align: center;
-  
-      p {
-        margin-bottom: 0.2rem;
-      }
-  
-      .name {
-        font-weight: bold;
-        font-size: 0.7rem;
-      }
-  
-      .copy {
-        font-size: 0.5rem;
-      }
+  min-height: calc(100vh - 96px);
+  animation: showOut var(--duration-base) var(--ease-out);
+  padding: 24px;
+  max-width: 1400px;
+  margin: 0 auto;
+
+  > [nz-row] {
+    gap: 20px;
+    flex-wrap: wrap;
+    align-items: flex-start;
+  }
+
+  .version-box {
+    text-align: center;
+    color: var(--color-text-muted);
+    margin-top: 16px;
+
+    p { margin: 2px 0; }
+    .name { font-weight: 600; font-size: var(--text-xs); color: var(--color-text-soft); }
+    .copy { font-size: 10px; }
+  }
+}
+
+@media (max-width: 992px) {
+  :host ::ng-deep .split-money-container {
+    padding: 16px;
+
+    > [nz-row] { flex-direction: column; }
+    [nz-col] {
+      flex: 0 0 100% !important;
+      max-width: 100% !important;
     }
   }
-  
+}

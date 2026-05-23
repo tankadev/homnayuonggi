@@ -1,26 +1,27 @@
 :host ::ng-deep .shop-info-container {
-  height: 45vh;
-  margin: 1rem 2rem 1rem 10%;
-  box-shadow: 0px 1px 15px rgba(180, 191, 206, 0.1);
-  background-color: #ffffff;
-  border-radius: 30px;
-  padding: 1vw 1.5vw;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-divider);
+  box-shadow: var(--shadow-sm);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  margin-bottom: 16px;
 
   .shop-avatar {
     display: flex;
     align-items: center;
-    justify-content: flex-start;
-    background-color: #e4f0e8;
-    padding: 0.4rem 0.6rem 0.4rem 1rem;
-    border-radius: 20px;
+    background-color: var(--color-primary-soft);
+    padding: 8px 12px 8px 14px;
+    border-radius: var(--radius-md);
+    gap: 12px;
 
     .image {
-      width: 50px;
-      height: 50px;
+      width: 48px;
+      height: 48px;
       border-radius: 50%;
-      border: 2px solid #ffffff;
-      box-shadow: 0px 8px 15px rgba(180, 191, 206, 0.3);
+      border: 2px solid var(--color-surface);
+      box-shadow: var(--shadow-sm);
       overflow: hidden;
+      flex-shrink: 0;
 
       img {
         width: 100%;
@@ -30,53 +31,57 @@
     }
 
     .name {
-      font-weight: bold;
-      font-size: 0.9vw;
-      font-family: "Dosis";
-      margin: 0 0 0 1rem;
-      word-break: keep-all;
-      text-align: left;
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: var(--text-base);
+      margin: 0;
       text-overflow: ellipsis;
       overflow: hidden;
       white-space: nowrap;
-      width: 70%;
-      color: #2D3867;
+      flex: 1;
+      color: var(--color-text);
+      letter-spacing: -0.01em;
     }
   }
 
   .rating {
-    margin-top: 0.4rem;
+    margin-top: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
   }
 
   .add-info {
-    margin-top: 0.6rem;
+    margin-top: 14px;
 
     p {
-      margin-bottom: 1vw;
-      font-size: 0.8vw;
-      font-family: "Dosis";
+      margin-bottom: 8px;
+      font-size: var(--text-sm);
+      font-family: var(--font-body);
       width: 100%;
       text-overflow: ellipsis;
       overflow: hidden;
       white-space: nowrap;
+      color: var(--color-text-soft);
 
       a {
-        color: #407F55;
+        color: var(--color-primary);
+        font-weight: 600;
+        &:hover { text-decoration: underline; }
       }
     }
 
     .head {
-      font-weight: bold;
+      font-weight: 600;
+      color: var(--color-text);
     }
 
     .hightlight {
-      background-color: #FFBF00;
-      padding: 0.3rem 0.4rem;
-      border-radius: 10px;
-      color: #ffffff;
+      background-color: var(--color-warning);
+      padding: 3px 8px;
+      border-radius: var(--radius-xs);
+      color: var(--color-text-on-brand);
+      font-weight: 600;
     }
   }
 
@@ -85,10 +90,14 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    margin-top: 12px;
+    padding: 12px;
+    background: var(--color-bg);
+    border-radius: var(--radius-md);
 
     img {
-      width: 17vh !important;
-      height: 17vh !important;
+      width: 160px !important;
+      height: 160px !important;
     }
   }
 }

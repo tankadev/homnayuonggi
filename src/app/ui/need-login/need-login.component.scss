@@ -1,53 +1,49 @@
 :host ::ng-deep .need-login-container {
-  height: calc(100vh - 64px);
+  min-height: calc(100vh - 96px);
+  display: flex;
+  flex-direction: column;
+  padding: 24px;
 
   .need-login-content {
-    height: calc(100vh - 64px - 50px);
+    flex: 1;
     width: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
 
     &__item {
-      box-shadow: 0px 1px 15px rgba(180, 191, 206, 0.1);
-      background-color: #ffffff;
-      animation-duration: 0.1s;
-      animation-name: showOut;
-      animation-timing-function: ease-in-out;
-      width: 50vh;
-      height: 40vh;
-      border-radius: 10px;
+      background-color: var(--color-surface);
+      border: 1px solid var(--color-divider);
+      box-shadow: var(--shadow-md);
+      animation: showOut var(--duration-base) var(--ease-out);
+      width: min(420px, 92vw);
+      padding: 48px 32px;
+      border-radius: var(--radius-xl);
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
+      gap: 16px;
 
       p {
-        font-size: 1.3rem;
-        margin-top: 2rem;
-        color: #407F55;
-        font-family: 'Dosis';
+        font-family: var(--font-display);
+        font-size: var(--text-md);
+        font-weight: 600;
+        letter-spacing: 0.04em;
+        color: var(--color-primary);
+        margin: 8px 0 0;
+        text-align: center;
       }
     }
   }
 
   .footer {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
+    text-align: center;
+    margin-top: 24px;
+    color: var(--color-text-muted);
 
-    p {
-      margin-bottom: 0.2rem;
-    }
-
-    .version {
-      font-weight: bold;
-      font-size: 1rem;
-    }
-
-    .copy {
-      font-size: 0.7rem;
-    }
+    p { margin: 2px 0; }
+    .version { font-weight: 600; font-size: var(--text-sm); color: var(--color-text-soft); }
+    .copy { font-size: var(--text-xs); }
   }
 }

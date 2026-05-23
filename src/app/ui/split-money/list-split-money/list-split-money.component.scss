@@ -1,181 +1,171 @@
 :host ::ng-deep .list-split-money-container {
-    height: calc(100vh - 64px - 35px);
-    margin: 1rem 10% 1rem 2rem;
-    box-shadow: 0px 1px 15px rgba(180, 191, 206, 0.1);
-    background-color: #ffffff;
-    border-radius: 30px;
-    position: relative;
-    overflow: hidden;
+  max-height: calc(100vh - 96px);
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-divider);
+  box-shadow: var(--shadow-sm);
+  border-radius: var(--radius-lg);
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
 
-    .title {
-        font-family: "Dosis";
-        font-weight: bold;
-        color: #2D3867;
-        font-size: 1.1vw;
-        text-align: center;
-        margin: 0.5vw 0;
+  .title {
+    font-family: var(--font-display);
+    font-weight: 700;
+    color: var(--color-text);
+    font-size: var(--text-md);
+    text-align: center;
+    margin: 0;
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--color-divider);
+    letter-spacing: -0.01em;
+  }
+
+  .split-money-content {
+    flex: 1;
+    overflow-y: auto;
+    padding-bottom: 80px;
+
+    &::-webkit-scrollbar { width: 4px; }
+    &::-webkit-scrollbar-thumb {
+      background: var(--color-border-strong);
+      border-radius: var(--radius-pill);
     }
 
-    .split-money-content {
-        height: calc(100vh - 6vh - 64px - 35px);
-        overflow-y: auto;
-        padding-bottom: 4vw;
+    .split-money-item {
+      border-bottom: 1px solid var(--color-divider);
+      padding: 12px 16px;
 
-        &::-webkit-scrollbar {
-            background: transparent;
-            width: 5px;
-            display: none;
-        }
-
-        &::-webkit-scrollbar-thumb {
-            background: rgba(214, 214, 214, 0.4);
-            border-radius: 10px;
-            display: none;
-        }
-
-        &::-webkit-resizer,
-        &::-webkit-scrollbar-button,
-        &::-webkit-scrollbar-corner {
-            display: none;
-        }
-
-        .split-money-item {
-            border-bottom: 5px solid #EBF2FF;
-            padding: 0.5vw 1.5vw 0 1.5vw;
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-            justify-content: flex-start;
-
-            &__main-content {
-                display: flex;
-                flex-direction: row;
-                align-items: flex-start;
-                justify-content: space-between;
-                position: relative;
-                width: 100%;
-                padding: 12px 0;
-
-                .main-content-info {
-                  display: flex;
-                  justify-content: flex-start;
-                  align-items: flex-start;
-                  flex-direction: column;
-
-                  .main-content-total {
-                    color: #3B5043;
-                    font-size: 0.8vw;
-                    margin: 0;
-                    font-weight: bold;
-                    padding-top: 2px;
-                  }
-                }
-
-                .main-content-name {
-                  color: #2D3867;
-                  font-size: 0.7vw;
-                  margin: 0;
-                  font-weight: bold;
-                  padding-bottom: 4px;
-
-                  span.icon-key-room {
-                    color: #fadb15;
-                    font-size: 0.8vw;
-                  }
-                }
-
-                .current-user {
-                  text-decoration: underline;
-                  text-decoration-style: dotted;
-                }
-
-                .main-content-check-payment {
-                  display: flex;
-                  justify-content: center;
-                  align-items: center;
-                  flex-direction: column;
-                }
-            }
-        }
-    }
-
-    .order-footer {
-        position: absolute;
-        width: 100%;
-        height: 4vw;
-        bottom: 0;
-        left: 0;
-        z-index: 100;
-        border-top: 1px solid #e4f0e8;
+      &__main-content {
         display: flex;
-        align-items: center;
+        align-items: flex-start;
         justify-content: space-between;
-        padding: 0.5vw 1vw;
-        background-color: #ffffff;
+        width: 100%;
+        padding: 8px 0;
+        gap: 12px;
 
-        .remaining-time {
-            margin-bottom: 0;
-            font-size: 0.8vw;
-            color: #B4BFCE;
-            font-family: "Dosis";
+        .main-content-info {
+          display: flex;
+          flex-direction: column;
 
-            nz-countdown {
-                display: inline-block;
-
-                .ant-statistic-content {
-                    font-size: 0.8vw;
-                    font-weight: bold;
-                    font-family: "Dosis";
-                    color: #2D3867;
-                }
-            }
-
-            .time-out {
-                font-size: 0.8vw;
-                font-weight: bold;
-                font-family: "Dosis";
-                color: #2D3867;
-            }
-
-            .count-user-order {
-                text-decoration: underline;
-                text-decoration-style: dotted;
-            }
+          .main-content-total {
+            color: var(--color-primary);
+            font-size: var(--text-base);
+            margin: 0;
+            font-weight: 700;
+            padding-top: 4px;
+          }
         }
 
-        .btn-group {
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        .main-content-name {
+          color: var(--color-text);
+          font-size: var(--text-sm);
+          margin: 0;
+          font-weight: 700;
 
-            .btn-cancel {
-                border-radius: 20px;
-                border: 0;
-                background: #FFE1E1;
-                color: #FF4154;
-                font-size: 0.8vw;
-                padding: 0.3vw 0.6vw;
-                cursor: pointer;
-                margin-right: 1vw;
-                font-family: "Dosis";
-            }
-
-            .btn-place-order {
-                border-radius: 20px;
-                border: 0;
-                background: #e4f0e8;
-                color: #407F55;
-                font-size: 0.8vw;
-                padding: 0.3vw 0.6vw;
-                cursor: pointer;
-                font-family: "Dosis";
-
-                &:disabled {
-                    background: #e6e6e6;
-                    color: #525252;
-                    cursor: not-allowed;
-                }
-            }
+          span.icon-key-room {
+            color: #fadb15;
+            font-size: var(--text-md);
+          }
         }
+
+        .current-user {
+          text-decoration: underline;
+          text-decoration-style: dotted;
+        }
+
+        .main-content-check-payment {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          flex-direction: column;
+        }
+      }
     }
+  }
+
+  .order-footer {
+    position: absolute;
+    width: 100%;
+    bottom: 0;
+    left: 0;
+    z-index: 5;
+    border-top: 1px solid var(--color-divider);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    background-color: var(--color-surface);
+    gap: 8px;
+
+    .remaining-time {
+      margin: 0;
+      font-size: var(--text-xs);
+      color: var(--color-text-muted);
+      font-family: var(--font-body);
+
+      nz-countdown {
+        display: inline-block;
+
+        .ant-statistic-content {
+          font-size: var(--text-sm);
+          font-weight: 700;
+          font-family: var(--font-display);
+          color: var(--color-text);
+        }
+      }
+
+      .time-out {
+        font-size: var(--text-sm);
+        font-weight: 700;
+        font-family: var(--font-display);
+        color: var(--color-danger);
+      }
+
+      .count-user-order {
+        text-decoration: underline;
+        text-decoration-style: dotted;
+      }
+    }
+
+    .btn-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+
+      .btn-cancel,
+      .btn-place-order {
+        border-radius: var(--radius-pill);
+        border: 0;
+        font-size: var(--text-xs);
+        padding: 6px 14px;
+        cursor: pointer;
+        font-family: var(--font-body);
+        font-weight: 600;
+        transition: all var(--duration-base) var(--ease-out);
+
+        &:hover { transform: translateY(-1px); }
+      }
+
+      .btn-cancel {
+        background: var(--color-accent-soft);
+        color: var(--color-danger);
+      }
+
+      .btn-place-order {
+        background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
+        color: var(--color-text-on-brand);
+
+        &:hover { box-shadow: var(--shadow-brand); }
+
+        &:disabled {
+          background: var(--color-surface-alt);
+          color: var(--color-text-muted);
+          cursor: not-allowed;
+          transform: none;
+          box-shadow: none;
+        }
+      }
+    }
+  }
 }
