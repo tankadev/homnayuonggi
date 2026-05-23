@@ -3,6 +3,7 @@ import { Component, Input, OnDestroy, OnInit, ViewContainerRef } from '@angular/
 import { map } from 'rxjs/operators';
 
 import { NzModalService } from 'ng-zorro-antd/modal';
+import { NzMessageService } from 'ng-zorro-antd/message';
 
 import { UserRO } from 'src/app/ro/user.ro';
 import { UserService } from 'src/app/services/user.service';
@@ -13,6 +14,7 @@ import { RoomRO } from 'src/app/ro/room.ro';
 import { Subscription } from 'rxjs';
 import { CreateRoomComponent } from '../dialogs/create-room/create-room.component';
 import { PaymentPaidRO } from 'src/app/ro/payment-paid.ro';
+import { ConfigService } from 'src/app/services/config.service';
 
 @Component({
   selector: 'header',
@@ -27,13 +29,16 @@ export class HeaderComponent implements OnInit, OnDestroy {
   room: RoomRO = new RoomRO();
   subSelectedRoom$: Subscription;
   visibleDrawerPaymentsPaid: boolean = false;
+  isRefreshingConfig: boolean = false;
 
   constructor(
     private modal: NzModalService,
     private viewContainerRef: ViewContainerRef,
     private userService: UserService,
     private appService: AppService,
-    private storage: LocalStorageService
+    private storage: LocalStorageService,
+    private configService: ConfigService,
+    private message: NzMessageService,
   ) {
     this.subSelectedRoom$ = this.appService.getSelectedRoomStatus().subscribe(status => {
       if (status) {
@@ -110,6 +115,19 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   public closeDrawer(): void {
     this.visibleDrawerPaymentsPaid = false;
+  }
+
+  public async refreshApiUrl(): Promise<void> {
+    if (this.isRefreshingConfig) return;
+    this.isRefreshingConfig = true;
+    try {
+      const url = await this.configService.refresh();
+      this.message.success(`API URL: ${url}`);
+    } catch (err) {
+      this.message.error('Không cập nhật được cấu hình');
+    } finally {
+      this.isRefreshingConfig = false;
+    }
   }
 
   private onListenUsersChangesFromFirebaseDB(): void {

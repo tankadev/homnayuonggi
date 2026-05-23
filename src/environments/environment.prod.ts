@@ -11,6 +11,7 @@ export const environment = {
     appId: "1:405891226420:web:d5679ea5c12d9beca2a361",
     measurementId: "G-VHZJ2DCT10"
   },
+  // Fallback only — actual value is fetched from Firebase Remote Config (key: `api_url`).
   apiURL: 'https://todayuonggi-api.vilinga.com',
   pwd: 'EMBEXINHDEP'
 };

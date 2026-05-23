@@ -17,6 +17,9 @@
       <span *isAllow="room.createUser" nz-icon nzType="edit" nzTheme="outline" class="btn-icon-edit-room" (click)="editRoom()" nz-tooltip nzTooltipPlacement="bottom" [nzTooltipTitle]="'Chỉnh sửa thông tin phòng'"></span>
     </div>
     <div class="right-content">
+      <button class="btn-refresh-config" (click)="refreshApiUrl()" [disabled]="isRefreshingConfig" nz-tooltip nzTooltipPlacement="bottom" [nzTooltipTitle]="'Cập nhật API URL từ Firebase Remote Config'">
+        <i nz-icon [nzType]="isRefreshingConfig ? 'loading' : 'reload'" nzTheme="outline"></i>
+      </button>
       <nz-badge *ngIf="unpaidList && unpaidList.length > 0" (click)="openDrawer()" class="notify-payment-paid" nzDot nz-tooltip nzTooltipPlacement="bottom" [nzTooltipTitle]="'Danh sách chưa thanh toán tiền cho người đặt'">
         <span nz-icon nzType="notification"></span>
       </nz-badge>

@@ -2,6 +2,8 @@ import { NgModule } from '@angular/core';
 import { provideFirebaseApp, initializeApp } from '@angular/fire/app';
 import { getDatabase, provideDatabase } from '@angular/fire/database';
 import { getMessaging, provideMessaging } from '@angular/fire/messaging';
+import { provideRemoteConfig } from '@angular/fire/remote-config';
+import { getRemoteConfig } from 'firebase/remote-config';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { registerLocaleData } from '@angular/common';
@@ -79,6 +81,7 @@ registerLocaleData(en);
     provideFirebaseApp(() => initializeApp(environment.firebase)),
     provideDatabase(() => getDatabase()),
     provideMessaging(() => getMessaging()),
+    provideRemoteConfig(() => getRemoteConfig()),
     ZoroAntdModule,
     FormsModule,
     ReactiveFormsModule,
@@ -89,7 +92,7 @@ registerLocaleData(en);
     QRCodeModule
   ],
   providers: [
-    { provide: NZ_I18N, useValue: en_US }
+    { provide: NZ_I18N, useValue: en_US },
   ],
   bootstrap: [AppComponent]
 })

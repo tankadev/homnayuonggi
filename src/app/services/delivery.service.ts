@@ -3,11 +3,10 @@ import { Injectable } from '@angular/core';
 
 import { Database, ref, push, update, set, remove, onValue, DataSnapshot } from '@angular/fire/database';
 
-import { environment } from 'src/environments/environment';
-
 import { DeliveryDTO } from '../dto/delivery.dto';
 import { DeliveryRO } from '../ro/delivery.ro';
 import { Observable } from 'rxjs';
+import { ConfigService } from './config.service';
 
 @Injectable({
   providedIn: 'root'
@@ -19,11 +18,12 @@ export class DeliveryService {
 
   constructor(
     private db: Database,
-    private http: HttpClient
+    private http: HttpClient,
+    private config: ConfigService,
   ) { }
 
   getDetailDeliveryFromShopeeFoodApi(param: string): Observable<any> {
-    return this.http.get(`${environment.apiURL}/get-detail?url=${param}`);
+    return this.http.get(`${this.config.getApiUrl()}/get-detail?url=${param}`);
   }
 
   getAll(): Observable<DeliveryRO[]> {
