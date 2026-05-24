@@ -112,9 +112,16 @@ export class PlaceOrderPageComponent implements OnInit, OnChanges, OnDestroy {
 
   ngOnChanges(changes: SimpleChanges): void {
     const trig = changes['editRoomTrigger'];
-    if (trig && trig.currentValue !== this.lastTrigger) {
-      this.lastTrigger = trig.currentValue;
-      if (this.lastTrigger > 0) this.editRoomOpen = true;
+    if (trig) {
+      /* On first bind, baseline the counter so re-entering a room (where the parent's
+         trigger is already > 0 from a previous edit click) doesn't auto-open the modal.
+         Only treat *subsequent* increments as a real "open" intent. */
+      if (trig.firstChange) {
+        this.lastTrigger = trig.currentValue;
+      } else if (trig.currentValue !== this.lastTrigger) {
+        this.lastTrigger = trig.currentValue;
+        this.editRoomOpen = true;
+      }
     }
     if (changes['room'] && this.room) {
       this.refreshRoomDraft(this.room);

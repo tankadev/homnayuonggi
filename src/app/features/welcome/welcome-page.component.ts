@@ -21,7 +21,6 @@ export class WelcomePageComponent implements OnInit, OnDestroy {
 
   authOpen = false;
   authMode: AuthMode = 'login';
-  refreshing = false;
 
   rotatingWords = ['cà phê?', 'trà đào?', 'phở bò?', 'trà sữa?', 'cơm tấm?'];
   currentWord = this.rotatingWords[0];
@@ -62,11 +61,5 @@ export class WelcomePageComponent implements OnInit, OnDestroy {
   onAuthDone(result: AuthResult): void {
     this.authOpen = false;
     this.authenticated.emit(result);
-  }
-
-  reload(): void {
-    if (this.refreshing) return;
-    this.refreshing = true;
-    setTimeout(() => (this.refreshing = false), 600);
   }
 }

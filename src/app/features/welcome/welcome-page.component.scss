@@ -161,22 +161,6 @@
   gap: 8px;
   justify-content: flex-end;
 }
-.wel-reload {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  border: 1px solid color-mix(in oklab, var(--primary) 30%, transparent);
-  background: var(--surface);
-  color: var(--primary);
-  display: grid;
-  place-items: center;
-  transition: 0.2s;
-  cursor: pointer;
-}
-.wel-reload:hover {
-  background: var(--primary-soft);
-  transform: rotate(45deg);
-}
 .wel-login-btn {
   appearance: none;
   display: inline-flex;
