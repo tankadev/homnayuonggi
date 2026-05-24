@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
+import { animate, style, transition, trigger } from '@angular/animations';
 
 import { MockCartLine, MockDish, MockMember } from './mock-data';
 
@@ -14,6 +15,27 @@ interface CartGroup {
   standalone: false,
   templateUrl: './cart-panel.component.html',
   styleUrls: ['./cart-panel.component.scss'],
+  animations: [
+    /* New cart-group entering: slide down from -10px while flashing the
+       primary-tinted background, then settle to the resting surface-2 color. */
+    trigger('groupEnter', [
+      transition(':enter', [
+        style({ opacity: 0, transform: 'translateY(-10px)' }),
+        animate('260ms cubic-bezier(.4, 0, .2, 1)', style({ opacity: 1, transform: 'translateY(0)' })),
+      ]),
+    ]),
+    /* Inline qty: increment rises from below, decrement drops from above. */
+    trigger('countFlip', [
+      transition(':increment', [
+        style({ transform: 'translateY(100%)', opacity: 0 }),
+        animate('200ms cubic-bezier(.4, 0, .2, 1)', style({ transform: 'translateY(0)', opacity: 1 })),
+      ]),
+      transition(':decrement', [
+        style({ transform: 'translateY(-100%)', opacity: 0 }),
+        animate('200ms cubic-bezier(.4, 0, .2, 1)', style({ transform: 'translateY(0)', opacity: 1 })),
+      ]),
+    ]),
+  ],
 })
 export class CartPanelComponent implements OnChanges {
   @Input() cart: MockCartLine[] = [];

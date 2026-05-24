@@ -26,7 +26,7 @@
   <div class="cart-body">
     <ng-container *ngIf="!empty; else emptyState">
       <ul class="cart-groups">
-        <li *ngFor="let g of grouped; trackBy: trackByDish" class="cart-group">
+        <li *ngFor="let g of grouped; trackBy: trackByDish" class="cart-group" @groupEnter>
           <div class="cg-head">
             <div class="cg-thumb" [style.--img-a]="g.dish.img[0]" [style.--img-b]="g.dish.img[1]">
               <span class="cg-thumb-placeholder" aria-hidden="true">🍽️</span>
@@ -68,7 +68,7 @@
                     <button type="button" title="Bớt 1 phần" (click)="minusItem.emit(l.dishId)">
                       <app-icon name="minus" [size]="11"></app-icon>
                     </button>
-                    <span>{{ l.qty }}</span>
+                    <span class="cgl-count"><span class="cgl-count-num" [@countFlip]="l.qty">{{ l.qty }}</span></span>
                     <button type="button" title="Thêm 1 phần" (click)="addItem.emit(l.dishId)">
                       <app-icon name="plus" [size]="11"></app-icon>
                     </button>

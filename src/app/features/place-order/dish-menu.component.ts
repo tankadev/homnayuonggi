@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { animate, style, transition, trigger } from '@angular/animations';
 
 import { MockCartLine, MockMenuSection } from './mock-data';
 
@@ -7,6 +8,20 @@ import { MockCartLine, MockMenuSection } from './mock-data';
   standalone: false,
   templateUrl: './dish-menu.component.html',
   styleUrls: ['./dish-menu.component.scss'],
+  animations: [
+    /* Number changes: increment rises from below, decrement drops from above —
+       direction maps to value change for clearer feedback. */
+    trigger('countFlip', [
+      transition(':increment', [
+        style({ transform: 'translateY(100%)', opacity: 0 }),
+        animate('220ms cubic-bezier(.4, 0, .2, 1)', style({ transform: 'translateY(0)', opacity: 1 })),
+      ]),
+      transition(':decrement', [
+        style({ transform: 'translateY(-100%)', opacity: 0 }),
+        animate('220ms cubic-bezier(.4, 0, .2, 1)', style({ transform: 'translateY(0)', opacity: 1 })),
+      ]),
+    ]),
+  ],
 })
 export class DishMenuComponent {
   @Input() section!: MockMenuSection;

@@ -53,13 +53,42 @@
   color: white;
   box-shadow: 0 0 0 2px var(--primary);
 }
-.pr-mem-avatar.owner::before {
+/* Orderer avatar — two layers of faint gold sparkles orbiting around the
+   avatar, one clockwise one counter-clockwise at different speeds for a
+   richer twinkle. Dots are box-shadows of a tiny centered pseudo so they
+   sit naturally outside the avatar circle. */
+.pr-mem-avatar.owner::before,
+.pr-mem-avatar.owner::after {
   content: '';
   position: absolute;
-  inset: -2px;
+  top: 50%;
+  left: 50%;
+  width: 2px;
+  height: 2px;
   border-radius: 50%;
-  background: conic-gradient(from 180deg, var(--amber), var(--primary), var(--amber));
-  z-index: -1;
+  background: transparent;
+  pointer-events: none;
+  filter: blur(0.4px);
+}
+.pr-mem-avatar.owner::before {
+  box-shadow:
+       0    -28px 0 0.5px var(--amber),
+     24px  -14px 0 0.5px var(--amber),
+     24px   14px 0 0.5px var(--amber),
+       0    28px 0 0.5px var(--amber),
+    -24px   14px 0 0.5px var(--amber),
+    -24px  -14px 0 0.5px var(--amber);
+  animation: sparkle-orbit 7s linear infinite, sparkle-twinkle 1.9s ease-in-out infinite;
+}
+.pr-mem-avatar.owner::after {
+  box-shadow:
+       0    -22px 0 0 var(--amber),
+     20px    0    0 0 var(--amber),
+       0     22px 0 0 var(--amber),
+    -20px    0    0 0 var(--amber),
+     15px  -15px 0 0 var(--amber),
+    -15px   15px 0 0 var(--amber);
+  animation: sparkle-orbit-reverse 9s linear infinite, sparkle-twinkle 2.6s ease-in-out infinite;
 }
 
 .pr-mem-name {

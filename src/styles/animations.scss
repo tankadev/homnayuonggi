@@ -38,6 +38,50 @@
   50% { transform: scale(1.6); opacity: 0; }
 }
 
+@keyframes tap-bounce {
+  0% { transform: scale(1); }
+  35% { transform: scale(0.92); }
+  70% { transform: scale(1.06); }
+  100% { transform: scale(1); }
+}
+
+@keyframes cart-slide-in {
+  from { transform: translateX(24px); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes cart-group-flash {
+  0%   { background: color-mix(in oklab, var(--primary) 35%, var(--surface-2)); border-color: var(--primary); }
+  35%  { background: color-mix(in oklab, var(--primary) 35%, var(--surface-2)); border-color: var(--primary); }
+  100% { background: var(--surface-2); border-color: var(--line-soft); }
+}
+
+@keyframes idle-bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+
+@keyframes crown-wiggle {
+  0%, 100% { transform: translateX(-50%) rotate(-12deg); }
+  50%      { transform: translateX(-50%) rotate(2deg); }
+}
+
+/* Sparkle orbit: rotates the pseudo (and its box-shadow "dots") around the
+   parent center. The translate(-50%, -50%) keeps the pseudo's box centered
+   on the parent throughout the spin. */
+@keyframes sparkle-orbit {
+  from { transform: translate(-50%, -50%) rotate(0deg); }
+  to   { transform: translate(-50%, -50%) rotate(360deg); }
+}
+@keyframes sparkle-orbit-reverse {
+  from { transform: translate(-50%, -50%) rotate(0deg); }
+  to   { transform: translate(-50%, -50%) rotate(-360deg); }
+}
+@keyframes sparkle-twinkle {
+  0%, 100% { opacity: 0.55; }
+  50%      { opacity: 0.12; }
+}
+
 /* ─── theme palette ripple overlay ────────────────────────────────────
    Element is appended to <body> from ThemeSwitcherComponent and animates
    its own clip-path inline — these are just the static positioning bits. */

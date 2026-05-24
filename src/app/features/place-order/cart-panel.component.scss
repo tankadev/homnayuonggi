@@ -14,6 +14,7 @@
   width: 100%;
   min-height: 0;
   overflow: hidden;
+  animation: cart-slide-in 320ms cubic-bezier(.2, .7, .2, 1) both;
 }
 
 .card-title {
@@ -180,6 +181,7 @@
   border-radius: 50%;
   background: var(--surface-2);
   border: 1px dashed var(--line);
+  animation: idle-bob 2.4s ease-in-out infinite;
 }
 .cart-empty p {
   margin: 4px 0 0;
@@ -216,6 +218,9 @@
   border: 1px solid var(--line-soft);
   border-radius: 12px;
   overflow: hidden;
+  /* Runs once when the element enters the DOM (i.e., a new dish added to cart).
+     Sweeps the primary tint across background + border for ~600ms then settles. */
+  animation: cart-group-flash 600ms ease-out;
 }
 .cg-head {
   display: grid;
@@ -332,6 +337,41 @@
   border-color: var(--primary);
   margin-top: 4px;
 }
+/* Orderer avatar — faint sparkle dots orbit around it via two pseudo layers
+   spinning in opposite directions. Dots are painted as box-shadows of a
+   1-2px pseudo at the avatar's center, so they sit OUTSIDE the avatar's
+   circle and the avatar's own background occludes nothing visually. */
+.cg-line.owner .cgl-avatar::before,
+.cg-line.owner .cgl-avatar::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 1.5px;
+  height: 1.5px;
+  border-radius: 50%;
+  background: transparent;
+  pointer-events: none;
+  filter: blur(0.3px);
+}
+.cg-line.owner .cgl-avatar::before {
+  box-shadow:
+       0   -14px 0 0.4px var(--amber),
+     12px   -7px 0 0.4px var(--amber),
+     12px    7px 0 0.4px var(--amber),
+       0    14px 0 0.4px var(--amber),
+    -12px    7px 0 0.4px var(--amber),
+    -12px   -7px 0 0.4px var(--amber);
+  animation: sparkle-orbit 6s linear infinite, sparkle-twinkle 1.9s ease-in-out infinite;
+}
+.cg-line.owner .cgl-avatar::after {
+  box-shadow:
+     -10px  -10px 0 0 var(--amber),
+      10px   10px 0 0 var(--amber),
+     -10px   10px 0 0 var(--amber),
+      10px  -10px 0 0 var(--amber);
+  animation: sparkle-orbit-reverse 8s linear infinite, sparkle-twinkle 2.4s ease-in-out infinite;
+}
 .cgl-crown {
   position: absolute;
   top: -7px;
@@ -340,6 +380,8 @@
   color: var(--amber);
   filter: drop-shadow(0 1px 0 var(--surface));
   pointer-events: none;
+  animation: crown-wiggle 2.6s ease-in-out infinite;
+  transform-origin: 50% 80%;
 }
 .cgl-info {
   min-width: 0;
@@ -445,13 +487,23 @@
   transition: 0.12s;
 }
 .cgl-stepper button:hover { background: rgba(255, 255, 255, 0.22); }
-.cgl-stepper > span {
+.cgl-stepper button:active { animation: tap-bounce 280ms cubic-bezier(.34, 1.56, .64, 1); }
+.cgl-stepper > .cgl-count {
   min-width: 18px;
+  height: 14px;
   text-align: center;
   font-family: var(--mono);
   font-size: 11px;
   font-weight: 700;
   font-variant-numeric: tabular-nums;
+  overflow: hidden;
+  display: inline-block;
+  line-height: 14px;
+  position: relative;
+}
+.cgl-count-num {
+  display: inline-block;
+  width: 100%;
 }
 
 .cart-foot {
