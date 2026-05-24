@@ -6,14 +6,14 @@ export const environment = {
   production: false,
   useEmulators: true,
   firebase: {
-    apiKey: "AIzaSyDFCughhn6YDYKifvpuNQcCvF5bDVhAn2Q",
-    authDomain: "homnaychonmongi.firebaseapp.com",
-    databaseURL: "https://homnaychonmongi-default-rtdb.asia-southeast1.firebasedatabase.app",
-    projectId: "homnaychonmongi",
-    storageBucket: "homnaychonmongi.appspot.com",
-    messagingSenderId: "405891226420",
-    appId: "1:405891226420:web:d5679ea5c12d9beca2a361",
-    measurementId: "G-VHZJ2DCT10"
+    apiKey: "AIzaSyDXLbgLdP1X6WtVyR3Z8L-ELs5fgZgnASQ",
+    authDomain: "prod-todayuonggi.firebaseapp.com",
+    databaseURL: "https://prod-todayuonggi-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "prod-todayuonggi",
+    storageBucket: "prod-todayuonggi.firebasestorage.app",
+    messagingSenderId: "461426577529",
+    appId: "1:461426577529:web:f7bcc4fc67de7aada244a8",
+    measurementId: "G-G75HCSB5BF"
   },
   // Fallback only — actual value is fetched from Firebase Remote Config (key: `api_url`).
   // Used when Remote Config hasn't loaded yet or fetch fails.
