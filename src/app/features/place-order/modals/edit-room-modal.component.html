@@ -55,8 +55,8 @@
               Không thể đổi quyền riêng tư khi phòng đang có người đặt món.
             </ng-container>
             <ng-template #activeTpl>
-              <ng-container *ngIf="priv; else publicTpl">Người mới cần mật khẩu mới vào được phòng.</ng-container>
-              <ng-template #publicTpl>Bất kỳ ai có link cũng có thể vào phòng.</ng-template>
+              <ng-container *ngIf="priv; else publicTpl">Người mới cần mật khẩu để vào được phòng.</ng-container>
+              <ng-template #publicTpl>Bất kỳ ai cũng có thể vào phòng.</ng-template>
             </ng-template>
           </span>
         </div>

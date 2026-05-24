@@ -173,16 +173,16 @@ export function pickActiveCompletedDelivery(deliveries: DeliveryRO[], roomKey: s
   return candidates[0] || null;
 }
 
-/** Pick the PaymentPaid record matching a delivery key (or fallback to latest by orderDate). */
+/**
+ * Strict match by deliveryId. The previous "fallback to latest payment in room" was unsafe:
+ * once place-order skips writing PaymentPaid (single-person orders or fully-paid sponsor mode),
+ * the fallback would return an UNRELATED prior payment from the same room — leaking stale
+ * paidMap / members into a fresh delivery's payment-review view.
+ */
 export function pickPaymentForDelivery(
   payments: PaymentPaidRO[],
   deliveryKey: string,
-  roomKey: string,
+  _roomKey: string,
 ): PaymentPaidRO | null {
-  const direct = payments.find((p) => p.deliveryId === deliveryKey);
-  if (direct) return direct;
-  const roomMatches = payments
-    .filter((p) => p.roomId === roomKey)
-    .sort((a, b) => (b.orderDate || '').localeCompare(a.orderDate || ''));
-  return roomMatches[0] || null;
+  return payments.find((p) => p.deliveryId === deliveryKey) || null;
 }

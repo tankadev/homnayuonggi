@@ -209,10 +209,22 @@ export class PaymentReviewPageComponent implements OnInit, OnChanges, OnDestroy 
 
   /**
    * Orderer chose "Tạo đơn mới" — wipe the active delivery + cart + history feed so a fresh
-   * poll can start in this room, but **keep** /paymentsPaid intact since members may still owe.
+   * poll can start in this room. Keep /paymentsPaid intact when members still owe; drop it
+   * when every non-orderer has been marked paid so the record doesn't linger in RTDB.
    */
   async confirmNewOrder(): Promise<void> {
     this.newOrderOpen = false;
+    if (this.payment) {
+      const others = (this.payment.usersPaid || []).filter((u) => u.userId !== this.ordererId);
+      const everyonePaid = !others.length || others.every((u) => !!u.isPaid);
+      if (everyonePaid) {
+        try {
+          await this.paymentPaidService.remove(this.payment.key);
+        } catch {
+          /* swallow */
+        }
+      }
+    }
     await this.cleanupForNextPoll();
     this.newOrder.emit();
   }

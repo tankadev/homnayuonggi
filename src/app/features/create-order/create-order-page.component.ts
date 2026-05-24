@@ -4,6 +4,7 @@ import { combineLatest, Subscription } from 'rxjs';
 import { UserService } from '../../core/services/user.service';
 import { DeliveryService } from '../../core/services/delivery.service';
 import { AuthService } from '../../core/services/auth.service';
+import { ConfigService } from '../../core/services/config.service';
 import { OrderFlowService } from '../../core/services/order-flow.service';
 import { RoomRO } from '../../core/ro/room.ro';
 import { UserRO } from '../../core/ro/user.ro';
@@ -46,6 +47,9 @@ export class CreateOrderPageComponent implements OnInit, OnDestroy {
   submitting = false;
   errorMsg: string | null = null;
 
+  refreshingApi = false;
+  apiRefreshedAt: number | null = null;
+
   toast: { ordererName: string; ordererIsMe: boolean; minutes: number } | null = null;
   private toastTimer?: number;
 
@@ -63,7 +67,19 @@ export class CreateOrderPageComponent implements OnInit, OnDestroy {
     private deliveryService: DeliveryService,
     private auth: AuthService,
     private flow: OrderFlowService,
+    private config: ConfigService,
   ) {}
+
+  async onRefreshApi(): Promise<void> {
+    if (this.refreshingApi) return;
+    this.refreshingApi = true;
+    try {
+      await this.config.refresh();
+      this.apiRefreshedAt = Date.now();
+    } finally {
+      this.refreshingApi = false;
+    }
+  }
 
   ngOnInit(): void {
     this.sub = combineLatest([

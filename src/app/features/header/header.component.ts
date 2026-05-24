@@ -2,7 +2,6 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 
 import { UserRO } from '../../core/ro/user.ro';
 import { RoomRO } from '../../core/ro/room.ro';
-import { ConfigService } from '../../core/services/config.service';
 import { LocalStorageService } from '../../core/services/localstorage.service';
 
 export type HeaderMode = 'welcome' | 'rooms' | 'create-order' | 'place-order' | 'payment-review' | 'history';
@@ -25,19 +24,7 @@ export class HeaderComponent {
   @Output() openHistory = new EventEmitter<void>();
   @Output() backToRooms = new EventEmitter<void>();
 
-  refreshing = false;
-
-  constructor(private config: ConfigService, private storage: LocalStorageService) {}
-
-  async onRefreshApi(): Promise<void> {
-    if (this.refreshing) return;
-    this.refreshing = true;
-    try {
-      await this.config.refresh();
-    } finally {
-      this.refreshing = false;
-    }
-  }
+  constructor(private storage: LocalStorageService) {}
 
   onLeaveRoom(): void {
     this.storage.quitRoom();

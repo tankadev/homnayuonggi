@@ -76,8 +76,8 @@
 
       <h1 class="co-empty-title">Hôm nay cả phòng uống gì?</h1>
       <p class="co-empty-sub">
-        Bấm chiếc ly để mở bình chọn. <b>{{ members.length }} thành viên</b> trong phòng sẽ
-        cùng chọn món — ai cũng có thể tạo, và bạn có thể tự gán người đặt hàng.
+        Bấm chiếc ly để mở bình chọn. <b>{{ members.length }} thành viên</b> sẽ
+        cùng chọn món — ai cũng có thể tạo, và bạn có thể tự chọn người đặt đơn hàng.
       </p>
 
       <div class="co-tips">
@@ -100,7 +100,23 @@
     <ng-template #formCard>
       <div class="co-card">
         <div class="co-card-head">
-          <h2 class="co-card-title">Tạo bình chọn món</h2>
+          <div class="co-card-head-row">
+            <h2 class="co-card-title">Tạo bình chọn món</h2>
+            <button
+              type="button"
+              class="co-api-refresh"
+              (click)="onRefreshApi()"
+              [disabled]="refreshingApi"
+              [class.is-loading]="refreshingApi"
+              [class.is-done]="!refreshingApi && apiRefreshedAt"
+              title="Tải lại địa chỉ API lấy menu"
+            >
+              <app-icon name="refresh" [size]="13"></app-icon>
+              <span *ngIf="refreshingApi">Đang tải…</span>
+              <span *ngIf="!refreshingApi && apiRefreshedAt">Đã tải lại APIURL</span>
+              <span *ngIf="!refreshingApi && !apiRefreshedAt">Tải lại APIURL</span>
+            </button>
+          </div>
           <p class="co-card-sub">Dán link quán, hẹn giờ, chọn người đứng tên đặt hàng.</p>
         </div>
 

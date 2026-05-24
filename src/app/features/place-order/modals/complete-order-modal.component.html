@@ -171,8 +171,8 @@
   <ng-template #success>
     <div class="modal-head">
       <div>
-        <h2 class="modal-title">Đã chốt đơn 🎉</h2>
-        <p class="modal-sub">Mã đơn đã gửi cho cả phòng — nhận hàng vui vẻ!</p>
+        <h2 class="modal-title">Đã chốt đơn</h2>
+        <p class="modal-sub">Chúc mọi người thưởng thức ngon miệng nhé!</p>
       </div>
       <button type="button" class="modal-close" (click)="acknowledgeDone()" aria-label="Đóng">
         <app-icon name="x" [size]="14"></app-icon>
@@ -184,9 +184,12 @@
         <div>
           <b>Đặt hàng thành công</b>
           <span>
+            {{ memberIds.length }} người với tổng đơn là <b class="success-total">{{ total | vnd }}đ</b>
+          </span>
+          <!-- <span>
             Mã đơn <span class="success-code">#{{ orderCode }}</span> · {{ memberIds.length }} người ·
             tổng <b class="success-total">{{ total | vnd }}đ</b>
-          </span>
+          </span> -->
         </div>
       </div>
     </div>

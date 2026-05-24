@@ -19,10 +19,7 @@
         <span class="theme-swatches">
           <span class="ts-dot" *ngFor="let c of p.swatches" [style.background]="c"></span>
         </span>
-        <span class="theme-opt-info">
-          <b>{{ p.name }}</b>
-          <span>{{ p.sub }}</span>
-        </span>
+        <span class="theme-opt-name">{{ p.name }}</span>
         <app-icon *ngIf="p.id === current.id" name="check" [size]="14"></app-icon>
       </button>
     </li>

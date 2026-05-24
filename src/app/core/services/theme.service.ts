@@ -19,21 +19,20 @@ export type PaletteId =
 export interface PaletteMeta {
   id: PaletteId;
   name: string;
-  sub: string;
   swatches: [string, string, string];
 }
 
 export const PALETTES: PaletteMeta[] = [
-  { id: 'saigon',   name: 'Sài Gòn',  sub: 'Terracotta + rau thơm', swatches: ['#c95a37', '#5a7a3c', '#f9f1e2'] },
-  { id: 'hanoi',    name: 'Hà Nội',   sub: 'Teal + amber',          swatches: ['#1e5566', '#d49328', '#f5f3ee'] },
-  { id: 'dalat',    name: 'Đà Lạt',   sub: 'Thông + phấn hồng',     swatches: ['#2f5a3b', '#c87a82', '#f4f1ec'] },
-  { id: 'mango',    name: 'Xoài',     sub: 'Xoài + cobalt',         swatches: ['#e6932b', '#3556a8', '#fff8eb'] },
-  { id: 'espresso', name: 'Espresso', sub: 'Caramel đậm (dark)',    swatches: ['#d09954', '#1c1612', '#f3e8d4'] },
-  { id: 'matcha',   name: 'Matcha',   sub: 'Sage + đất ấm',         swatches: ['#5a7a48', '#c48556', '#f1f0e9'] },
-  { id: 'paper',    name: 'Paper',    sub: 'Kem + xanh',            swatches: ['#3a6a3d', '#c08838', '#f6f1e7'] },
-  { id: 'coral',    name: 'Coral',    sub: 'Hồng cam ấm',           swatches: ['#c14e2b', '#d96a3c', '#fcefe6'] },
-  { id: 'ocean',    name: 'Ocean',    sub: 'Xanh dương + ấm',       swatches: ['#2c5896', '#c46237', '#eef3f6'] },
-  { id: 'midnight', name: 'Midnight', sub: 'Rừng xanh tối (dark)',  swatches: ['#3fc580', '#e89944', '#0f1113'] },
+  { id: 'saigon',   name: 'Gốm',      swatches: ['#c95a37', '#5a7a3c', '#f9f1e2'] },
+  { id: 'hanoi',    name: 'Ngọc Bích', swatches: ['#1e5566', '#d49328', '#f5f3ee'] },
+  { id: 'dalat',    name: 'Rừng Thông', swatches: ['#2f5a3b', '#c87a82', '#f4f1ec'] },
+  { id: 'mango',    name: 'Xoài',     swatches: ['#e6932b', '#3556a8', '#fff8eb'] },
+  { id: 'espresso', name: 'Cà Phê',   swatches: ['#d09954', '#1c1612', '#f3e8d4'] },
+  { id: 'matcha',   name: 'Trà Xanh', swatches: ['#5a7a48', '#c48556', '#f1f0e9'] },
+  { id: 'paper',    name: 'Giấy',     swatches: ['#3a6a3d', '#c08838', '#f6f1e7'] },
+  { id: 'coral',    name: 'San Hô',   swatches: ['#c14e2b', '#d96a3c', '#fcefe6'] },
+  { id: 'ocean',    name: 'Biển',     swatches: ['#2c5896', '#c46237', '#eef3f6'] },
+  { id: 'midnight', name: 'Đêm',      swatches: ['#3fc580', '#e89944', '#0f1113'] },
 ];
 
 const VALID = new Set<string>(PALETTES.map((p) => p.id));

@@ -27,7 +27,7 @@ import { OrderHistoryService } from '../../core/services/order-history.service';
 import { PaymentPaidService } from '../../core/services/payment-paid.service';
 import { UserService } from '../../core/services/user.service';
 import { RoomsService } from '../../core/services/rooms.service';
-import { CompleteOrderResult } from './modals/complete-order-modal.component';
+import { CompleteOrderResult, paymentInfoToList } from './modals/complete-order-modal.component';
 import { encryptPassword } from '../rooms/room-view';
 import { OrderDTO, UserNote } from '../../core/dto/order.dto';
 import { DeliveryRO } from '../../core/ro/delivery.ro';
@@ -159,6 +159,21 @@ export class PlaceOrderPageComponent implements OnInit, OnChanges, OnDestroy {
     if (!uid) return '';
     const u = this.userMap[uid];
     return u?.displayName || u?.username || '';
+  }
+
+  /** Payment array of the current logged-in user — passed to the complete-order modal
+   *  so it pre-fills from the user's own profile rather than a shared localStorage cache. */
+  get currentUserPayment() {
+    const me = this.auth.currentUser;
+    if (!me) return undefined;
+    return this.userMap[me.key]?.payment || me.payment;
+  }
+
+  get currentUserName(): string {
+    const me = this.auth.currentUser;
+    if (!me) return '';
+    const live = this.userMap[me.key];
+    return live?.displayName || live?.username || me.displayName || me.username || '';
   }
 
   /* ─── live subscription ───────────────────────────────────── */
@@ -353,6 +368,17 @@ export class PlaceOrderPageComponent implements OnInit, OnChanges, OnDestroy {
     const ordererId =
       this.delivery.assignUserId || this.delivery.userCreate || this.auth.currentUser?.key || '';
 
+    /* Persist the orderer's payment info on their /users record so payment-review
+       (which reads userMap[ordererId].payment) can show MoMo / bank to other members.
+       Only the orderer can submit, so auth.currentUser is the orderer here. */
+    if (this.auth.currentUser?.key === ordererId) {
+      try {
+        await this.auth.patch({ payment: paymentInfoToList(result.payment) });
+      } catch {
+        /* swallow — payment persistence is best-effort */
+      }
+    }
+
     /* Type 0 = chia đều, 2 = người đặt tài trợ 100%. */
     const splitType = result.splitMode === 'sponsor' ? 2 : 0;
 
@@ -406,29 +432,35 @@ export class PlaceOrderPageComponent implements OnInit, OnChanges, OnDestroy {
     /* Silence the unused-var warning — subtotalAll is kept for future "items" split mode. */
     void subtotalAll;
 
-    try {
-      /* Snapshot room name + shop photo so the history screen + payment-review still
-         render correctly after the delivery record is later cleared. */
-      const photos = this.delivery.delivery?.photos;
-      const deliveryPhoto =
-        (photos && photos.length
-          ? [...photos].sort((a, b) => (b.width || 0) - (a.width || 0))[0]?.value
-          : null) || this.shop.photoUrl || undefined;
+    /* Skip writing /paymentsPaid when there's nothing to collect — i.e. only the orderer
+       ordered, or sponsor mode where the orderer covers 100%. Saves an RTDB record that
+       would just sit at "fully paid" and get deleted on the next action anyway. */
+    const hasUnpaidPayer = usersPaid.some((u) => u.userId !== ordererId && !u.isPaid);
+    if (hasUnpaidPayer) {
+      try {
+        /* Snapshot room name + shop photo so the history screen + payment-review still
+           render correctly after the delivery record is later cleared. */
+        const photos = this.delivery.delivery?.photos;
+        const deliveryPhoto =
+          (photos && photos.length
+            ? [...photos].sort((a, b) => (b.width || 0) - (a.width || 0))[0]?.value
+            : null) || this.shop.photoUrl || undefined;
 
-      await this.paymentPaidService.create({
-        roomId: this.room.key,
-        roomName: this.room.name,
-        orderDate: new Date().toISOString(),
-        userOrderId: ordererId,
-        deliveryId: this.delivery.key,
-        deliveryName: this.delivery.delivery?.name || this.shop.name,
-        deliveryAddress: this.delivery.delivery?.address || this.shop.address,
-        ...(deliveryPhoto ? { deliveryPhoto } : {}),
-        totalBill: result.total,
-        usersPaid,
-      });
-    } catch {
-      /* swallow — payment record creation is best-effort */
+        await this.paymentPaidService.create({
+          roomId: this.room.key,
+          roomName: this.room.name,
+          orderDate: new Date().toISOString(),
+          userOrderId: ordererId,
+          deliveryId: this.delivery.key,
+          deliveryName: this.delivery.delivery?.name || this.shop.name,
+          deliveryAddress: this.delivery.delivery?.address || this.shop.address,
+          ...(deliveryPhoto ? { deliveryPhoto } : {}),
+          totalBill: result.total,
+          usersPaid,
+        });
+      } catch {
+        /* swallow — payment record creation is best-effort */
+      }
     }
 
     /* Cart action log is no longer useful once the bill is finalized — clear it so the

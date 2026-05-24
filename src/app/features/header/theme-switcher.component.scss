@@ -103,21 +103,12 @@
   background: var(--primary-soft);
   color: var(--primary-ink);
 }
-.theme-opt-info {
+.theme-opt-name {
   flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 1px;
   min-width: 0;
-}
-.theme-opt-info b {
   font-size: 13px;
   font-weight: 600;
   color: var(--ink);
-}
-.theme-opt-info span {
-  font-size: 11px;
-  color: var(--muted);
 }
 .theme-opt > app-icon {
   color: var(--primary);

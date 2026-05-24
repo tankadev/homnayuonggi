@@ -295,6 +295,12 @@
   to { opacity: 1; transform: translateY(0) scale(1); }
 }
 .co-card-head { padding: 20px 24px 4px; }
+.co-card-head-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
 .co-card-title {
   font-family: var(--display);
   font-weight: 800;
@@ -303,6 +309,40 @@
   line-height: 1.15;
   margin: 0;
   color: var(--ink);
+}
+.co-api-refresh {
+  appearance: none;
+  font: inherit;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 26px;
+  padding: 0 10px;
+  margin-top: 2px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: var(--surface-2);
+  color: var(--ink-2);
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.15s;
+  flex-shrink: 0;
+}
+.co-api-refresh:hover:not(:disabled) {
+  border-color: var(--primary);
+  color: var(--primary-ink);
+  background: var(--primary-soft);
+}
+.co-api-refresh:disabled { cursor: not-allowed; opacity: 0.7; }
+.co-api-refresh app-icon { color: inherit; }
+.co-api-refresh.is-loading app-icon {
+  animation: co-spin 0.9s linear infinite;
+}
+.co-api-refresh.is-done {
+  border-color: color-mix(in oklab, var(--accent) 60%, var(--line));
+  color: var(--accent);
+  background: color-mix(in oklab, var(--accent) 10%, var(--surface));
 }
 .co-card-sub {
   margin: 4px 0 0;

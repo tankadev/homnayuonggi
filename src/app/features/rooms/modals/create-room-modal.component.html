@@ -52,8 +52,8 @@
             Phòng riêng tư
           </span>
           <span class="tr-sub">
-            <ng-container *ngIf="priv; else publicTpl">Người mới cần mật khẩu mới vào được phòng.</ng-container>
-            <ng-template #publicTpl>Bất kỳ ai có link cũng có thể vào phòng.</ng-template>
+            <ng-container *ngIf="priv; else publicTpl">Người mới cần mật khẩu để vào được phòng.</ng-container>
+            <ng-template #publicTpl>Bất kỳ ai cũng có thể vào phòng.</ng-template>
           </span>
         </div>
         <button type="button" class="switch" [class.on]="priv" (click)="priv = !priv" [attr.aria-pressed]="priv"></button>

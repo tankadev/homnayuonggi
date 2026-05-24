@@ -17,7 +17,7 @@ export class NoteEditModalComponent implements OnInit, AfterViewInit {
   @ViewChild('input') input?: ElementRef<HTMLInputElement>;
 
   note = '';
-  readonly quick = ['Ít đá', 'Ít đường', 'Không hành', 'Không cay', 'Cay nhiều', 'Mang về'];
+  readonly quick = ['Không đá', 'Đá riêng','50% đường', 'Full topping'];
   readonly maxLen = 120;
 
   ngOnInit(): void {

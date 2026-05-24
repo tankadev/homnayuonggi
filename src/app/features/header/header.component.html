@@ -55,10 +55,6 @@
       <app-icon name="history" [size]="16"></app-icon>
     </button>
 
-    <button class="icon-btn" type="button" title="Tải lại API URL" (click)="onRefreshApi()" [disabled]="refreshing">
-      <app-icon name="refresh" [size]="16"></app-icon>
-    </button>
-
     <div class="me-pill" *ngIf="isLoggedIn">
       <span class="avatar me">{{ (user?.displayName || user?.username || '?').charAt(0).toUpperCase() }}</span>
       <span>{{ user?.displayName || user?.username }}</span>

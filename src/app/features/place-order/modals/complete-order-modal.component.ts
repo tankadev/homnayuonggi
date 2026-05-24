@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 
 import { MockCartLine, MockDish, MockMember } from '../mock-data';
+import { UserPaymentModel } from '../../../core/models/user-payment.model';
 
 type PayMethod = 'bank' | 'momo';
 type SplitMode = 'equal' | 'sponsor';
@@ -22,7 +23,6 @@ export interface CompleteOrderResult {
   payment: PaymentInfo;
 }
 
-const STORAGE_KEY = 'tug-payment-info';
 const BANKS = [
   'Vietcombank', 'Techcombank', 'BIDV', 'VietinBank', 'MB Bank',
   'ACB', 'Sacombank', 'TPBank', 'VPBank', 'VIB',
@@ -40,6 +40,10 @@ export class CompleteOrderModalComponent implements OnInit {
   @Input() dishMap: Record<string, MockDish> = {};
   @Input() memberMap: Record<string, MockMember> = {};
   @Input() subtotal = 0;
+  /** Current user's saved payment list — source of truth, replaces previous global localStorage cache. */
+  @Input() initialPayment: UserPaymentModel[] | undefined = undefined;
+  /** Default account holder if profile doesn't yet have one. */
+  @Input() defaultHolder = '';
 
   @Output() done = new EventEmitter<CompleteOrderResult>();
   @Output() closed = new EventEmitter<void>();
@@ -56,25 +60,14 @@ export class CompleteOrderModalComponent implements OnInit {
 
   pay: PaymentInfo = {
     method: 'bank',
-    holder: 'Chick',
+    holder: '',
     momoPhone: '',
     bankName: '',
     bankAccount: '',
   };
 
   ngOnInit(): void {
-    try {
-      const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
-      this.pay = {
-        method: saved.method || 'bank',
-        holder: saved.holder || this.memberMap['me']?.name || 'Chick',
-        momoPhone: saved.momoPhone || '',
-        bankName: saved.bankName || '',
-        bankAccount: saved.bankAccount || '',
-      };
-    } catch {
-      /* keep defaults */
-    }
+    this.pay = parsePaymentList(this.initialPayment, this.defaultHolder);
     this.orderCode = String(Math.floor(Math.random() * 900000 + 100000));
   }
 
@@ -93,10 +86,9 @@ export class CompleteOrderModalComponent implements OnInit {
 
   setMethod(m: PayMethod): void {
     this.pay = { ...this.pay, method: m };
-    this.persist();
   }
 
-  /** Sanitize numeric input (digits + spaces) and persist. */
+  /** Sanitize numeric input (digits + spaces). */
   onPayInput(key: keyof PaymentInfo, value: string): void {
     let next = value;
     if (key === 'bankAccount' || key === 'momoPhone') {
@@ -105,15 +97,6 @@ export class CompleteOrderModalComponent implements OnInit {
       next = value.toUpperCase();
     }
     this.pay = { ...this.pay, [key]: next };
-    this.persist();
-  }
-
-  private persist(): void {
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(this.pay));
-    } catch {
-      /* localStorage may be unavailable */
-    }
   }
 
   setFee(key: 'shipping' | 'serviceFee' | 'discount', value: string | number): void {
@@ -142,4 +125,45 @@ export class CompleteOrderModalComponent implements OnInit {
       payment: { ...this.pay },
     });
   }
+}
+
+/**
+ * Mirror image of paymentLookup() in payment-review.adapter.ts — turn a freeform
+ * UserPaymentModel[] back into a typed PaymentInfo so the form can pre-fill. Labels
+ * must match the same regexes the adapter uses, so write-then-read round-trips cleanly.
+ */
+function parsePaymentList(list: UserPaymentModel[] | undefined, defaultHolder: string): PaymentInfo {
+  const find = (re: RegExp): UserPaymentModel | undefined =>
+    (list || []).find((p) => re.test(p.label || ''));
+  const valueOf = (p?: UserPaymentModel) => (p?.value || '').trim();
+  const isActive = (p?: UserPaymentModel) => !!p && p.checked !== false && !p.disabled;
+
+  const bankNameEntry = find(/ngân hàng|bank/i);
+  const bankAccEntry = find(/(số tài khoản|stk|acc)/i);
+  const holderEntry = find(/(chủ tài khoản|holder|tên)/i);
+  const momoEntry = find(/momo|sđt|phone/i);
+
+  const bankActive = isActive(bankAccEntry) || isActive(bankNameEntry);
+  const momoActive = isActive(momoEntry) && !bankActive;
+  const method: PayMethod = momoActive ? 'momo' : 'bank';
+
+  return {
+    method,
+    holder: valueOf(holderEntry) || defaultHolder || '',
+    momoPhone: valueOf(momoEntry),
+    bankName: valueOf(bankNameEntry),
+    bankAccount: valueOf(bankAccEntry),
+  };
+}
+
+/** Inverse of parsePaymentList — only the active method's entries are checked=true,
+ *  so payment-review's paymentLookup() picks the right method back out. */
+export function paymentInfoToList(pay: PaymentInfo): UserPaymentModel[] {
+  const isBank = pay.method === 'bank';
+  return [
+    { label: 'Ngân hàng', value: pay.bankName || '', checked: isBank },
+    { label: 'STK', value: pay.bankAccount || '', checked: isBank },
+    { label: 'Chủ tài khoản', value: pay.holder || '', checked: isBank },
+    { label: 'MoMo', value: pay.momoPhone || '', checked: !isBank },
+  ];
 }

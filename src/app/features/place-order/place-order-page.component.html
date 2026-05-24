@@ -68,6 +68,8 @@
   [dishMap]="dishMap"
   [memberMap]="memberMap"
   [subtotal]="subtotal"
+  [initialPayment]="currentUserPayment"
+  [defaultHolder]="currentUserName"
   (done)="onSubmitDone($event)"
   (closed)="submitOpen = false"
 ></app-complete-order-modal>
