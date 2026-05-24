@@ -13,8 +13,6 @@
         <span *ngIf="member.me" class="pr-mem-role me">Bạn</span>
       </b>
       <span class="pr-mem-sub">
-        <span class="phone"><app-icon name="phone" [size]="10"></app-icon> {{ member.phone }}</span>
-        <span class="sep">·</span>
         <span>{{ totalQty }} món</span>
         <ng-container *ngIf="member.owner">
           <span class="sep">·</span>

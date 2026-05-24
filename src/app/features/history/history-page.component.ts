@@ -16,6 +16,7 @@ import { PairEntry } from './pairs-card.component';
 import { RangeFilter } from './filters-card.component';
 
 import { AuthService } from '../../core/services/auth.service';
+import { DeliveryService } from '../../core/services/delivery.service';
 import { PaymentPaidService } from '../../core/services/payment-paid.service';
 import { RoomsService } from '../../core/services/rooms.service';
 import { UserService } from '../../core/services/user.service';
@@ -56,6 +57,7 @@ export class HistoryPageComponent implements OnInit, OnDestroy {
 
   constructor(
     private paymentPaidService: PaymentPaidService,
+    private deliveryService: DeliveryService,
     private roomsService: RoomsService,
     private userService: UserService,
     private auth: AuthService,
@@ -67,8 +69,19 @@ export class HistoryPageComponent implements OnInit, OnDestroy {
       this.paymentPaidService.getAll(),
       this.roomsService.getAll(),
       this.userService.getAll(),
-    ]).subscribe(([payments, rooms, users]) => {
-      const view = mapHistory(payments, rooms, users, this.meId || null);
+      this.deliveryService.getAll(),
+    ]).subscribe(([payments, rooms, users, deliveries]) => {
+      /* Hide payments whose delivery is still in payment-review (delivery record
+         still exists with isCompleted=true). Once the orderer presses "Tạo đơn mới"
+         or "Xác nhận thanh toán đủ" the delivery is removed, then the payment
+         shows up in history. */
+      const inReview = new Set(
+        deliveries
+          .filter((d) => d.isCompleted === true)
+          .map((d) => d.key),
+      );
+      const visible = payments.filter((p) => !inReview.has(p.deliveryId));
+      const view = mapHistory(visible, rooms, users, this.meId || null);
       this.membersMap = view.members;
       this.rawOrders = view.orders;
     });

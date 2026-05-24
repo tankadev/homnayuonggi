@@ -330,6 +330,7 @@
   background: var(--primary);
   color: white;
   border-color: var(--primary);
+  margin-top: 4px;
 }
 .cgl-crown {
   position: absolute;
@@ -345,6 +346,7 @@
   display: flex;
   flex-direction: column;
   gap: 1px;
+  padding-top: 1px;
 }
 .cgl-who {
   font-size: 11px;
