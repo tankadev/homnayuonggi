@@ -465,8 +465,11 @@ export class PlaceOrderPageComponent implements OnInit, OnChanges, OnDestroy {
           totalBill: result.total,
           usersPaid,
         });
-      } catch {
-        /* swallow — payment record creation is best-effort */
+      } catch (err) {
+        /* Log so we can see if payment-record creation is silently failing — this is
+           the root cause of "F5 mất trạng thái trả tiền" + "lịch sử không hiện đơn" if
+           it ever fires. payment-review's onTogglePaid has a self-healing fallback. */
+        console.error('[place-order] failed to create payment record', err);
       }
     }
 

@@ -171,13 +171,23 @@ export class PaymentReviewPageComponent implements OnInit, OnChanges, OnDestroy 
   }
 
   async onTogglePaid(id: string): Promise<void> {
-    if (!this.isOwner || !this.payment) {
-      /* Optimistic local toggle even if no payment record. */
+    if (!this.isOwner) {
+      /* Non-orderer fallback — keep the local toggle so the readonly UI updates visually. */
       this.paidMap = { ...this.paidMap, [id]: !this.paidMap[id] };
       return;
     }
     const next = !this.paidMap[id];
     this.paidMap = { ...this.paidMap, [id]: next };
+
+    /* No payment record exists yet (e.g. place-order's create silently failed at finalize).
+       Build one from the current shares + delivery snapshot so the toggle persists and
+       the entry shows up in /paymentsPaid / history. Without this, the toggle would only
+       live in memory and F5 would lose it. */
+    if (!this.payment) {
+      await this.createPaymentRecord(id, next);
+      return;
+    }
+
     const updated = (this.payment.usersPaid || []).map((u) =>
       u.userId === id ? { ...u, isPaid: next } : u,
     );
@@ -188,8 +198,48 @@ export class PaymentReviewPageComponent implements OnInit, OnChanges, OnDestroy 
     }
     try {
       await this.paymentPaidService.update(this.payment.key, { usersPaid: updated });
-    } catch {
-      /* swallow */
+    } catch (err) {
+      /* Log so the failure is visible — revert the optimistic local toggle. */
+      console.error('[payment-review] failed to update usersPaid', err);
+      this.paidMap = { ...this.paidMap, [id]: !next };
+    }
+  }
+
+  /** Build a /paymentsPaid record from the live delivery + shares when none exists yet. */
+  private async createPaymentRecord(toggledId: string, toggledPaid: boolean): Promise<void> {
+    if (!this.room || !this.delivery) return;
+    const ordererId = this.ordererId;
+    const usersPaid = this.shares.map((s) => ({
+      userId: s.id,
+      moneyPaid: s.share || 0,
+      isPaid: s.id === ordererId ? true : s.id === toggledId ? toggledPaid : false,
+    }));
+    /* Make sure orderer row exists even if they didn't order any dish. */
+    if (ordererId && !usersPaid.find((u) => u.userId === ordererId)) {
+      usersPaid.push({ userId: ordererId, moneyPaid: 0, isPaid: true });
+    }
+    const photos = this.delivery.delivery?.photos;
+    const deliveryPhoto =
+      (photos && photos.length
+        ? [...photos].sort((a, b) => (b.width || 0) - (a.width || 0))[0]?.value
+        : null) || this.order.shopPhoto || undefined;
+    try {
+      await this.paymentPaidService.create({
+        roomId: this.room.key,
+        roomName: this.room.name,
+        orderDate: this.delivery.createDateTime || new Date().toISOString(),
+        userOrderId: ordererId,
+        deliveryId: this.delivery.key,
+        deliveryName: this.delivery.delivery?.name || this.order.shop,
+        deliveryAddress: this.delivery.delivery?.address || this.order.shopSub,
+        ...(deliveryPhoto ? { deliveryPhoto } : {}),
+        totalBill: this.grand,
+        usersPaid,
+      });
+    } catch (err) {
+      console.error('[payment-review] failed to create payment record on toggle', err);
+      /* Revert optimistic local toggle. */
+      this.paidMap = { ...this.paidMap, [toggledId]: !toggledPaid };
     }
   }
 
