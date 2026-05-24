@@ -23,9 +23,18 @@ export class WelcomePageComponent implements OnInit, OnDestroy {
   authMode: AuthMode = 'login';
 
   rotatingWords = ['cà phê?', 'trà đào?', 'phở bò?', 'trà sữa?', 'cơm tấm?'];
-  currentWord = this.rotatingWords[0];
+  /** What's currently rendered — evolves character-by-character as the
+   *  typewriter loop deletes the previous word and types the next. */
+  displayedWord = this.rotatingWords[0];
+  /** Source array splitting respects multi-byte Unicode (à, ở, ữ, …). */
+  private targetChars: string[] = Array.from(this.rotatingWords[0]);
   private wordIdx = 0;
-  private wordTimer?: number;
+  private typeTimer?: number;
+  private pauseTimer?: number;
+
+  private static readonly TYPE_SPEED_MS = 75;
+  private static readonly DELETE_SPEED_MS = 40;
+  private static readonly HOLD_BEFORE_DELETE_MS = 1700;
 
   readonly confetti: ConfettiItem[] = [
     { emoji: '🍵', left: '8%',  top: '22%', rot: '-6deg', delay: '0s' },
@@ -38,15 +47,66 @@ export class WelcomePageComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     document.body.classList.add('welcome-screen');
-    this.wordTimer = window.setInterval(() => {
-      this.wordIdx = (this.wordIdx + 1) % this.rotatingWords.length;
-      this.currentWord = this.rotatingWords[this.wordIdx];
-    }, 2400);
+    this.scheduleNextWord();
   }
 
   ngOnDestroy(): void {
     document.body.classList.remove('welcome-screen');
-    if (this.wordTimer !== undefined) window.clearInterval(this.wordTimer);
+    this.clearTimers();
+  }
+
+  /** Hold the current word for a beat, then start deleting it. */
+  private scheduleNextWord(): void {
+    this.clearTimers();
+    this.pauseTimer = window.setTimeout(
+      () => this.startDeleting(),
+      WelcomePageComponent.HOLD_BEFORE_DELETE_MS,
+    );
+  }
+
+  /** Pop one character off the end of the displayed word. When empty, kick
+   *  off the typing phase for the next word. */
+  private startDeleting(): void {
+    const chars = Array.from(this.displayedWord);
+    if (chars.length === 0) {
+      this.wordIdx = (this.wordIdx + 1) % this.rotatingWords.length;
+      this.targetChars = Array.from(this.rotatingWords[this.wordIdx]);
+      this.startTyping();
+      return;
+    }
+    chars.pop();
+    this.displayedWord = chars.join('');
+    this.typeTimer = window.setTimeout(
+      () => this.startDeleting(),
+      WelcomePageComponent.DELETE_SPEED_MS,
+    );
+  }
+
+  /** Append one character from the target. When complete, schedule the
+   *  next word. */
+  private startTyping(): void {
+    const current = Array.from(this.displayedWord);
+    if (current.length >= this.targetChars.length) {
+      this.scheduleNextWord();
+      return;
+    }
+    current.push(this.targetChars[current.length]);
+    this.displayedWord = current.join('');
+    this.typeTimer = window.setTimeout(
+      () => this.startTyping(),
+      WelcomePageComponent.TYPE_SPEED_MS,
+    );
+  }
+
+  private clearTimers(): void {
+    if (this.typeTimer !== undefined) {
+      window.clearTimeout(this.typeTimer);
+      this.typeTimer = undefined;
+    }
+    if (this.pauseTimer !== undefined) {
+      window.clearTimeout(this.pauseTimer);
+      this.pauseTimer = undefined;
+    }
   }
 
   openAuth(mode: AuthMode = 'login'): void {

@@ -14,6 +14,27 @@
   isolation: isolate;
 }
 
+/* ─── Entry orchestration ────────────────────────────────────────
+   Hero elements rise into place with a staggered delay so the page
+   feels assembled rather than dumped all at once. All keyframes use
+   `forwards` so the final state sticks once played. */
+@keyframes wel-rise {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes wel-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes wel-accent-draw {
+  from { transform: skewX(-6deg) scaleX(0); }
+  to   { transform: skewX(-6deg) scaleX(1); }
+}
+@keyframes wel-card-rise {
+  from { opacity: 0; transform: translateY(40px) scale(0.96); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
 /* ─── Background ─────────────────────────────────────────────── */
 .wel-bg {
   position: absolute;
@@ -82,6 +103,8 @@
   flex-shrink: 0;
   padding: 12px 22px 0;
   z-index: 5;
+  opacity: 0;
+  animation: wel-rise 520ms cubic-bezier(.22, 1, .36, 1) 50ms forwards;
 }
 .wel-header-inner {
   display: grid;
@@ -224,6 +247,8 @@
   font-weight: 600;
   color: var(--ink-2);
   box-shadow: 0 1px 0 rgba(0, 0, 0, 0.02);
+  opacity: 0;
+  animation: wel-rise 520ms cubic-bezier(.22, 1, .36, 1) 150ms forwards;
 }
 .eb-dot {
   width: 20px;
@@ -263,7 +288,14 @@
   color: var(--ink);
   margin: 0;
 }
-.wt-line { display: block; }
+.wt-line {
+  display: block;
+  opacity: 0;
+  animation: wel-rise 580ms cubic-bezier(.22, 1, .36, 1) forwards;
+}
+.wt-line:nth-child(1) { animation-delay: 220ms; }
+.wt-line:nth-child(2) { animation-delay: 320ms; }
+.wt-line:nth-child(3) { animation-delay: 420ms; }
 .wt-accent {
   color: var(--primary);
   position: relative;
@@ -279,7 +311,11 @@
   background: color-mix(in oklab, var(--amber) 70%, transparent);
   border-radius: 4px;
   z-index: -1;
-  transform: skewX(-6deg);
+  /* The accent bar draws across after its title line lands. transform-origin
+     left so the scaleX growth feels like a marker stroke being drawn. */
+  transform: skewX(-6deg) scaleX(0);
+  transform-origin: left center;
+  animation: wel-accent-draw 480ms cubic-bezier(.34, 1.4, .64, 1) 540ms forwards;
 }
 .wt-rotate {
   position: relative;
@@ -290,11 +326,24 @@
 .wt-rotate-inner {
   display: inline-block;
   color: var(--accent);
-  animation: rotword 1s ease-out;
+  /* Text content is bound to `displayedWord` which the TS typewriter loop
+     mutates one character at a time (delete to empty, then type the next
+     word). No CSS animation needed on the text itself — the visible effect
+     comes from the string growing/shrinking and the blinking caret. */
 }
-@keyframes rotword {
-  from { opacity: 0; transform: translateY(20px) rotate(-3deg); }
-  to { opacity: 1; transform: translateY(0) rotate(0); }
+.wt-caret {
+  display: inline-block;
+  width: 3px;
+  height: 0.85em;
+  vertical-align: -0.05em;
+  margin-left: 4px;
+  background: var(--accent);
+  border-radius: 1px;
+  animation: caret-blink 0.7s step-end infinite;
+}
+@keyframes caret-blink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0; }
 }
 
 .wel-sub {
@@ -303,6 +352,8 @@
   color: var(--ink-2);
   max-width: 480px;
   margin: 0;
+  opacity: 0;
+  animation: wel-rise 520ms cubic-bezier(.22, 1, .36, 1) 580ms forwards;
 }
 .wel-sub b { color: var(--ink); font-weight: 700; }
 .wel-sub i { font-style: italic; }
@@ -312,6 +363,8 @@
   align-items: center;
   gap: 14px;
   flex-wrap: wrap;
+  opacity: 0;
+  animation: wel-rise 520ms cubic-bezier(.22, 1, .36, 1) 700ms forwards;
 }
 .wel-btn-primary {
   appearance: none;
@@ -387,7 +440,12 @@
   background: var(--surface);
   border: 1px solid var(--line-soft);
   border-radius: 12px;
+  opacity: 0;
+  animation: wel-rise 520ms cubic-bezier(.22, 1, .36, 1) forwards;
 }
+.wel-feat:nth-child(1) { animation-delay: 820ms; }
+.wel-feat:nth-child(2) { animation-delay: 900ms; }
+.wel-feat:nth-child(3) { animation-delay: 980ms; }
 .wel-feat-ic {
   width: 28px;
   height: 28px;
@@ -431,6 +489,8 @@
   box-shadow: 0 30px 60px -28px rgba(0, 0, 0, 0.2);
   position: relative;
   overflow: hidden;
+  opacity: 0;
+  animation: wel-card-rise 700ms cubic-bezier(.22, 1, .36, 1) 380ms forwards;
 }
 .wel-card::before {
   content: '';
@@ -581,12 +641,18 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  animation: float-bob 5.8s ease-in-out infinite;
   z-index: 2;
+  opacity: 0;
+  /* Two animations on disjoint properties so they don't fight: fade-in for
+     opacity, float-bob for transform. Each chip starts its fade after the
+     main card lands, while bob runs continuously with phase offsets. */
+  animation:
+    wel-fade-in 520ms ease-out forwards,
+    float-bob 5.8s ease-in-out infinite;
 }
-.wel-float.f1 { top: 6%; left: -8%; }
-.wel-float.f2 { bottom: 12%; left: -4%; animation-delay: -2s; }
-.wel-float.f3 { top: 12%; right: -10%; animation-delay: -3s; }
+.wel-float.f1 { top: 6%; left: -8%; animation-delay: 820ms, 0s; }
+.wel-float.f2 { bottom: 12%; left: -4%; animation-delay: 940ms, -2s; }
+.wel-float.f3 { top: 12%; right: -10%; animation-delay: 1060ms, -3s; }
 @keyframes float-bob {
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-12px); }
