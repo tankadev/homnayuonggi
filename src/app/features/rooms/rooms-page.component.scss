@@ -118,13 +118,13 @@
 }
 .filter-chip.active {
   background: var(--ink);
-  color: white;
+  color: var(--ink-3);
 }
 .filter-count {
   font-family: var(--mono);
   font-size: 9.5px;
   padding: 1px 6px;
-  background: color-mix(in oklab, white 22%, transparent);
+  background: color-mix(in oklab, var(--ink-3) 22%, transparent);
   border-radius: 999px;
   font-weight: 700;
 }
