@@ -25,3 +25,26 @@
   40% { transform: scale(1.35); }
   100% { transform: scale(1); }
 }
+
+@keyframes badge-bump {
+  0% { transform: scale(1); }
+  35% { transform: scale(1.45); }
+  70% { transform: scale(0.92); }
+  100% { transform: scale(1); }
+}
+
+@keyframes badge-dot-pulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.6); opacity: 0; }
+}
+
+/* ─── theme palette ripple overlay ────────────────────────────────────
+   Element is appended to <body> from ThemeSwitcherComponent and animates
+   its own clip-path inline — these are just the static positioning bits. */
+.theme-ripple {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+  will-change: clip-path, opacity;
+}

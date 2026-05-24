@@ -51,8 +51,24 @@
       <app-icon name="arrow-l" [size]="16"></app-icon>
     </button>
 
-    <button class="icon-btn" type="button" [class.is-active]="isHistory" title="Lịch sử thanh toán" (click)="openHistory.emit()">
+    <button
+      class="icon-btn history-btn"
+      type="button"
+      [class.is-active]="isHistory"
+      [class.has-unpaid]="unpaidCount > 0"
+      title="Lịch sử thanh toán"
+      (click)="openHistory.emit()"
+    >
       <app-icon name="history" [size]="16"></app-icon>
+      <span
+        *ngIf="unpaidCount > 0"
+        class="unpaid-badge"
+        [@bump]="bumpKey"
+        [attr.aria-label]="unpaidCount + ' đơn chưa thanh toán'"
+      >
+        <span class="unpaid-dot"></span>
+        <span class="unpaid-num">{{ unpaidCount > 99 ? '99+' : unpaidCount }}</span>
+      </span>
     </button>
 
     <div class="me-pill" *ngIf="isLoggedIn">

@@ -14,7 +14,7 @@
         type="button"
         class="theme-opt"
         [class.active]="p.id === current.id"
-        (click)="select(p.id)"
+        (click)="select(p.id, p, $event)"
       >
         <span class="theme-swatches">
           <span class="ts-dot" *ngFor="let c of p.swatches" [style.background]="c"></span>
