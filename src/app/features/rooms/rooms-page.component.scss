@@ -196,6 +196,39 @@
   grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
   gap: 14px;
 }
+
+/* Skeleton placeholder card — same footprint as a real room-card so the
+   grid layout doesn't shift when real data arrives. Renders inside
+   rooms-page (NOT room-card) so it has no host with display: contents. */
+.room-card-skeleton {
+  background: var(--surface);
+  border: 1px solid var(--line-soft);
+  border-radius: 18px;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-height: 230px;
+  pointer-events: none;
+}
+.room-card-skeleton .rc-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 8px;
+}
+.room-card-skeleton .rc-info {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.room-card-skeleton .rc-foot {
+  margin-top: auto;
+  padding-top: 10px;
+  border-top: 1px dashed var(--line);
+  display: flex;
+  justify-content: flex-end;
+}
 .room-card.add-room {
   background: transparent;
   border: 2px dashed var(--line);

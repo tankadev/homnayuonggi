@@ -4,3 +4,14 @@
   flex-direction: column;
   overflow: hidden;
 }
+
+/* Wraps the [ngSwitch] outlet so the page-level fade trigger has a stable
+   host element. Must inherit the flex sizing from .app so inner screens
+   (place-order, payment-review, history) can still use flex: 1 layouts. */
+.app-pages {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}

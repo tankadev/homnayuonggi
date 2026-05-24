@@ -43,13 +43,33 @@
   </div>
 
   <div class="room-grid">
-    <app-room-card *ngFor="let r of filtered" [room]="r" (join)="onJoin($event)"></app-room-card>
+    <ng-container *ngIf="loading && !rooms.length; else realRooms">
+      <!-- Shimmer placeholders while waiting for the first /rooms snapshot. -->
+      <div *ngFor="let _ of [0,1,2,3,4,5]" class="room-card room-card-skeleton">
+        <div class="rc-top">
+          <app-skeleton width="54px" height="54px" radius="16px"></app-skeleton>
+          <app-skeleton width="62px" height="20px" radius="999px"></app-skeleton>
+        </div>
+        <div class="rc-info">
+          <app-skeleton width="60px" height="14px" radius="999px"></app-skeleton>
+          <app-skeleton width="80%" height="18px"></app-skeleton>
+          <app-skeleton width="100%" height="12px"></app-skeleton>
+          <app-skeleton width="70%" height="12px"></app-skeleton>
+        </div>
+        <div class="rc-foot">
+          <app-skeleton width="80px" height="26px" radius="999px"></app-skeleton>
+        </div>
+      </div>
+    </ng-container>
+    <ng-template #realRooms>
+      <app-room-card *ngFor="let r of filtered" [room]="r" (join)="onJoin($event)"></app-room-card>
 
-    <button type="button" class="room-card add-room" (click)="openCreate()">
-      <div class="add-room-icon"><app-icon name="plus" [size]="22"></app-icon></div>
-      <div class="add-room-title">Thêm phòng</div>
-      <div class="add-room-sub">Tạo một phòng mới để rủ nhóm đặt món</div>
-    </button>
+      <button type="button" class="room-card add-room" (click)="openCreate()">
+        <div class="add-room-icon"><app-icon name="plus" [size]="22"></app-icon></div>
+        <div class="add-room-title">Thêm phòng</div>
+        <div class="add-room-sub">Tạo một phòng mới để rủ nhóm đặt món</div>
+      </button>
+    </ng-template>
   </div>
 
   <div class="rooms-footer">

@@ -1,0 +1,95 @@
+:host {
+  /* Stacking context above app content but below any modal that already
+     uses 9999+ — toasts should sit above the rooms grid yet not block
+     critical confirms. */
+  position: fixed;
+  top: 12px;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  z-index: 9000;
+  pointer-events: none;
+}
+
+.toasts {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: min(420px, calc(100vw - 32px));
+}
+
+.toast {
+  position: relative;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--ink-2);
+  border-radius: 12px;
+  padding: 10px 36px 12px 14px;
+  box-shadow: 0 14px 30px -14px rgba(0, 0, 0, 0.22);
+  font-size: 13px;
+  color: var(--ink);
+  pointer-events: auto;
+  overflow: hidden;
+}
+.toast-success {
+  border-left-color: var(--primary);
+}
+.toast-error {
+  border-left-color: var(--danger, #c14e63);
+}
+.toast-warning {
+  border-left-color: var(--amber, #d6a542);
+}
+
+.toast-msg {
+  display: block;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+.toast-close {
+  position: absolute;
+  top: 4px;
+  right: 6px;
+  width: 22px;
+  height: 22px;
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  font-size: 16px;
+  line-height: 1;
+  border-radius: 50%;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  transition: 0.15s;
+}
+.toast-close:hover {
+  background: var(--surface-2);
+  color: var(--ink);
+}
+
+/* Auto-dismiss countdown — width shrinks from 100% to 0 over animation-duration
+   (set inline to match each toast's `duration` ms). transform-origin left so
+   the bar shrinks toward the right edge. */
+.toast-progress {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 2px;
+  width: 100%;
+  background: color-mix(in oklab, var(--ink-2) 30%, transparent);
+  transform-origin: left center;
+  animation-name: toast-progress;
+  animation-timing-function: linear;
+  animation-fill-mode: forwards;
+}
+.toast-success .toast-progress { background: color-mix(in oklab, var(--primary) 55%, transparent); }
+.toast-error .toast-progress   { background: color-mix(in oklab, var(--danger, #c14e63) 55%, transparent); }
+.toast-warning .toast-progress { background: color-mix(in oklab, var(--amber, #d6a542) 60%, transparent); }
+
+@keyframes toast-progress {
+  from { transform: scaleX(1); }
+  to { transform: scaleX(0); }
+}

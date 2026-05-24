@@ -15,31 +15,36 @@
       (logout)="logout()"
     ></app-header>
 
-    <ng-container [ngSwitch]="mode">
-      <app-rooms-page *ngSwitchCase="'rooms'" (enter)="enterRoom($event)"></app-rooms-page>
+    <div class="app-pages" [@page]="mode">
+      <ng-container [ngSwitch]="mode">
+        <app-rooms-page *ngSwitchCase="'rooms'" (enter)="enterRoom($event)"></app-rooms-page>
 
-      <app-create-order-page
-        *ngSwitchCase="'create-order'"
-        [room]="room"
-        (created)="onCreateOrder()"
-      ></app-create-order-page>
+        <app-create-order-page
+          *ngSwitchCase="'create-order'"
+          [room]="room"
+          (created)="onCreateOrder()"
+        ></app-create-order-page>
 
-      <app-place-order
-        *ngSwitchCase="'place-order'"
-        [room]="room"
-        [editRoomTrigger]="editRoomTrigger"
-        (roomChanged)="onRoomChanged($event)"
-        (orderCompleted)="onOrderCompleted()"
-      ></app-place-order>
+        <app-place-order
+          *ngSwitchCase="'place-order'"
+          [room]="room"
+          [editRoomTrigger]="editRoomTrigger"
+          (roomChanged)="onRoomChanged($event)"
+          (orderCompleted)="onOrderCompleted()"
+        ></app-place-order>
 
-      <app-payment-review-page
-        *ngSwitchCase="'payment-review'"
-        [room]="room"
-        [roomName]="room?.name || ''"
-        (newOrder)="onNewOrder()"
-      ></app-payment-review-page>
+        <app-payment-review-page
+          *ngSwitchCase="'payment-review'"
+          [room]="room"
+          [roomName]="room?.name || ''"
+          (newOrder)="onNewOrder()"
+        ></app-payment-review-page>
 
-      <app-history-page *ngSwitchCase="'history'"></app-history-page>
-    </ng-container>
+        <app-history-page *ngSwitchCase="'history'"></app-history-page>
+      </ng-container>
+    </div>
   </ng-template>
 </div>
+
+<!-- Global toast outlet — ToastService.show() pushes messages here. -->
+<app-toast-container></app-toast-container>

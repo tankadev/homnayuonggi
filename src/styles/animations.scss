@@ -117,6 +117,14 @@
   }
 }
 
+/* Skeleton shimmer — sweeping highlight band across a 2x-wide gradient. The
+   block element renders a 200%-wide background and scrolls its background-position
+   from right to left, painting a "shine" pass over the dark base color. */
+@keyframes skeleton-shimmer {
+  0%   { background-position: 100% 0; }
+  100% { background-position: -100% 0; }
+}
+
 /* ─── theme palette ripple overlay ────────────────────────────────────
    Element is appended to <body> from ThemeSwitcherComponent and animates
    its own clip-path inline — these are just the static positioning bits. */

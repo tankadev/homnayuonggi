@@ -1,4 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
+import { animate, style, transition, trigger } from '@angular/animations';
 import { Subscription } from 'rxjs';
 
 import { UserRO } from './core/ro/user.ro';
@@ -18,6 +19,20 @@ type AppMode = HeaderMode;
   standalone: false,
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
+  animations: [
+    /* Page-level fade + 8px slide-up — fires whenever the ngSwitch state
+       changes. Old content is removed instantly (ngSwitch behavior); the
+       fade-in masks the cut so the user perceives a smooth page change. */
+    trigger('page', [
+      transition('* => *', [
+        style({ opacity: 0, transform: 'translateY(8px)' }),
+        animate(
+          '260ms cubic-bezier(.4, 0, .2, 1)',
+          style({ opacity: 1, transform: 'translateY(0)' }),
+        ),
+      ]),
+    ]),
+  ],
 })
 export class AppComponent implements OnInit, OnDestroy {
   user: UserRO | null = null;

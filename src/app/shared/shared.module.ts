@@ -9,8 +9,20 @@ import { PadZeroPipe } from './pipes/pad-zero.pipe';
 import { InitialsPipe } from './pipes/initials.pipe';
 import { AbsPipe } from './pipes/abs.pipe';
 import { CountUpDirective } from './directives/count-up.directive';
+import { SkeletonComponent } from './skeleton/skeleton.component';
+import { ToastContainerComponent } from './toast/toast-container.component';
 
-const EXPORTS = [IconComponent, ModalComponent, CurrencyVndPipe, PadZeroPipe, InitialsPipe, AbsPipe, CountUpDirective];
+const EXPORTS = [
+  IconComponent,
+  ModalComponent,
+  CurrencyVndPipe,
+  PadZeroPipe,
+  InitialsPipe,
+  AbsPipe,
+  CountUpDirective,
+  SkeletonComponent,
+  ToastContainerComponent,
+];
 
 @NgModule({
   declarations: EXPORTS,
