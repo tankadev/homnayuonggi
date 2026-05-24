@@ -46,9 +46,11 @@ export class AppComponent implements OnInit, OnDestroy {
       const savedRoom = this.safeReadRoom();
       if (savedRoom) {
         this.room = savedRoom;
-        /* deriveModeFromDeliveries() will flip this to place-order/payment-review
-           once the live snapshot arrives. */
+        /* Seed from the last cached /deliveries snapshot so F5 lands on the right screen
+           without flashing 'create-order' while waiting for Firebase to reply. */
+        this.latestDeliveries = this.safeReadDeliveries();
         this.mode = 'create-order';
+        this.deriveModeFromDeliveries();
       } else {
         this.mode = 'rooms';
       }
@@ -61,9 +63,11 @@ export class AppComponent implements OnInit, OnDestroy {
     });
 
     /* Cache the live delivery list so enterRoom() can derive the correct mode on first
-       click without waiting for the next /deliveries snapshot. */
+       click without waiting for the next /deliveries snapshot. Also persist to
+       localStorage so the next F5 can render the correct screen before Firebase replies. */
     this.deliverySub = this.deliveryService.getAll().subscribe((deliveries) => {
       this.latestDeliveries = deliveries;
+      this.storage.setDeliveriesList(deliveries);
       this.deriveModeFromDeliveries();
     });
   }
@@ -149,6 +153,15 @@ export class AppComponent implements OnInit, OnDestroy {
       return r && (r as RoomRO).key ? (r as RoomRO) : null;
     } catch {
       return null;
+    }
+  }
+
+  private safeReadDeliveries(): DeliveryRO[] {
+    try {
+      const d = this.storage.getDeliveriesList();
+      return Array.isArray(d) ? d : [];
+    } catch {
+      return [];
     }
   }
 

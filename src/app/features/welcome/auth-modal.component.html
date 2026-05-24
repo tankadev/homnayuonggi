@@ -5,7 +5,7 @@
       <div class="wm-head-info">
         <h2 class="wm-title">
           <ng-container *ngIf="step === 3; else stepTitle">
-            {{ mode === 'register' ? 'Chào mừng tới phòng tiệc 🎉' : 'Đăng nhập thành công' }}
+            {{ mode === 'register' ? 'Chào mừng tới phòng tiệc' : 'Đăng nhập thành công' }}
           </ng-container>
           <ng-template #stepTitle>Phương thức đăng nhập</ng-template>
         </h2>

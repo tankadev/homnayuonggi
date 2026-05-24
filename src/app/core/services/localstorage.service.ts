@@ -51,6 +51,11 @@ export class LocalStorageService {
     return raw ? JSON.parse(raw) : [];
   }
 
+  getPaymentsPaid(): PaymentPaidRO[] {
+    const raw = localStorage.getItem(LocalStorage.PAYMENT_PAID_LIST);
+    return raw ? JSON.parse(raw) : [];
+  }
+
   getTheme(): string | null {
     return localStorage.getItem(LocalStorage.THEME);
   }

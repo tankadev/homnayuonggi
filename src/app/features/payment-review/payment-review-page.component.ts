@@ -9,6 +9,8 @@ import { DeliveryService } from '../../core/services/delivery.service';
 import { OrderService } from '../../core/services/order.service';
 import { PaymentPaidService } from '../../core/services/payment-paid.service';
 import { UserService } from '../../core/services/user.service';
+import { LocalStorageService } from '../../core/services/localstorage.service';
+import { UserRO } from '../../core/ro/user.ro';
 import { DeliveryRO } from '../../core/ro/delivery.ro';
 import { OrderRO } from '../../core/ro/order.ro';
 import { PaymentPaidRO } from '../../core/ro/payment-paid.ro';
@@ -50,6 +52,7 @@ export class PaymentReviewPageComponent implements OnInit, OnChanges, OnDestroy 
     private paymentPaidService: PaymentPaidService,
     private userService: UserService,
     private auth: AuthService,
+    private storage: LocalStorageService,
   ) {}
 
   ngOnInit(): void {
@@ -71,34 +74,73 @@ export class PaymentReviewPageComponent implements OnInit, OnChanges, OnDestroy 
     if (!this.room) return;
     const meKey = this.auth.currentUser?.key || null;
     const roomKey = this.room.key;
+
+    /* Paint immediately from the last cached snapshot so F5 doesn't blink the cards
+       to empty for ~0.5s while the 4 RTDB streams roundtrip. */
+    this.hydrateFromCache(roomKey, meKey);
+
     this.sub = combineLatest([
       this.deliveryService.getAll(),
       this.orderService.getListOrders(),
       this.userService.getAll(),
       this.paymentPaidService.getAll(),
     ]).subscribe(([deliveries, orders, users, payments]) => {
-      const delivery = pickActiveCompletedDelivery(deliveries, roomKey);
-      const payment = delivery ? pickPaymentForDelivery(payments, delivery.key, roomKey) : null;
-      this.delivery = delivery;
-      this.payment = payment;
-      this.rawOrders = orders;
-      const view = mapPaymentReview(this.room, delivery, orders, users, payment, meKey);
-      if (!view) {
-        this.members = [];
-        this.order = blankOrder();
-        this.splitMode = 'items';
-        this.paidMap = {};
-        this.isOwner = false;
-        this.ordererId = '';
-        return;
-      }
-      this.members = view.members;
-      this.order = view.order;
-      this.splitMode = view.splitMode;
-      this.paidMap = view.paidMap;
-      this.isOwner = view.isOwner;
-      this.ordererId = view.ordererId;
+      this.applySnapshot(deliveries, orders, users, payments, roomKey, meKey);
+      this.storage.setDeliveriesList(deliveries);
+      this.storage.setOrdersList(orders);
+      this.storage.setUserList(users);
+      this.storage.setPaymentsPaid(payments);
     });
+  }
+
+  private hydrateFromCache(roomKey: string, meKey: string | null): void {
+    const deliveries = this.safeReadArray<DeliveryRO>(() => this.storage.getDeliveriesList());
+    const completed = pickActiveCompletedDelivery(deliveries, roomKey);
+    if (!completed) return;
+    const orders = this.safeReadArray<OrderRO>(() => this.storage.getOrdersList());
+    const users = this.safeReadArray<UserRO>(() => this.storage.getListUser());
+    const payments = this.safeReadArray<PaymentPaidRO>(() => this.storage.getPaymentsPaid());
+    this.applySnapshot(deliveries, orders, users, payments, roomKey, meKey);
+  }
+
+  private applySnapshot(
+    deliveries: DeliveryRO[],
+    orders: OrderRO[],
+    users: UserRO[],
+    payments: PaymentPaidRO[],
+    roomKey: string,
+    meKey: string | null,
+  ): void {
+    const delivery = pickActiveCompletedDelivery(deliveries, roomKey);
+    const payment = delivery ? pickPaymentForDelivery(payments, delivery.key, roomKey) : null;
+    this.delivery = delivery;
+    this.payment = payment;
+    this.rawOrders = orders;
+    const view = mapPaymentReview(this.room, delivery, orders, users, payment, meKey);
+    if (!view) {
+      this.members = [];
+      this.order = blankOrder();
+      this.splitMode = 'items';
+      this.paidMap = {};
+      this.isOwner = false;
+      this.ordererId = '';
+      return;
+    }
+    this.members = view.members;
+    this.order = view.order;
+    this.splitMode = view.splitMode;
+    this.paidMap = view.paidMap;
+    this.isOwner = view.isOwner;
+    this.ordererId = view.ordererId;
+  }
+
+  private safeReadArray<T>(read: () => T[] | null | undefined): T[] {
+    try {
+      const v = read();
+      return Array.isArray(v) ? v : [];
+    } catch {
+      return [];
+    }
   }
 
   /* ─── derived view ────────────────────────────────────────── */

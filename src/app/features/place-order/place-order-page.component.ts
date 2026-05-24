@@ -27,6 +27,7 @@ import { OrderHistoryService } from '../../core/services/order-history.service';
 import { PaymentPaidService } from '../../core/services/payment-paid.service';
 import { UserService } from '../../core/services/user.service';
 import { RoomsService } from '../../core/services/rooms.service';
+import { LocalStorageService } from '../../core/services/localstorage.service';
 import { CompleteOrderResult, paymentInfoToList } from './modals/complete-order-modal.component';
 import { encryptPassword } from '../rooms/room-view';
 import { OrderDTO, UserNote } from '../../core/dto/order.dto';
@@ -102,12 +103,38 @@ export class PlaceOrderPageComponent implements OnInit, OnChanges, OnDestroy {
     private userService: UserService,
     private roomsService: RoomsService,
     private auth: AuthService,
+    private storage: LocalStorageService,
   ) {}
 
   ngOnInit(): void {
     if (this.room) this.refreshRoomDraft(this.room);
+    /* Paint immediately from the last cached snapshot so F5 doesn't flash a blank
+       3-col layout while waiting for the 4 combineLatest streams to all resolve. */
+    this.hydrateFromCache();
     this.subscribeAll();
     this.tickId = window.setInterval(() => this.tick(), 1000);
+  }
+
+  private hydrateFromCache(): void {
+    if (!this.room) return;
+    const deliveries = this.safeReadArray<DeliveryRO>(() => this.storage.getDeliveriesList());
+    const orders = this.safeReadArray<OrderRO>(() => this.storage.getOrdersList());
+    const history = this.safeReadArray<OrderHistoryRO>(() => this.storage.getOrdersHistory());
+    const users = this.safeReadArray<UserRO>(() => this.storage.getListUser());
+    /* Only worth hydrating when we at least have a delivery for this room cached —
+       otherwise apply() would just paint empty and there's no point. */
+    if (deliveries.some((d) => d.roomKey === this.room!.key)) {
+      this.apply(deliveries, orders, history, users);
+    }
+  }
+
+  private safeReadArray<T>(read: () => T[] | null | undefined): T[] {
+    try {
+      const v = read();
+      return Array.isArray(v) ? v : [];
+    } catch {
+      return [];
+    }
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -193,6 +220,11 @@ export class PlaceOrderPageComponent implements OnInit, OnChanges, OnDestroy {
       this.userService.getAll(),
     ]).subscribe(([deliveries, orders, history, users]) => {
       this.apply(deliveries, orders, history, users);
+      /* Keep the cache warm so the next F5 can hydrate. */
+      this.storage.setDeliveriesList(deliveries);
+      this.storage.setOrdersList(orders);
+      this.storage.setOrdersHistory(history);
+      this.storage.setUserList(users);
     });
   }
 
