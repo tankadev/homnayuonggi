@@ -1,4 +1,11 @@
-<article class="h-order" [class.is-open]="open" [class.is-settled]="status.tag === 'settled'">
+<article
+  #cardEl
+  class="h-order"
+  [class.is-open]="open"
+  [class.is-settled]="status.tag === 'settled'"
+  [class.entered]="entered"
+  [style.--enter-delay]="entered ? enterDelay + 'ms' : null"
+>
   <header class="h-order-head" (click)="onToggle()">
     <div class="h-order-shop-icon" [class.has-photo]="!!order.shopPhoto">
       <img *ngIf="order.shopPhoto; else iconTpl" class="h-order-shop-photo"
@@ -37,7 +44,7 @@
     <span class="h-order-chev"><app-icon name="chevron" [size]="14"></app-icon></span>
   </header>
 
-  <div *ngIf="open" class="h-order-body">
+  <div *ngIf="open" class="h-order-body" @expand>
     <ng-container *ngFor="let row of rows; trackBy: trackByRow">
       <ng-container *ngTemplateOutlet="payRow; context: { row: row }"></ng-container>
     </ng-container>

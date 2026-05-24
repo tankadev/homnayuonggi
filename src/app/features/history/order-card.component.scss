@@ -5,7 +5,20 @@
   border: 1px solid var(--line-soft);
   border-radius: var(--r-lg);
   overflow: hidden;
-  transition: 0.18s ease;
+  /* Resting state for IntersectionObserver fade-up — invisible + slightly
+     translated down until the card enters the viewport. The enter-delay var
+     is scoped only to opacity/transform so hover transitions stay snappy. */
+  opacity: 0;
+  transform: translateY(10px);
+  transition:
+    opacity 360ms cubic-bezier(0.22, 1, 0.36, 1) var(--enter-delay, 0ms),
+    transform 360ms cubic-bezier(0.22, 1, 0.36, 1) var(--enter-delay, 0ms),
+    border-color 0.18s ease,
+    background 0.18s ease;
+}
+.h-order.entered {
+  opacity: 1;
+  transform: translateY(0);
 }
 .h-order:hover { border-color: var(--line); }
 .h-order.is-settled {

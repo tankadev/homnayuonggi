@@ -1,4 +1,13 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  OnDestroy,
+  OnInit,
+  QueryList,
+  ViewChild,
+  ViewChildren,
+} from '@angular/core';
 import { combineLatest, Subscription } from 'rxjs';
 
 import {
@@ -38,7 +47,17 @@ interface DayGroup {
   templateUrl: './history-page.component.html',
   styleUrls: ['./history-page.component.scss'],
 })
-export class HistoryPageComponent implements OnInit, OnDestroy {
+export class HistoryPageComponent implements OnInit, OnDestroy, AfterViewInit {
+  @ViewChild('tabsBar') tabsBar?: ElementRef<HTMLElement>;
+  @ViewChildren('tabBtn') tabBtns?: QueryList<ElementRef<HTMLButtonElement>>;
+
+  /** Sliding pill backdrop position/size — computed from the active tab. */
+  pillX = 0;
+  pillW = 0;
+  /** False until the first measurement lands — used to suppress the entrance
+   *  transition (which would otherwise look like the pill is "growing in"). */
+  pillReady = false;
+
   meId = '';
 
   range: RangeFilter = '7d';
@@ -87,8 +106,29 @@ export class HistoryPageComponent implements OnInit, OnDestroy {
     });
   }
 
+  ngAfterViewInit(): void {
+    /* rAF, not microtask — measurement must run AFTER Angular's CD has
+       applied the .active class to the initial button. */
+    requestAnimationFrame(() => this.updatePill());
+  }
+
   ngOnDestroy(): void {
     this.sub?.unsubscribe();
+  }
+
+  private updatePill(): void {
+    const bar = this.tabsBar?.nativeElement;
+    const btns = this.tabBtns?.toArray() || [];
+    if (!bar || !btns.length) return;
+    const active = btns.find((b) => b.nativeElement.classList.contains('active'));
+    if (!active) return;
+    const barRect = bar.getBoundingClientRect();
+    const r = active.nativeElement.getBoundingClientRect();
+    this.pillX = r.left - barRect.left;
+    this.pillW = r.width;
+    /* Enable transitions on the next frame so the FIRST positioning doesn't
+       animate from 0/0 (which looks like the pill is "growing in"). */
+    if (!this.pillReady) requestAnimationFrame(() => (this.pillReady = true));
   }
 
   /* ─── filter helpers ─────────────────────────────────────── */
@@ -219,6 +259,7 @@ export class HistoryPageComponent implements OnInit, OnDestroy {
 
   setFilter(f: ListFilter): void {
     this.filter = f;
+    requestAnimationFrame(() => this.updatePill());
   }
 
   isOpen(id: string): boolean {

@@ -46,29 +46,36 @@
       <div class="h-banner-r">
         <div class="h-netbal-card owe-you">
           <span class="lbl">Bạn được nhận</span>
-          <span class="val">+{{ balance.totalOwedToMe | vnd }}<span>đ</span></span>
+          <span class="val">+<span [appCountUp]="balance.totalOwedToMe"></span><span class="vnd-suffix">đ</span></span>
         </div>
         <div class="h-netbal-card you-owe">
           <span class="lbl">Bạn cần trả</span>
-          <span class="val">−{{ balance.totalIOwe | vnd }}<span>đ</span></span>
+          <span class="val">−<span [appCountUp]="balance.totalIOwe"></span><span class="vnd-suffix">đ</span></span>
         </div>
       </div>
     </section>
 
     <div class="h-list-tabs">
       <span class="lbl"><app-icon name="filter" [size]="11"></app-icon> Lọc:</span>
-      <button type="button" class="h-list-tab" [class.active]="filter === 'all'" (click)="setFilter('all')">
-        Tất cả <span class="num">{{ counts.all }}</span>
-      </button>
-      <button type="button" class="h-list-tab" [class.active]="filter === 'owe'" (click)="setFilter('owe')">
-        Bạn cần trả <span class="num">{{ counts.owe }}</span>
-      </button>
-      <button type="button" class="h-list-tab" [class.active]="filter === 'owed'" (click)="setFilter('owed')">
-        Bạn cần thu <span class="num">{{ counts.owed }}</span>
-      </button>
-      <button type="button" class="h-list-tab" [class.active]="filter === 'settled'" (click)="setFilter('settled')">
-        Đã xong <span class="num">{{ counts.settled }}</span>
-      </button>
+      <div class="h-list-tabs-group" #tabsBar [class.ready]="pillReady">
+        <span
+          class="h-list-pill"
+          [style.transform]="'translateX(' + pillX + 'px)'"
+          [style.width.px]="pillW"
+        ></span>
+        <button #tabBtn type="button" class="h-list-tab" [class.active]="filter === 'all'" (click)="setFilter('all')">
+          Tất cả <span class="num">{{ counts.all }}</span>
+        </button>
+        <button #tabBtn type="button" class="h-list-tab" [class.active]="filter === 'owe'" (click)="setFilter('owe')">
+          Bạn cần trả <span class="num">{{ counts.owe }}</span>
+        </button>
+        <button #tabBtn type="button" class="h-list-tab" [class.active]="filter === 'owed'" (click)="setFilter('owed')">
+          Bạn cần thu <span class="num">{{ counts.owed }}</span>
+        </button>
+        <button #tabBtn type="button" class="h-list-tab" [class.active]="filter === 'settled'" (click)="setFilter('settled')">
+          Đã xong <span class="num">{{ counts.settled }}</span>
+        </button>
+      </div>
       <span class="h-search">
         <app-icon name="search" [size]="13"></app-icon>
         <input placeholder="Tìm quán…" [(ngModel)]="search" name="search"/>

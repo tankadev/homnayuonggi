@@ -7,7 +7,7 @@
   <div *ngIf="!pairs.length" class="h-pairs-empty">{{ emptyText }}</div>
 
   <ul *ngIf="pairs.length" class="h-pairs">
-    <li *ngFor="let p of pairs" class="h-pair">
+    <li *ngFor="let p of pairs; trackBy: trackByPair" class="h-pair">
       <div class="h-pair-avatar">{{ p.member.initial }}</div>
       <div class="h-pair-info">
         <span class="nm">{{ p.member.name }}</span>
@@ -15,7 +15,7 @@
       </div>
       <div class="h-pair-amt">
         <span class="v" [class.pos]="isOwed" [class.neg]="!isOwed">
-          {{ isOwed ? '+' : '−' }}{{ p.amt | abs | vnd }}<span>đ</span>
+          {{ isOwed ? '+' : '−' }}<span [appCountUp]="(p.amt | abs)"></span><span class="vnd-suffix">đ</span>
         </span>
         <span class="tag">{{ isOwed ? 'Nợ bạn' : 'Bạn nợ' }}</span>
       </div>

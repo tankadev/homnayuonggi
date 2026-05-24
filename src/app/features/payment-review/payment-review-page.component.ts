@@ -59,6 +59,8 @@ export class PaymentReviewPageComponent implements OnInit, OnChanges, OnDestroy,
   /** Underline indicator pos/width — driven by ViewChild on the active tab. */
   underlineX = 0;
   underlineW = 0;
+  /** Suppresses the initial transition so the underline doesn't grow from 0. */
+  underlineReady = false;
 
   /** Confetti burst — pieces rendered while celebrating; cleared after ~3s. */
   confettiPieces: ConfettiPiece[] = [];
@@ -247,6 +249,7 @@ export class PaymentReviewPageComponent implements OnInit, OnChanges, OnDestroy,
     const r = active.nativeElement.getBoundingClientRect();
     this.underlineX = r.left - barRect.left;
     this.underlineW = r.width;
+    if (!this.underlineReady) requestAnimationFrame(() => (this.underlineReady = true));
   }
 
   async setSplitMode(m: SplitMode): Promise<void> {

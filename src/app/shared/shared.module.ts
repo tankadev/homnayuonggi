@@ -8,8 +8,9 @@ import { CurrencyVndPipe } from './pipes/currency-vnd.pipe';
 import { PadZeroPipe } from './pipes/pad-zero.pipe';
 import { InitialsPipe } from './pipes/initials.pipe';
 import { AbsPipe } from './pipes/abs.pipe';
+import { CountUpDirective } from './directives/count-up.directive';
 
-const EXPORTS = [IconComponent, ModalComponent, CurrencyVndPipe, PadZeroPipe, InitialsPipe, AbsPipe];
+const EXPORTS = [IconComponent, ModalComponent, CurrencyVndPipe, PadZeroPipe, InitialsPipe, AbsPipe, CountUpDirective];
 
 @NgModule({
   declarations: EXPORTS,

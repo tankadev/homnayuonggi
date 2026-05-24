@@ -1,4 +1,14 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  EventEmitter,
+  Input,
+  OnDestroy,
+  Output,
+  ViewChild,
+} from '@angular/core';
+import { animate, style, transition, trigger } from '@angular/animations';
 
 import { HMember, HOrder, HPayer, MyRole, OrderStatus, classifyMyRole, orderStatus } from './mock-data';
 
@@ -11,8 +21,22 @@ interface PayRow extends HPayer {
   standalone: false,
   templateUrl: './order-card.component.html',
   styleUrls: ['./order-card.component.scss'],
+  animations: [
+    /* Body expand/collapse — animates height between 0 and auto via
+       max-height interpolation, plus opacity for a softer reveal. */
+    trigger('expand', [
+      transition(':enter', [
+        style({ height: 0, opacity: 0, overflow: 'hidden' }),
+        animate('260ms cubic-bezier(.4, 0, .2, 1)', style({ height: '*', opacity: 1 })),
+      ]),
+      transition(':leave', [
+        style({ height: '*', opacity: 1, overflow: 'hidden' }),
+        animate('220ms cubic-bezier(.4, 0, .2, 1)', style({ height: 0, opacity: 0 })),
+      ]),
+    ]),
+  ],
 })
-export class OrderCardComponent {
+export class OrderCardComponent implements AfterViewInit, OnDestroy {
   @Input() order!: HOrder;
   @Input() meId = 'me';
   @Input() open = false;
@@ -23,6 +47,56 @@ export class OrderCardComponent {
   @Output() togglePaid = new EventEmitter<{ orderId: string; memberId: string; paid: boolean }>();
   /** Orderer confirms everyone paid → parent deletes /paymentsPaid record. */
   @Output() confirmFullyPaid = new EventEmitter<string>();
+
+  /** Flips to true once this card has scrolled into the viewport — drives the
+      fade-up enter animation. Starts false so the card mounts invisible. */
+  entered = false;
+  /** Used as a stagger source so multiple cards entering simultaneously
+      don't all animate in the same frame. */
+  enterDelay = 0;
+  /** Ref to the `<article>` itself — the host has `display: contents` so
+   *  IntersectionObserver can't track it (no layout box). */
+  @ViewChild('cardEl', { static: true }) cardEl?: ElementRef<HTMLElement>;
+
+  private observer?: IntersectionObserver;
+  private static burstCounter = 0;
+  private static lastEnterAt = 0;
+
+  ngAfterViewInit(): void {
+    const target = this.cardEl?.nativeElement;
+    /* If IO isn't available OR we couldn't locate the article, reveal now. */
+    if (typeof IntersectionObserver === 'undefined' || !target) {
+      this.entered = true;
+      return;
+    }
+    this.observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting && !this.entered) this.revealWithStagger();
+        }
+      },
+      { rootMargin: '0px 0px -8% 0px', threshold: 0.05 },
+    );
+    this.observer.observe(target);
+  }
+
+  ngOnDestroy(): void {
+    this.observer?.disconnect();
+  }
+
+  /** Reveal this card with a stagger delay shared across cards arriving in
+   *  the same burst. The counter resets after a ~250ms idle gap so unrelated
+   *  reveals later (e.g., the user scrolls down) start at delay 0 again. */
+  private revealWithStagger(): void {
+    const now = performance.now();
+    if (now - OrderCardComponent.lastEnterAt > 250) OrderCardComponent.burstCounter = 0;
+    OrderCardComponent.lastEnterAt = now;
+    this.enterDelay = (OrderCardComponent.burstCounter % 10) * 50;
+    OrderCardComponent.burstCounter++;
+    this.entered = true;
+    this.observer?.disconnect();
+    this.observer = undefined;
+  }
 
   get status(): OrderStatus {
     return orderStatus(this.order);

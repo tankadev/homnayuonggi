@@ -140,7 +140,7 @@
   align-items: baseline;
   gap: 2px;
 }
-.h-netbal-card .val span { font-size: 10.5px; color: var(--muted); font-weight: 600; }
+.h-netbal-card .val .vnd-suffix { font-size: 10.5px; color: var(--muted); font-weight: 600; }
 .h-netbal-card.owe-you .val { color: var(--primary); }
 .h-netbal-card.you-owe .val { color: var(--rose); }
 
@@ -160,9 +160,14 @@
   align-items: center;
   gap: 4px;
 }
+.h-list-tabs-group {
+  position: relative;
+  display: inline-flex;
+  gap: 0;
+}
 .h-list-tab {
   appearance: none;
-  border: 1px solid transparent;
+  border: 0;
   background: transparent;
   color: var(--muted);
   font-family: inherit;
@@ -171,18 +176,15 @@
   padding: 5px 11px;
   border-radius: 999px;
   cursor: pointer;
-  transition: 0.15s;
+  transition: color 0.18s ease;
   display: inline-flex;
   align-items: center;
   gap: 5px;
+  position: relative;
+  z-index: 1;
 }
 .h-list-tab:hover { color: var(--ink); }
-.h-list-tab.active {
-  background: var(--surface);
-  color: var(--ink);
-  border-color: var(--line);
-  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.02);
-}
+.h-list-tab.active { color: var(--ink); }
 .h-list-tab .num {
   font-family: var(--mono);
   font-size: 10px;
@@ -191,8 +193,31 @@
   background: var(--surface-2);
   border-radius: 999px;
   color: var(--muted);
+  transition: background 0.18s ease, color 0.18s ease;
 }
 .h-list-tab.active .num { background: var(--primary); color: white; }
+
+/* Sliding pill backdrop — sits behind the buttons via z-index: 0 and is
+   driven by ViewChild measurements in TS. */
+.h-list-pill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.02);
+  z-index: 0;
+  pointer-events: none;
+}
+/* Transitions only enabled after the FIRST measurement, so the initial pill
+   placement snaps into position without an entrance "grow from 0" animation. */
+.h-list-tabs-group.ready .h-list-pill {
+  transition:
+    transform 320ms cubic-bezier(0.22, 1, 0.36, 1),
+    width 320ms cubic-bezier(0.22, 1, 0.36, 1);
+}
 
 .h-search {
   margin-left: auto;

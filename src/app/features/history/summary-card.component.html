@@ -7,12 +7,12 @@
   <div class="h-summary-row">
     <div class="h-sum-tile owe-you">
       <span class="lbl">Mọi người nợ bạn</span>
-      <span class="val">{{ balance.totalOwedToMe | vnd }}<span>đ</span></span>
+      <span class="val"><span [appCountUp]="balance.totalOwedToMe"></span><span class="vnd-suffix">đ</span></span>
       <span class="sub">{{ balance.nOwedToMe }} người · {{ owedOrderCount }} đơn</span>
     </div>
     <div class="h-sum-tile you-owe">
       <span class="lbl">Bạn nợ mọi người</span>
-      <span class="val">{{ balance.totalIOwe | vnd }}<span>đ</span></span>
+      <span class="val"><span [appCountUp]="balance.totalIOwe"></span><span class="vnd-suffix">đ</span></span>
       <span class="sub">{{ balance.nIOwe }} người · {{ oweOrderCount }} đơn</span>
     </div>
   </div>
@@ -22,7 +22,7 @@
       <app-icon name="trend" [size]="12" [sw]="2"></app-icon> Số dư ròng
     </span>
     <span class="net-v" [class.neg]="balance.net < 0">
-      {{ balance.net >= 0 ? '+' : '−' }}{{ balance.net | abs | vnd }}<span>đ</span>
+      {{ balance.net >= 0 ? '+' : '−' }}<span [appCountUp]="(balance.net | abs)"></span><span class="vnd-suffix">đ</span>
     </span>
   </div>
 </section>

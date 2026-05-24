@@ -58,7 +58,7 @@
       <span class="lbl">
         <app-icon name="filter" [size]="12"></app-icon> Lọc:
       </span>
-      <div class="pr-tabs" #tabsBar>
+      <div class="pr-tabs" #tabsBar [class.ready]="underlineReady">
         <button #tabBtn type="button" class="pr-tab" [class.active]="filter === 'all'" (click)="setFilter('all')">
           Tất cả <span class="num">{{ shares.length }}</span>
         </button>
