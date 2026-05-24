@@ -350,6 +350,25 @@
   color: var(--muted);
   line-height: 1.5;
 }
+.co-tip-note {
+  margin-top: 10px;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  background: color-mix(in oklab, var(--primary) 7%, var(--surface));
+  border: 1px dashed color-mix(in oklab, var(--primary) 35%, var(--line));
+  color: var(--ink-2);
+  font-size: 12px;
+  line-height: 1.5;
+}
+.co-tip-note app-icon {
+  flex-shrink: 0;
+  color: var(--primary);
+  margin-top: 1px;
+}
+.co-tip-note b { color: var(--ink); font-weight: 700; }
 .co-card-body {
   padding: 16px 24px 4px;
   display: flex;

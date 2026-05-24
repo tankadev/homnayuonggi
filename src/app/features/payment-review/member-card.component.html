@@ -100,7 +100,7 @@
   <div *ngIf="paid && !member.owner" class="pr-mem-paid-foot">
     <span class="who">
       <app-icon name="check-circle" [size]="13"></app-icon>
-      Đã đánh dấu trả tiền · {{ paidAt || '12:42, 23/05' }}
+      Đã đánh dấu trả tiền
     </span>
     <button *ngIf="isOwner" type="button" class="undo" (click)="togglePaid.emit(member.id)">
       <app-icon name="undo" [size]="11"></app-icon> Huỷ đánh dấu

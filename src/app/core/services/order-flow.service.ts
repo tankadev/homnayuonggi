@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { firstValueFrom, of } from 'rxjs';
-import { catchError, take, timeout } from 'rxjs/operators';
+import { firstValueFrom } from 'rxjs';
+import { take, timeout } from 'rxjs/operators';
 
 import { DeliveryService } from './delivery.service';
 import { DeliveryDTO } from '../dto/delivery.dto';
@@ -39,11 +39,11 @@ export class OrderFlowService {
   }
 
   /**
-   * Promote the editing lock into a real, active order. Best-effort scrape, then update
-   * the existing delivery record (no new push) so other rooms see one consistent record.
+   * Promote the editing lock into a real, active order. Throws if the scrape fails so
+   * the caller can show an error and keep the lock — never commit a broken delivery.
    */
   async commitDelivery(deliveryKey: string, args: CommitDeliveryArgs): Promise<void> {
-    const scraped = await this.tryScrape(args.url);
+    const scraped = await this.scrapeOrThrow(args.url);
     await this.deliveryService.update(deliveryKey, {
       isEdit: false,
       isCreate: true,
@@ -55,19 +55,25 @@ export class OrderFlowService {
     });
   }
 
-  private async tryScrape(url: string): Promise<DeliveryDetailNowAPI> {
+  private async scrapeOrThrow(url: string): Promise<DeliveryDetailNowAPI> {
+    let data: any;
     try {
-      const data = await firstValueFrom(
+      data = await firstValueFrom(
         this.deliveryService.getDetailDeliveryFromShopeeFoodApi(url).pipe(
           take(1),
-          timeout(8000),
-          catchError(() => of(null)),
+          timeout(15000),
         ),
       );
-      if (data && typeof data === 'object') return data as DeliveryDetailNowAPI;
     } catch {
-      /* swallow */
+      throw new Error(
+        'Không kết nối được API lấy menu. Kiểm tra mạng hoặc bấm "Tải lại APIURL" rồi thử lại.',
+      );
     }
-    return { url, result: 'fallback' } as DeliveryDetailNowAPI;
+    if (!data || typeof data !== 'object' || data.result !== 'success') {
+      throw new Error(
+        'Không lấy được dữ liệu quán. Vui lòng kiểm tra lại link ShopeeFood của bạn.',
+      );
+    }
+    return data as DeliveryDetailNowAPI;
   }
 }

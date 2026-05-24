@@ -63,7 +63,6 @@
           [member]="m"
           [splitMode]="splitMode"
           [paid]="!!paidMap[m.id]"
-          [paidAt]="paidAtFor(m.id)"
           [isOwner]="isOwner"
           (togglePaid)="onTogglePaid($event)"
         ></app-pr-member-card>
@@ -91,9 +90,9 @@
   </aside>
 </div>
 
-<div *ngIf="isOwner" class="pr-fab-stack">
+<div class="pr-fab-stack">
   <button
-    *ngIf="isAllPaid"
+    *ngIf="isOwner && isAllPaid"
     type="button"
     class="pr-fab-new-order pr-fab-confirm"
     title="Xác nhận tất cả thành viên đã trả — sẽ xoá ghi nhận thanh toán"

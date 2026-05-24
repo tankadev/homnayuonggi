@@ -259,10 +259,6 @@ export class PaymentReviewPageComponent implements OnInit, OnChanges, OnDestroy 
     }
   }
 
-  paidAtFor(id: string): string | null {
-    /* No timestamp persisted today — return null so the card hides the "đã trả lúc" line. */
-    return this.paidMap[id] ? '' : null;
-  }
 }
 
 function blankOrder(): PrOrder {

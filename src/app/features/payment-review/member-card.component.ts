@@ -12,7 +12,6 @@ export class MemberCardComponent {
   @Input() member!: PrShare;
   @Input() splitMode: SplitMode = 'items';
   @Input() paid = false;
-  @Input() paidAt: string | null = null;
   @Input() isOwner = false;
 
   @Output() togglePaid = new EventEmitter<string>();
