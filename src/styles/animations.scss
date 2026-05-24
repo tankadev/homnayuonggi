@@ -82,6 +82,41 @@
   50%      { opacity: 0.12; }
 }
 
+/* ─── payment-review animations ──────────────────────────────────── */
+
+/* Row flash when a member is marked paid: jumps from the unpaid surface bg
+   to a strong primary tint, then settles to the resting paid bg. */
+@keyframes paid-row-flash {
+  0%   { background: var(--surface); }
+  18%  { background: color-mix(in oklab, var(--primary) 35%, var(--surface)); }
+  100% { background: color-mix(in oklab, var(--primary-soft) 25%, var(--surface)); }
+}
+
+/* Banner glow pulse — 1 nhịp = 1 cycle; we trigger this with iteration 2. */
+@keyframes banner-glow-pulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 color-mix(in oklab, var(--primary) 0%, transparent);
+    border-color: var(--line-soft);
+  }
+  50% {
+    box-shadow: 0 0 0 8px color-mix(in oklab, var(--primary) 25%, transparent);
+    border-color: var(--primary);
+  }
+}
+
+/* Confetti piece: falls down + sways + rotates. Each piece's horizontal drift
+   and rotation amount is overridden inline so 20 pieces don't move identically. */
+@keyframes confetti-fall {
+  0% {
+    transform: translate(0, -20px) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(var(--dx, 0), var(--dy, 70vh)) rotate(var(--rot, 540deg));
+    opacity: 0;
+  }
+}
+
 /* ─── theme palette ripple overlay ────────────────────────────────────
    Element is appended to <body> from ThemeSwitcherComponent and animates
    its own clip-path inline — these are just the static positioning bits. */

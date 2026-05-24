@@ -36,6 +36,7 @@
 
 /* ─── Status banner ─────────────────────────────────────────────── */
 .pr-banner {
+  position: relative;
   background: var(--surface);
   border: 1px solid var(--line-soft);
   border-radius: var(--r-lg);
@@ -44,7 +45,30 @@
   grid-template-columns: 1fr auto;
   gap: 14px;
   align-items: center;
+  transition: border-color 0.4s ease, box-shadow 0.4s ease;
 }
+.pr-banner.glow {
+  animation: banner-glow-pulse 900ms ease-in-out 2;
+}
+
+/* Confetti container is absolutely positioned over the banner so pieces can
+   spill outside its bounds. Pointer-events off so it never blocks clicks. */
+.pr-confetti {
+  position: absolute;
+  inset: 0;
+  overflow: visible;
+  pointer-events: none;
+  z-index: 5;
+}
+.cf-piece {
+  position: absolute;
+  top: 0;
+  transform: translate(0, -20px);
+  border-radius: 2px;
+  animation: confetti-fall 2400ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  will-change: transform, opacity;
+}
+.cf-piece.round { border-radius: 50%; }
 .pr-banner-l {
   display: flex;
   flex-direction: column;
@@ -125,7 +149,7 @@
   height: 100%;
   background: linear-gradient(90deg, var(--primary), color-mix(in oklab, var(--primary) 70%, var(--amber)));
   border-radius: 999px;
-  transition: width 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  transition: width 650ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 .pr-progress-note {
   font-size: 10.5px;
@@ -156,31 +180,31 @@
   color: var(--muted);
 }
 .pr-tabs {
+  position: relative;
   display: inline-flex;
   gap: 4px;
+  /* Bottom rail for the underline indicator to slide along. */
+  padding-bottom: 4px;
 }
 .pr-tab {
   appearance: none;
-  border: 1px solid transparent;
+  border: 0;
   background: transparent;
   color: var(--muted);
   font-family: inherit;
   font-weight: 600;
   font-size: 12px;
-  padding: 5px 10px;
-  border-radius: 999px;
+  padding: 5px 12px;
+  border-radius: 6px 6px 0 0;
   cursor: pointer;
-  transition: 0.15s;
+  transition: color 0.18s ease;
   display: inline-flex;
   align-items: center;
   gap: 6px;
 }
 .pr-tab:hover { color: var(--ink); }
 .pr-tab.active {
-  background: var(--surface);
-  color: var(--ink);
-  border-color: var(--line);
-  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.02);
+  color: var(--primary);
 }
 .pr-tab .num {
   font-family: var(--mono);
@@ -190,10 +214,24 @@
   background: var(--surface-2);
   border-radius: 999px;
   color: var(--muted);
+  transition: background 0.18s ease, color 0.18s ease;
 }
 .pr-tab.active .num {
   background: var(--primary);
   color: white;
+}
+/* Sliding underline — position + width come from the ViewChild in TS. */
+.pr-tab-underline {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 2px;
+  background: var(--primary);
+  border-radius: 2px;
+  transition:
+    transform 320ms cubic-bezier(0.22, 1, 0.36, 1),
+    width 320ms cubic-bezier(0.22, 1, 0.36, 1);
+  pointer-events: none;
 }
 
 /* ─── Member list ─────────────────────────────────────────────── */
@@ -268,29 +306,18 @@
   from { transform: translateY(20px) scale(0.85); opacity: 0; }
   to { transform: translateY(0) scale(1); opacity: 1; }
 }
-.pr-fab-new-order::after {
-  content: '';
-  position: absolute;
-  top: 4px;
-  right: 8px;
-  width: 9px;
-  height: 9px;
-  border-radius: 50%;
-  background: var(--amber);
-  box-shadow:
-    0 0 0 2px color-mix(in oklab, var(--primary) 60%, var(--ink)),
-    0 0 0 5px color-mix(in oklab, var(--amber) 30%, transparent);
-  animation: nopulse 2s ease-in-out infinite;
-}
-@keyframes nopulse {
-  0%, 100% { transform: scale(1); opacity: 1; }
-  50% { transform: scale(1.25); opacity: 0.7; }
-}
 .pr-fab-new-order:hover {
   transform: translateY(-2px) scale(1.02);
   box-shadow:
     0 18px 34px -8px color-mix(in oklab, var(--primary) 80%, transparent),
     0 0 0 6px color-mix(in oklab, var(--primary) 20%, transparent);
+}
+/* Confirm FAB keeps its accent ring on hover instead of switching to primary —
+   otherwise the red button picks up a green halo which reads as a bug. */
+.pr-fab-new-order.pr-fab-confirm:hover {
+  box-shadow:
+    0 18px 34px -8px color-mix(in oklab, var(--accent, #c14e63) 85%, transparent),
+    0 0 0 6px color-mix(in oklab, var(--accent, #c14e63) 22%, transparent);
 }
 .pr-fab-icon {
   width: 32px;

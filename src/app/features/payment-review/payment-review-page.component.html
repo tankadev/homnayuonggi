@@ -14,7 +14,23 @@
   </aside>
 
   <main class="pr-col scroll">
-    <section class="pr-banner">
+    <section class="pr-banner" [class.glow]="bannerGlow">
+      <!-- Confetti burst when isAllPaid flips on. Pieces self-clear after ~2.8s. -->
+      <div *ngIf="confettiPieces.length" class="pr-confetti" aria-hidden="true">
+        <span
+          *ngFor="let p of confettiPieces; trackBy: trackConfetti"
+          class="cf-piece"
+          [class.round]="p.round"
+          [style.background]="p.color"
+          [style.left.%]="p.left"
+          [style.width.px]="p.size"
+          [style.height.px]="p.size * (p.round ? 1 : 0.6)"
+          [style.animation-delay.ms]="p.delay"
+          [style.--dx]="p.dx + 'px'"
+          [style.--dy]="p.dy + 'px'"
+          [style.--rot]="p.rot + 'deg'"
+        ></span>
+      </div>
       <div class="pr-banner-l">
         <span class="pr-status-chip">
           <span class="dot"></span> Đơn đã chốt · Chờ thanh toán
@@ -42,16 +58,21 @@
       <span class="lbl">
         <app-icon name="filter" [size]="12"></app-icon> Lọc:
       </span>
-      <div class="pr-tabs">
-        <button type="button" class="pr-tab" [class.active]="filter === 'all'" (click)="setFilter('all')">
+      <div class="pr-tabs" #tabsBar>
+        <button #tabBtn type="button" class="pr-tab" [class.active]="filter === 'all'" (click)="setFilter('all')">
           Tất cả <span class="num">{{ shares.length }}</span>
         </button>
-        <button type="button" class="pr-tab" [class.active]="filter === 'unpaid'" (click)="setFilter('unpaid')">
+        <button #tabBtn type="button" class="pr-tab" [class.active]="filter === 'unpaid'" (click)="setFilter('unpaid')">
           Chưa trả <span class="num">{{ totalPayers - paidCount }}</span>
         </button>
-        <button type="button" class="pr-tab" [class.active]="filter === 'paid'" (click)="setFilter('paid')">
+        <button #tabBtn type="button" class="pr-tab" [class.active]="filter === 'paid'" (click)="setFilter('paid')">
           Đã trả <span class="num">{{ paidCount }}</span>
         </button>
+        <span
+          class="pr-tab-underline"
+          [style.transform]="'translateX(' + underlineX + 'px)'"
+          [style.width.px]="underlineW"
+        ></span>
       </div>
       <span class="pr-filter-hint">Bạn được xếp lên đầu danh sách</span>
     </div>

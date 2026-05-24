@@ -1,4 +1,18 @@
-import { Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  EventEmitter,
+  Input,
+  OnChanges,
+  OnDestroy,
+  OnInit,
+  Output,
+  QueryList,
+  SimpleChanges,
+  ViewChild,
+  ViewChildren,
+} from '@angular/core';
 import { combineLatest, Subscription } from 'rxjs';
 
 import { calcShares, PrMember, PrOrder, PrShare, SplitMode } from './mock-data';
@@ -24,10 +38,13 @@ type Filter = 'all' | 'unpaid' | 'paid';
   templateUrl: './payment-review-page.component.html',
   styleUrls: ['./payment-review-page.component.scss'],
 })
-export class PaymentReviewPageComponent implements OnInit, OnChanges, OnDestroy {
+export class PaymentReviewPageComponent implements OnInit, OnChanges, OnDestroy, AfterViewInit {
   @Input() room: RoomRO | null = null;
   @Input() roomName = '';
   @Output() newOrder = new EventEmitter<void>();
+
+  @ViewChild('tabsBar') tabsBar?: ElementRef<HTMLElement>;
+  @ViewChildren('tabBtn') tabBtns?: QueryList<ElementRef<HTMLButtonElement>>;
 
   members: PrMember[] = [];
   order: PrOrder = blankOrder();
@@ -38,6 +55,19 @@ export class PaymentReviewPageComponent implements OnInit, OnChanges, OnDestroy 
   filter: Filter = 'all';
 
   newOrderOpen = false;
+
+  /** Underline indicator pos/width — driven by ViewChild on the active tab. */
+  underlineX = 0;
+  underlineW = 0;
+
+  /** Confetti burst — pieces rendered while celebrating; cleared after ~3s. */
+  confettiPieces: ConfettiPiece[] = [];
+  /** Drives the banner glow-pulse class for ~2 cycles. */
+  bannerGlow = false;
+  /** Tracks the prior isAllPaid so we only fire celebration on false→true. */
+  private prevAllPaid = false;
+  /** First snapshot establishes the baseline — we don't celebrate on mount. */
+  private celebrationArmed = false;
 
   private delivery: DeliveryRO | null = null;
   private payment: PaymentPaidRO | null = null;
@@ -64,6 +94,11 @@ export class PaymentReviewPageComponent implements OnInit, OnChanges, OnDestroy 
       this.sub?.unsubscribe();
       this.subscribe();
     }
+  }
+
+  ngAfterViewInit(): void {
+    /* Initial underline position once the view has rendered. */
+    requestAnimationFrame(() => this.updateUnderline());
   }
 
   ngOnDestroy(): void {
@@ -132,6 +167,7 @@ export class PaymentReviewPageComponent implements OnInit, OnChanges, OnDestroy 
     this.paidMap = view.paidMap;
     this.isOwner = view.isOwner;
     this.ordererId = view.ordererId;
+    this.checkCelebration(this.isAllPaid);
   }
 
   private safeReadArray<T>(read: () => T[] | null | undefined): T[] {
@@ -196,6 +232,21 @@ export class PaymentReviewPageComponent implements OnInit, OnChanges, OnDestroy 
 
   setFilter(f: Filter): void {
     this.filter = f;
+    /* Wait for the .active class to land on the new button before measuring. */
+    requestAnimationFrame(() => this.updateUnderline());
+  }
+
+  /** Position the sliding underline under the active tab. */
+  private updateUnderline(): void {
+    const bar = this.tabsBar?.nativeElement;
+    const btns = this.tabBtns?.toArray() || [];
+    if (!bar || !btns.length) return;
+    const active = btns.find((b) => b.nativeElement.classList.contains('active'));
+    if (!active) return;
+    const barRect = bar.getBoundingClientRect();
+    const r = active.nativeElement.getBoundingClientRect();
+    this.underlineX = r.left - barRect.left;
+    this.underlineW = r.width;
   }
 
   async setSplitMode(m: SplitMode): Promise<void> {
@@ -286,6 +337,7 @@ export class PaymentReviewPageComponent implements OnInit, OnChanges, OnDestroy 
   }
 
   trackByMember = (_: number, m: PrShare) => m.id;
+  trackConfetti = (_: number, p: ConfettiPiece) => p.id;
 
   /** True iff there's a payment record AND every non-orderer in it is marked paid. */
   get isAllPaid(): boolean {
@@ -293,6 +345,51 @@ export class PaymentReviewPageComponent implements OnInit, OnChanges, OnDestroy 
     const others = (this.payment.usersPaid || []).filter((u) => u.userId !== this.ordererId);
     if (!others.length) return false;
     return others.every((u) => !!u.isPaid);
+  }
+
+  /**
+   * Detects a fresh false→true transition of isAllPaid and fires the
+   * confetti burst + banner glow. Called from the template via a side-effect
+   * binding; using a getter here avoids zoning a separate subscription.
+   */
+  checkCelebration(allPaid: boolean): void {
+    if (this.celebrationArmed && allPaid && !this.prevAllPaid) this.celebrate();
+    this.prevAllPaid = allPaid;
+    this.celebrationArmed = true;
+  }
+
+  private celebrate(): void {
+    this.spawnConfetti();
+    this.bannerGlow = true;
+    /* Glow runs 2 cycles × ~900ms each = ~1.8s, then clear so the class can
+       re-apply on a subsequent celebration (e.g., user toggled off then on). */
+    window.setTimeout(() => (this.bannerGlow = false), 2000);
+  }
+
+  private spawnConfetti(): void {
+    const palette = [
+      'var(--primary)',
+      'var(--amber)',
+      'var(--accent, var(--primary))',
+      'var(--rose, var(--primary))',
+      'color-mix(in oklab, var(--primary) 60%, var(--amber))',
+    ];
+    const pieces: ConfettiPiece[] = [];
+    for (let i = 0; i < 24; i++) {
+      pieces.push({
+        id: i,
+        color: palette[i % palette.length],
+        left: 30 + Math.random() * 40, // start in middle 40% of the column
+        dx: (Math.random() - 0.5) * 280, // ±140px horizontal drift
+        dy: 280 + Math.random() * 240, // 280–520px fall
+        rot: (Math.random() - 0.5) * 1200, // ±600deg
+        delay: Math.random() * 150,
+        size: 6 + Math.random() * 6,
+        round: Math.random() > 0.6,
+      });
+    }
+    this.confettiPieces = pieces;
+    window.setTimeout(() => (this.confettiPieces = []), 2800);
   }
 
   openNewOrder(): void {
@@ -351,6 +448,23 @@ export class PaymentReviewPageComponent implements OnInit, OnChanges, OnDestroy 
     }
   }
 
+}
+
+interface ConfettiPiece {
+  id: number;
+  color: string;
+  /** Starting x as a % of the confetti container width. */
+  left: number;
+  /** Horizontal drift in px applied via CSS var --dx. */
+  dx: number;
+  /** Vertical fall distance in px applied via CSS var --dy. */
+  dy: number;
+  /** Rotation amount applied via CSS var --rot. */
+  rot: number;
+  delay: number;
+  size: number;
+  /** Round pieces vs square — adds variety. */
+  round: boolean;
 }
 
 function blankOrder(): PrOrder {
