@@ -11,7 +11,8 @@
       *ngFor="let d of section.items"
       class="dish"
       [class.out]="d.out"
-      [class.in-cart]="qtyFor(d.id) > 0"
+      [class.in-cart]="qtyFor(d) > 0"
+      [class.has-sizes]="d.sizes?.length"
       [style.--img-a]="d.img[0]"
       [style.--img-b]="d.img[1]"
     >
@@ -51,35 +52,76 @@
             <span *ngIf="d.options" class="dish-opt">Tùy chọn: {{ d.options }}</span>
             <span *ngIf="d.out" class="dish-out-badge">Hết hàng</span>
           </div>
-          <div class="dish-buy">
-            <div class="dish-price" [class.discounted]="d.originalPrice">
-              <span *ngIf="d.originalPrice" class="orig"
-                    [title]="'Giá gốc ' + (d.originalPrice | vnd) + 'đ'">
-                {{ d.originalPrice | vnd }}đ
-              </span>
-              <span class="now">
-                <span class="amt">{{ d.price | vnd }}</span>
-                <span class="currency">đ</span>
-              </span>
-            </div>
 
-            <ng-container *ngIf="!d.out">
-              <ng-container *ngIf="qtyFor(d.id) === 0; else stepper">
-                <button class="add-btn" type="button" title="Thêm vào đơn" (click)="add.emit(d.id)">
-                  <app-icon name="plus" [size]="16"></app-icon>
-                </button>
+          <!-- ─── No sizes: single price + add/stepper ───────── -->
+          <ng-container *ngIf="!d.sizes?.length; else sizedTpl">
+            <div class="dish-buy">
+              <div class="dish-price" [class.discounted]="d.originalPrice">
+                <span *ngIf="d.originalPrice" class="orig"
+                      [title]="'Giá gốc ' + (d.originalPrice | vnd) + 'đ'">
+                  {{ d.originalPrice | vnd }}đ
+                </span>
+                <span class="now">
+                  <span class="amt">{{ d.price | vnd }}</span>
+                  <span class="currency">đ</span>
+                </span>
+              </div>
+
+              <ng-container *ngIf="!d.out">
+                <ng-container *ngIf="qtyFor(d) === 0; else stepper">
+                  <button class="add-btn" type="button" title="Thêm vào đơn" (click)="emitAdd(d)">
+                    <app-icon name="plus" [size]="16"></app-icon>
+                  </button>
+                </ng-container>
+                <ng-template #stepper>
+                  <div class="qty-stepper">
+                    <button type="button" (click)="emitMinus(d)"><app-icon name="minus" [size]="14"></app-icon></button>
+                    <span class="count">
+                      <span class="count-num" [@countFlip]="qtyFor(d)">{{ qtyFor(d) }}</span>
+                    </span>
+                    <button type="button" (click)="emitAdd(d)"><app-icon name="plus" [size]="14"></app-icon></button>
+                  </div>
+                </ng-template>
               </ng-container>
-              <ng-template #stepper>
-                <div class="qty-stepper">
-                  <button type="button" (click)="minus.emit(d.id)"><app-icon name="minus" [size]="14"></app-icon></button>
-                  <span class="count">
-                    <span class="count-num" [@countFlip]="qtyFor(d.id)">{{ qtyFor(d.id) }}</span>
+            </div>
+          </ng-container>
+
+          <!-- ─── Sized: price range header + one row per size ─ -->
+          <ng-template #sizedTpl>
+            <div class="dish-buy size-range">
+              <div class="dish-price">
+                <span class="now">
+                  <span class="amt">{{ sizePriceRange(d)?.min | vnd }}đ</span>
+                  <span class="size-sep" *ngIf="sizePriceRange(d) && sizePriceRange(d)!.min !== sizePriceRange(d)!.max">
+                    – {{ sizePriceRange(d)?.max | vnd }}đ
                   </span>
-                  <button type="button" (click)="add.emit(d.id)"><app-icon name="plus" [size]="14"></app-icon></button>
-                </div>
-              </ng-template>
-            </ng-container>
-          </div>
+                </span>
+              </div>
+              <span class="size-hint">Chọn size:</span>
+            </div>
+            <ul class="size-list" *ngIf="!d.out">
+              <li *ngFor="let s of d.sizes; trackBy: trackBySize" class="size-row"
+                  [class.picked]="qtyForSize(d, s) > 0">
+                <span class="size-label">{{ s.label }}</span>
+                <span class="size-price">{{ s.price | vnd }}đ</span>
+                <ng-container *ngIf="qtyForSize(d, s) === 0; else sizedStepper">
+                  <button type="button" class="add-btn size-add" (click)="emitAdd(d, s)"
+                          [attr.aria-label]="'Thêm ' + d.name + ' size ' + s.label">
+                    <app-icon name="plus" [size]="14"></app-icon>
+                  </button>
+                </ng-container>
+                <ng-template #sizedStepper>
+                  <div class="qty-stepper small">
+                    <button type="button" (click)="emitMinus(d, s)"><app-icon name="minus" [size]="12"></app-icon></button>
+                    <span class="count">
+                      <span class="count-num" [@countFlip]="qtyForSize(d, s)">{{ qtyForSize(d, s) }}</span>
+                    </span>
+                    <button type="button" (click)="emitAdd(d, s)"><app-icon name="plus" [size]="12"></app-icon></button>
+                  </div>
+                </ng-template>
+              </li>
+            </ul>
+          </ng-template>
         </div>
       </div>
     </article>

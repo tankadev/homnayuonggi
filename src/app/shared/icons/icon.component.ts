@@ -53,7 +53,9 @@ export type IconName =
   | 'alert'
   | 'timer'
   | 'at'
-  | 'bolt';
+  | 'bolt'
+  | 'image'
+  | 'upload';
 
 const PATHS: Record<IconName, string> = {
   lock: '<rect x="4" y="11" width="16" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>',
@@ -122,6 +124,10 @@ const PATHS: Record<IconName, string> = {
   timer: '<path d="M10 2h4"/><path d="M12 14V8"/><circle cx="12" cy="14" r="8"/>',
   at: '<circle cx="12" cy="12" r="4"/><path d="M16 8v5a3 3 0 0 0 6 0v-1a10 10 0 1 0-4 8"/>',
   bolt: '<path d="m13 2-9 12h7l-1 8 9-12h-7Z"/>',
+  image:
+    '<rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="m21 17-5-5-9 9"/>',
+  upload:
+    '<path d="M12 16V4"/><path d="m6 10 6-6 6 6"/><path d="M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3"/>',
 };
 
 @Component({

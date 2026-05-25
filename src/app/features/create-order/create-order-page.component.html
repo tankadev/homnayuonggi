@@ -1,7 +1,7 @@
 <main class="main main-empty">
-  <section class="create-order-stage">
-    <!-- ─── Locked state: someone else is creating ───────────────── -->
-    <div *ngIf="view === 'locked'; else maybeEmpty" class="co-empty co-locked">
+  <section class="create-order-stage" [ngSwitch]="view">
+    <!-- ─── Locked: someone else is creating ───────────────────── -->
+    <div *ngSwitchCase="'locked'" class="co-empty co-locked">
       <span class="crumb crumb-locked">
         <span class="crumb-dot"></span>
         Phòng "{{ roomName }}" · đang có người tạo
@@ -33,9 +33,8 @@
       </div>
     </div>
 
-    <ng-template #maybeEmpty>
-    <!-- ─── Empty state ─────────────────────────────────────────── -->
-    <div *ngIf="view === 'empty'; else formCard" class="co-empty">
+    <!-- ─── Empty hero ─────────────────────────────────────────── -->
+    <div *ngSwitchCase="'empty'" class="co-empty">
       <span class="crumb">
         <span class="crumb-dot"></span>
         Phòng "{{ roomName }}" · chưa có đơn
@@ -83,7 +82,7 @@
       <div class="co-tips">
         <div class="co-tip">
           <span class="co-tip-step">01 · Mở quán</span>
-          <span class="co-tip-text">Dán link <b>ShopeeFood</b> của quán muốn đặt</span>
+          <span class="co-tip-text">Dán link <b>ShopeeFood</b> hoặc gửi <b>ảnh menu</b></span>
         </div>
         <div class="co-tip">
           <span class="co-tip-step">02 · Hẹn giờ</span>
@@ -96,151 +95,375 @@
       </div>
     </div>
 
-    <!-- ─── Form card ───────────────────────────────────────────── -->
-    <ng-template #formCard>
-      <div class="co-card">
-        <div class="co-card-head">
-          <div class="co-card-head-row">
-            <h2 class="co-card-title">Tạo bình chọn món</h2>
-            <button
-              type="button"
-              class="co-api-refresh"
-              (click)="onRefreshApi()"
-              [disabled]="refreshingApi"
-              [class.is-loading]="refreshingApi"
-              [class.is-done]="!refreshingApi && apiRefreshedAt"
-              title="Tải lại địa chỉ API lấy menu"
-            >
-              <app-icon name="refresh" [size]="13"></app-icon>
-              <span *ngIf="refreshingApi">Đang tải…</span>
-              <span *ngIf="!refreshingApi && apiRefreshedAt">Đã tải lại APIURL</span>
-              <span *ngIf="!refreshingApi && !apiRefreshedAt">Tải lại APIURL</span>
+    <!-- ─── Extracting (loading) ───────────────────────────────── -->
+    <div *ngSwitchCase="'extracting'" class="co-empty co-loading">
+      <span class="crumb">
+        <span class="crumb-dot"></span>
+        Phòng "{{ roomName }}" · đang chuẩn bị menu
+      </span>
+
+      <div class="co-loader">
+        <span class="co-loader-ring"></span>
+        <span class="co-loader-cup"><app-icon name="image" [size]="22"></app-icon></span>
+      </div>
+
+      <h1 class="co-empty-title">
+        <ng-container [ngSwitch]="extractStage">
+          <span *ngSwitchCase="'compressing'">Đang nén ảnh menu…</span>
+          <span *ngSwitchCase="'uploading'">Đang gửi ảnh cho AI…</span>
+          <span *ngSwitchDefault>Đang đọc menu quán…</span>
+        </ng-container>
+      </h1>
+      <p class="co-empty-sub">
+        <ng-container *ngIf="inputMode === 'images'">
+          AI cần ~10–30 giây để đọc tên + giá từ ảnh. Bạn sẽ được kiểm tra lại trước khi mở bình chọn.
+        </ng-container>
+        <ng-container *ngIf="inputMode === 'url'">
+          Đang tải menu từ link quán. Bạn sẽ được xem lại trước khi mở bình chọn.
+        </ng-container>
+      </p>
+    </div>
+
+    <!-- ─── Review / edit menu ─────────────────────────────────── -->
+    <div *ngSwitchCase="'review'" class="co-card co-review">
+      <div class="co-card-head">
+        <div class="co-card-head-row">
+          <h2 class="co-card-title">Kiểm tra menu</h2>
+          <span class="co-review-count">
+            {{ reviewSections.length }} mục · {{ reviewDishCount }} món
+          </span>
+        </div>
+        <p class="co-card-sub">
+          AI có thể đọc sai — kiểm tra tên quán, từng món và giá trước khi mở bình chọn.
+        </p>
+      </div>
+
+      <div class="co-card-body co-review-body">
+        <!-- Source images preview -->
+        <div *ngIf="reviewMenuPhotos.length" class="co-review-photos">
+          <div class="co-review-photos-head">
+            <app-icon name="image" [size]="13"></app-icon>
+            Ảnh gốc ({{ reviewMenuPhotos.length }}) — sẽ lưu trong đơn để xem lại
+          </div>
+          <div class="co-review-photos-strip">
+            <button *ngFor="let p of reviewMenuPhotos; let i = index; trackBy: trackByPhoto"
+                    type="button" class="co-review-photo" (click)="openLightbox(p)"
+                    [attr.aria-label]="'Xem ảnh menu ' + (i + 1)">
+              <img [src]="p" alt="Ảnh menu" loading="lazy"/>
             </button>
           </div>
-          <p class="co-card-sub">Dán link quán, hẹn giờ, chọn người đứng tên đặt hàng.</p>
-          <div class="co-tip-note">
-            <app-icon name="info" [size]="14"></app-icon>
-            <span>
-              Nếu tạo bình chọn báo lỗi <b>"Không lấy được dữ liệu quán"</b>, hãy bấm
-              <b>Tải lại APIURL</b> ở góc trên rồi thử lại.
-            </span>
+        </div>
+
+        <!-- Shop info -->
+        <div class="co-review-shop">
+          <div class="field">
+            <label class="field-label">Tên quán <span class="req">*</span></label>
+            <div class="co-input-wrap">
+              <span class="co-input-icon"><app-icon name="store" [size]="16"></app-icon></span>
+              <input class="co-input" placeholder="VD: Cà phê Highlands"
+                     [(ngModel)]="reviewShopName" name="reviewShopName"/>
+            </div>
+          </div>
+          <div class="field">
+            <label class="field-label">Địa chỉ (tuỳ chọn)</label>
+            <div class="co-input-wrap">
+              <span class="co-input-icon"><app-icon name="pin" [size]="16"></app-icon></span>
+              <input class="co-input" placeholder="VD: 123 Nguyễn Trãi, Q.1"
+                     [(ngModel)]="reviewShopAddress" name="reviewShopAddress"/>
+            </div>
           </div>
         </div>
 
-        <div class="co-card-body">
-          <div class="co-form">
-            <!-- URL -->
-            <div class="field">
-              <label class="field-label">Link quán <span class="req">*</span></label>
-              <div class="co-input-wrap"
-                   [class.error]="touched && (!url.trim() || urlState === 'err')">
-                <span class="co-input-icon"><app-icon name="link" [size]="16"></app-icon></span>
-                <input class="co-input"
-                       placeholder="https://shopeefood.vn/can-tho/nuoc-mia-my-tho-mt68"
-                       [(ngModel)]="url" name="url" autofocus/>
-                <button *ngIf="url" type="button" class="co-input-clear" (click)="clearUrl()" aria-label="Xoá">
-                  <app-icon name="x" [size]="14"></app-icon>
-                </button>
-              </div>
-              <div *ngIf="urlState === 'ok'" class="co-url-hint ok">
-                <app-icon name="check" [size]="12" [sw]="2.4"></app-icon> Link ShopeeFood hợp lệ
-              </div>
-              <div *ngIf="urlState === 'warn'" class="co-url-hint hint">
-                <app-icon name="info" [size]="12"></app-icon> Link không phải ShopeeFood — vẫn dùng được
-              </div>
-              <div *ngIf="urlState === 'err'" class="co-url-hint err">
-                <app-icon name="alert" [size]="12"></app-icon> Link chưa đúng định dạng
-              </div>
-              <div *ngIf="!url" class="co-url-hint hint">
-                VD: <span class="co-url-example">https://shopeefood.vn/can-tho/nuoc-mia-my-tho-mt68</span>
-              </div>
+        <!-- Sections -->
+        <div class="co-sections">
+          <div *ngFor="let s of reviewSections; let si = index; trackBy: trackBySection"
+               class="co-section" [class.collapsed]="s.collapsed">
+            <div class="co-section-head">
+              <button type="button" class="co-section-toggle" (click)="toggleSection(s)"
+                      [attr.aria-label]="s.collapsed ? 'Mở mục' : 'Thu mục'">
+                <app-icon [name]="s.collapsed ? 'chevron-r' : 'chevron'" [size]="14"></app-icon>
+              </button>
+              <input class="co-section-name" [(ngModel)]="s.name" name="sec-{{ s.uid }}"
+                     placeholder="Tên mục (VD: Trà sữa)"/>
+              <span class="co-section-count">{{ s.dishes.length }} món</span>
+              <button type="button" class="co-icon-btn danger" (click)="removeSection(si)"
+                      aria-label="Xoá mục" title="Xoá mục">
+                <app-icon name="trash" [size]="14"></app-icon>
+              </button>
             </div>
 
-            <!-- Time -->
-            <div class="field">
-              <label class="field-label">Thời gian bình chọn <span class="req">*</span></label>
-              <div class="co-input-wrap">
-                <span class="co-input-icon"><app-icon name="timer" [size]="16"></app-icon></span>
-                <input class="co-input" type="number" inputmode="numeric" min="1" max="180"
-                       placeholder="10"
-                       [ngModel]="minutes" (ngModelChange)="setMinutes($event)" name="minutes"/>
-                <span class="co-input-suffix">Phút</span>
-              </div>
-              <div class="co-presets">
-                <button *ngFor="let p of presets" type="button" class="co-preset"
-                        [class.active]="minutes === p" (click)="setPreset(p)">
-                  {{ p }} phút
-                </button>
-              </div>
-            </div>
-
-            <!-- Orderer -->
-            <div class="co-orderer">
-              <div class="co-orderer-head">
-                <span class="co-orderer-title">
-                  <app-icon name="user" [size]="14" [filled]="true"></app-icon>
-                  Người đặt hàng
-                  <span class="req">*</span>
-                </span>
-                <div class="co-who-toggle">
-                  <button type="button" [class.active]="whoMode === 'me'" (click)="setWhoMode('me')">
-                    <app-icon name="user" [size]="11" [filled]="true"></app-icon> Tôi đặt
-                  </button>
-                  <button type="button" [class.active]="whoMode === 'other'" (click)="setWhoMode('other')">
-                    <app-icon name="users" [size]="11" [filled]="true"></app-icon> Người khác
-                  </button>
-                </div>
-              </div>
-
-              <ng-container *ngIf="whoMode === 'me'; else otherTpl">
-                <button type="button" class="co-member me active" aria-pressed="true">
-                  <span class="co-member-av">{{ me.initial }}</span>
-                  <span class="co-member-info">
-                    <span class="co-member-name">{{ me.name }}<em>· bạn</em></span>
-                    <span class="co-member-sub">Bạn sẽ đứng tên đặt và nhận tiền</span>
-                  </span>
-                  <span class="co-member-radio"></span>
-                </button>
-              </ng-container>
-
-              <ng-template #otherTpl>
-                <div *ngIf="others.length; else noOthers" class="co-select-wrap">
-                  <span class="co-select-av">{{ selectAvatarLabel }}</span>
-                  <select class="co-select" [(ngModel)]="pickedId" name="pickedId">
-                    <option *ngFor="let m of others; trackBy: trackByMember" [value]="m.id">
-                      {{ m.name }}
-                    </option>
-                  </select>
-                  <span class="co-select-chev"><app-icon name="chevron" [size]="14"></app-icon></span>
-                </div>
-                <ng-template #noOthers>
-                  <div class="co-no-others">
-                    Chưa có thành viên nào khác trong hệ thống — chọn "Tôi đặt" hoặc mời thêm người đăng ký.
+            <div class="co-dishes" *ngIf="!s.collapsed">
+              <div *ngFor="let d of s.dishes; let di = index; trackBy: trackByDish" class="co-dish">
+                <div class="co-dish-main">
+                  <input class="co-dish-name" [(ngModel)]="d.name" name="d-name-{{ d.uid }}"
+                         placeholder="Tên món"/>
+                  <div class="co-dish-price-wrap" *ngIf="!d.hasChoices">
+                    <input class="co-dish-price" type="number" inputmode="numeric" min="0"
+                           [(ngModel)]="d.price" name="d-price-{{ d.uid }}" placeholder="Giá"/>
+                    <span class="co-dish-price-suffix">đ</span>
                   </div>
-                </ng-template>
-              </ng-template>
+                  <button type="button" class="co-icon-btn" (click)="toggleDishChoices(d)"
+                          [class.active]="d.hasChoices"
+                          [attr.aria-label]="d.hasChoices ? 'Bỏ size' : 'Thêm size'"
+                          [title]="d.hasChoices ? 'Bỏ size / lựa chọn' : 'Có nhiều size / lựa chọn'">
+                    <app-icon name="filter" [size]="13"></app-icon>
+                  </button>
+                  <button type="button" class="co-icon-btn danger" (click)="removeDish(s, di)"
+                          aria-label="Xoá món" title="Xoá món">
+                    <app-icon name="x" [size]="13" [sw]="2.4"></app-icon>
+                  </button>
+                </div>
+
+                <div *ngIf="d.hasChoices" class="co-choices">
+                  <div *ngFor="let c of d.choices; let ci = index; trackBy: trackByChoice" class="co-choice">
+                    <input class="co-choice-label" [(ngModel)]="c.label" name="c-l-{{ c.uid }}"
+                           placeholder="Tên size (VD: Nhỏ)"/>
+                    <div class="co-dish-price-wrap small">
+                      <input class="co-dish-price" type="number" inputmode="numeric" min="0"
+                             [(ngModel)]="c.price" name="c-p-{{ c.uid }}" placeholder="Giá"/>
+                      <span class="co-dish-price-suffix">đ</span>
+                    </div>
+                    <button type="button" class="co-icon-btn danger" (click)="removeChoice(d, ci)"
+                            aria-label="Xoá lựa chọn">
+                      <app-icon name="x" [size]="12" [sw]="2.4"></app-icon>
+                    </button>
+                  </div>
+                  <button type="button" class="co-mini-add" (click)="addChoice(d)">
+                    <app-icon name="plus" [size]="12" [sw]="2.4"></app-icon> Thêm lựa chọn
+                  </button>
+                </div>
+              </div>
+
+              <button type="button" class="co-add-row" (click)="addDish(s)">
+                <app-icon name="plus" [size]="13" [sw]="2.4"></app-icon> Thêm món
+              </button>
             </div>
           </div>
-        </div>
 
-        <div *ngIf="errorMsg" class="co-error">
-          <app-icon name="alert" [size]="14"></app-icon> {{ errorMsg }}
-        </div>
-
-        <div class="co-foot">
-          <button type="button" class="btn-confirm-big" (click)="submit()" [disabled]="!canSubmit">
-            <ng-container *ngIf="submitting; else readyTpl">
-              <span class="co-spinner"></span> Đang tạo bình chọn…
-            </ng-container>
-            <ng-template #readyTpl>
-              <app-icon name="check" [size]="18" [sw]="2.4"></app-icon> Xác nhận
-            </ng-template>
+          <button type="button" class="co-add-section" (click)="addSection()">
+            <app-icon name="plus" [size]="14" [sw]="2.4"></app-icon> Thêm mục mới
           </button>
-          <button type="button" class="btn-cancel-big" (click)="cancelForm()" [disabled]="submitting">Hủy</button>
         </div>
       </div>
-    </ng-template>
-    </ng-template>
+
+      <div *ngIf="errorMsg" class="co-error">
+        <app-icon name="alert" [size]="14"></app-icon> {{ errorMsg }}
+      </div>
+
+      <div class="co-foot">
+        <button type="button" class="btn-confirm-big" (click)="confirmReview()" [disabled]="!canCommit">
+          <ng-container *ngIf="submitting; else readyCommit">
+            <span class="co-spinner"></span> Đang tạo bình chọn…
+          </ng-container>
+          <ng-template #readyCommit>
+            <app-icon name="check" [size]="18" [sw]="2.4"></app-icon> Tạo bình chọn
+          </ng-template>
+        </button>
+        <button type="button" class="btn-cancel-big alt" (click)="backToForm()" [disabled]="submitting">
+          <app-icon name="arrow-l" [size]="14"></app-icon> Quay lại
+        </button>
+      </div>
+    </div>
+
+    <!-- ─── Form card (default) ────────────────────────────────── -->
+    <div *ngSwitchDefault class="co-card">
+      <div class="co-card-head">
+        <div class="co-card-head-row">
+          <h2 class="co-card-title">Tạo bình chọn món</h2>
+          <button
+            type="button"
+            class="co-api-refresh"
+            (click)="onRefreshApi()"
+            [disabled]="refreshingApi"
+            [class.is-loading]="refreshingApi"
+            [class.is-done]="!refreshingApi && apiRefreshedAt"
+            title="Tải lại địa chỉ API lấy menu"
+          >
+            <app-icon name="refresh" [size]="13"></app-icon>
+            <span *ngIf="refreshingApi">Đang tải…</span>
+            <span *ngIf="!refreshingApi && apiRefreshedAt">Đã tải lại APIURL</span>
+            <span *ngIf="!refreshingApi && !apiRefreshedAt">Tải lại APIURL</span>
+          </button>
+        </div>
+        <p class="co-card-sub">Chọn nguồn menu (link / ảnh), hẹn giờ, chọn người đứng tên đặt hàng.</p>
+        <div class="co-tip-note">
+          <app-icon name="info" [size]="14"></app-icon>
+          <span>
+            Nếu báo lỗi <b>"Không lấy được dữ liệu quán"</b>, hãy bấm
+            <b>Tải lại APIURL</b> ở góc trên rồi thử lại.
+          </span>
+        </div>
+      </div>
+
+      <div class="co-card-body">
+        <div class="co-form">
+          <!-- Source toggle -->
+          <div class="co-source-toggle" role="tablist" aria-label="Nguồn menu">
+            <button type="button" role="tab" [class.active]="inputMode === 'url'"
+                    [attr.aria-selected]="inputMode === 'url'" (click)="setInputMode('url')">
+              <app-icon name="link" [size]="13"></app-icon> Link quán
+            </button>
+            <button type="button" role="tab" [class.active]="inputMode === 'images'"
+                    [attr.aria-selected]="inputMode === 'images'" (click)="setInputMode('images')">
+              <app-icon name="image" [size]="13"></app-icon> Ảnh menu
+            </button>
+          </div>
+
+          <!-- URL -->
+          <div *ngIf="inputMode === 'url'" class="field">
+            <label class="field-label">Link quán <span class="req">*</span></label>
+            <div class="co-input-wrap"
+                 [class.error]="touched && (!url.trim() || urlState === 'err')">
+              <span class="co-input-icon"><app-icon name="link" [size]="16"></app-icon></span>
+              <input class="co-input"
+                     placeholder="https://shopeefood.vn/can-tho/nuoc-mia-my-tho-mt68"
+                     [(ngModel)]="url" name="url" autofocus/>
+              <button *ngIf="url" type="button" class="co-input-clear" (click)="clearUrl()" aria-label="Xoá">
+                <app-icon name="x" [size]="14"></app-icon>
+              </button>
+            </div>
+            <div *ngIf="urlState === 'ok'" class="co-url-hint ok">
+              <app-icon name="check" [size]="12" [sw]="2.4"></app-icon> Link ShopeeFood hợp lệ
+            </div>
+            <div *ngIf="urlState === 'warn'" class="co-url-hint hint">
+              <app-icon name="info" [size]="12"></app-icon> Link không phải ShopeeFood — vẫn dùng được
+            </div>
+            <div *ngIf="urlState === 'err'" class="co-url-hint err">
+              <app-icon name="alert" [size]="12"></app-icon> Link chưa đúng định dạng
+            </div>
+            <div *ngIf="!url" class="co-url-hint hint">
+              VD: <span class="co-url-example">https://shopeefood.vn/can-tho/nuoc-mia-my-tho-mt68</span>
+            </div>
+          </div>
+
+          <!-- Images -->
+          <div *ngIf="inputMode === 'images'" class="field">
+            <label class="field-label">Ảnh menu <span class="req">*</span></label>
+
+            <label class="co-drop"
+                   [class.dragging]="isDragging"
+                   [class.error]="touched && images.length === 0"
+                   (dragover)="onDragOver($event)"
+                   (dragleave)="onDragLeave($event)"
+                   (drop)="onDropImages($event)">
+              <input type="file" accept="image/*" multiple
+                     (change)="onPickImages($event)" hidden
+                     [disabled]="images.length >= maxImages"/>
+              <span class="co-drop-icon"><app-icon name="upload" [size]="22"></app-icon></span>
+              <span class="co-drop-title">Kéo thả ảnh menu hoặc <b>bấm để chọn</b></span>
+              <span class="co-drop-sub">
+                JPG / PNG · tối đa {{ maxImages }} ảnh · 10MB mỗi ảnh ·
+                AI sẽ trích xuất món + giá
+              </span>
+            </label>
+
+            <div *ngIf="images.length" class="co-thumbs">
+              <div *ngFor="let img of images; let i = index; trackBy: trackByImage" class="co-thumb">
+                <img [src]="img.previewUrl" [alt]="img.file.name"/>
+                <button type="button" class="co-thumb-x" (click)="removeImage(i)"
+                        [attr.aria-label]="'Xoá ' + img.file.name">
+                  <app-icon name="x" [size]="12" [sw]="2.6"></app-icon>
+                </button>
+                <span class="co-thumb-name" [title]="img.file.name">{{ img.file.name }}</span>
+              </div>
+            </div>
+
+            <div *ngIf="imageError" class="co-url-hint err">
+              <app-icon name="alert" [size]="12"></app-icon> {{ imageError }}
+            </div>
+            <div *ngIf="!imageError && images.length" class="co-url-hint ok">
+              <app-icon name="check" [size]="12" [sw]="2.4"></app-icon>
+              Đã chọn {{ images.length }} ảnh — có thể mất chút thời gian để xử lý
+            </div>
+            <div *ngIf="!imageError && !images.length" class="co-url-hint hint">
+              <app-icon name="info" [size]="12"></app-icon>
+              Chụp rõ tên món + giá, có thể gửi nhiều ảnh (mặt trước / mặt sau)
+            </div>
+          </div>
+
+          <!-- Time -->
+          <div class="field">
+            <label class="field-label">Thời gian bình chọn <span class="req">*</span></label>
+            <div class="co-input-wrap">
+              <span class="co-input-icon"><app-icon name="timer" [size]="16"></app-icon></span>
+              <input class="co-input" type="number" inputmode="numeric" min="1" max="180"
+                     placeholder="10"
+                     [ngModel]="minutes" (ngModelChange)="setMinutes($event)" name="minutes"/>
+              <span class="co-input-suffix">Phút</span>
+            </div>
+            <div class="co-presets">
+              <button *ngFor="let p of presets" type="button" class="co-preset"
+                      [class.active]="minutes === p" (click)="setPreset(p)">
+                {{ p }} phút
+              </button>
+            </div>
+          </div>
+
+          <!-- Orderer -->
+          <div class="co-orderer">
+            <div class="co-orderer-head">
+              <span class="co-orderer-title">
+                <app-icon name="user" [size]="14" [filled]="true"></app-icon>
+                Người đặt hàng
+                <span class="req">*</span>
+              </span>
+              <div class="co-who-toggle">
+                <button type="button" [class.active]="whoMode === 'me'" (click)="setWhoMode('me')">
+                  <app-icon name="user" [size]="11" [filled]="true"></app-icon> Tôi đặt
+                </button>
+                <button type="button" [class.active]="whoMode === 'other'" (click)="setWhoMode('other')">
+                  <app-icon name="users" [size]="11" [filled]="true"></app-icon> Người khác
+                </button>
+              </div>
+            </div>
+
+            <ng-container *ngIf="whoMode === 'me'; else otherTpl">
+              <button type="button" class="co-member me active" aria-pressed="true">
+                <span class="co-member-av">{{ me.initial }}</span>
+                <span class="co-member-info">
+                  <span class="co-member-name">{{ me.name }}<em>· bạn</em></span>
+                  <span class="co-member-sub">Bạn sẽ đứng tên đặt và nhận tiền</span>
+                </span>
+                <span class="co-member-radio"></span>
+              </button>
+            </ng-container>
+
+            <ng-template #otherTpl>
+              <div *ngIf="others.length; else noOthers" class="co-select-wrap">
+                <span class="co-select-av">{{ selectAvatarLabel }}</span>
+                <select class="co-select" [(ngModel)]="pickedId" name="pickedId">
+                  <option *ngFor="let m of others; trackBy: trackByMember" [value]="m.id">
+                    {{ m.name }}
+                  </option>
+                </select>
+                <span class="co-select-chev"><app-icon name="chevron" [size]="14"></app-icon></span>
+              </div>
+              <ng-template #noOthers>
+                <div class="co-no-others">
+                  Chưa có thành viên nào khác trong hệ thống — chọn "Tôi đặt" hoặc mời thêm người đăng ký.
+                </div>
+              </ng-template>
+            </ng-template>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="errorMsg" class="co-error">
+        <app-icon name="alert" [size]="14"></app-icon> {{ errorMsg }}
+      </div>
+
+      <div class="co-foot">
+        <button type="button" class="btn-confirm-big" (click)="submit()" [disabled]="!canSubmit">
+          <ng-container *ngIf="submitting; else readyTpl">
+            <span class="co-spinner"></span> Đang đọc menu…
+          </ng-container>
+          <ng-template #readyTpl>
+            <app-icon name="arrow-r" [size]="18" [sw]="2.4"></app-icon> Tiếp theo
+          </ng-template>
+        </button>
+        <button type="button" class="btn-cancel-big" (click)="cancelForm()" [disabled]="submitting">Hủy</button>
+      </div>
+    </div>
   </section>
 
   <div class="footer-text co-footer-text">
@@ -256,4 +479,11 @@
     <b>{{ toast.ordererIsMe ? 'bạn' : toast.ordererName }}</b>
     đứng tên đặt · còn {{ toast.minutes }} phút
   </span>
+</div>
+
+<div *ngIf="reviewLightboxSrc" class="co-lightbox" (click)="closeLightbox()" role="dialog" aria-label="Ảnh menu">
+  <button type="button" class="co-lightbox-close" (click)="closeLightbox()" aria-label="Đóng">
+    <app-icon name="x" [size]="18" [sw]="2.4"></app-icon>
+  </button>
+  <img [src]="reviewLightboxSrc" alt="Ảnh menu" (click)="$event.stopPropagation()"/>
 </div>

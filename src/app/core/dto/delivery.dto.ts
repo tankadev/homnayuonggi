@@ -10,6 +10,8 @@ export class DeliveryDTO {
   createDateTime?: string;
   assignUserId?: string;
   delivery?: DeliveryDetailNowAPI;
+  /** Compressed base64 dataURLs of the source images the orderer uploaded (image-mode only). */
+  menuPhotos?: string[];
   shippingFee?: number;
   serviceFee?: number;
   sponsorPrice?: number;

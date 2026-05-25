@@ -6,8 +6,17 @@ import { DeliveryService } from './delivery.service';
 import { DeliveryDTO } from '../dto/delivery.dto';
 import { DeliveryDetailNowAPI } from '../ro/delivery-detail-now-api.ro';
 
-export interface CommitDeliveryArgs {
+export interface ExtractFromUrlArgs {
   url: string;
+}
+
+export interface ExtractFromImagesArgs {
+  files: File[];
+}
+
+export interface CommitDeliveryArgs {
+  scraped: DeliveryDetailNowAPI;
+  menuPhotos?: string[];
   minutes: number;
   ordererKey: string;
 }
@@ -38,28 +47,12 @@ export class OrderFlowService {
     return this.deliveryService.remove(deliveryKey);
   }
 
-  /**
-   * Promote the editing lock into a real, active order. Throws if the scrape fails so
-   * the caller can show an error and keep the lock — never commit a broken delivery.
-   */
-  async commitDelivery(deliveryKey: string, args: CommitDeliveryArgs): Promise<void> {
-    const scraped = await this.scrapeOrThrow(args.url);
-    await this.deliveryService.update(deliveryKey, {
-      isEdit: false,
-      isCreate: true,
-      isCompleted: false,
-      assignUserId: args.ordererKey,
-      remainingTime: args.minutes * 60 * 1000,
-      createDateTime: new Date().toISOString(),
-      delivery: scraped,
-    });
-  }
-
-  private async scrapeOrThrow(url: string): Promise<DeliveryDetailNowAPI> {
+  /** Scrape menu data from a ShopeeFood URL. Throws on failure so the caller keeps the lock. */
+  async extractFromUrl(args: ExtractFromUrlArgs): Promise<DeliveryDetailNowAPI> {
     let data: any;
     try {
       data = await firstValueFrom(
-        this.deliveryService.getDetailDeliveryFromShopeeFoodApi(url).pipe(
+        this.deliveryService.getDetailDeliveryFromShopeeFoodApi(args.url).pipe(
           take(1),
           timeout(15000),
         ),
@@ -75,5 +68,47 @@ export class OrderFlowService {
       );
     }
     return data as DeliveryDetailNowAPI;
+  }
+
+  /** Send compressed menu images to the AI extractor. Throws on failure. */
+  async extractFromImages(args: ExtractFromImagesArgs): Promise<DeliveryDetailNowAPI> {
+    let data: any;
+    try {
+      data = await firstValueFrom(
+        this.deliveryService.getDetailDeliveryFromImagesApi(args.files).pipe(
+          take(1),
+          timeout(90000),
+        ),
+      );
+    } catch {
+      throw new Error(
+        'Không kết nối được API trích xuất menu từ ảnh. Kiểm tra mạng hoặc bấm "Tải lại APIURL" rồi thử lại.',
+      );
+    }
+    if (!data || typeof data !== 'object' || data.result !== 'success') {
+      throw new Error(
+        'Không nhận dạng được menu từ ảnh. Vui lòng chụp rõ hơn hoặc thử ảnh khác.',
+      );
+    }
+    return data as DeliveryDetailNowAPI;
+  }
+
+  /**
+   * Promote the editing lock into a real, active order using a scraped payload that the
+   * orderer has already reviewed/edited. Caller is responsible for showing the review UI
+   * between extract() and commitDelivery().
+   */
+  async commitDelivery(deliveryKey: string, args: CommitDeliveryArgs): Promise<void> {
+    const patch: Partial<DeliveryDTO> = {
+      isEdit: false,
+      isCreate: true,
+      isCompleted: false,
+      assignUserId: args.ordererKey,
+      remainingTime: args.minutes * 60 * 1000,
+      createDateTime: new Date().toISOString(),
+      delivery: args.scraped,
+    };
+    if (args.menuPhotos && args.menuPhotos.length) patch.menuPhotos = args.menuPhotos;
+    await this.deliveryService.update(deliveryKey, patch);
   }
 }

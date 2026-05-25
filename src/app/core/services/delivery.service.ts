@@ -22,6 +22,12 @@ export class DeliveryService {
     return this.http.get(`${this.config.getApiUrl()}/get-detail?url=${param}`);
   }
 
+  getDetailDeliveryFromImagesApi(files: File[]): Observable<any> {
+    const form = new FormData();
+    for (const f of files) form.append('files', f, f.name);
+    return this.http.post(`${this.config.getApiUrl()}/extract-from-image`, form);
+  }
+
   getAll(): Observable<DeliveryRO[]> {
     return new Observable((observer) => {
       onValue(

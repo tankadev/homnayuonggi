@@ -323,3 +323,85 @@
   text-align: center;
   line-height: 16px;
 }
+
+/* ─── Sized dishes ─────────────────────────────────────────── */
+.dish.has-sizes .dish-bottom {
+  align-items: flex-start;
+}
+.size-range {
+  width: 100%;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+.size-range .size-sep {
+  font-size: 11px;
+  color: var(--muted);
+  font-weight: 600;
+  margin-left: 2px;
+}
+.size-hint {
+  font-size: 10.5px;
+  color: var(--muted);
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+.size-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 100%;
+}
+.size-row {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 8px;
+  background: var(--surface-2);
+  border: 1px solid transparent;
+  border-radius: 8px;
+  transition: 0.12s;
+}
+.size-row:hover {
+  border-color: var(--line);
+  background: var(--surface);
+}
+.size-row.picked {
+  background: var(--primary-soft);
+  border-color: color-mix(in oklab, var(--primary) 40%, transparent);
+}
+.size-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink);
+}
+.size-row.picked .size-label { color: var(--primary-ink); }
+.size-price {
+  font-size: 12px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-2);
+}
+.add-btn.size-add {
+  width: 24px;
+  height: 24px;
+}
+.qty-stepper.small {
+  padding: 2px 4px;
+}
+.qty-stepper.small button {
+  width: 20px;
+  height: 20px;
+}
+.qty-stepper.small .count {
+  width: 18px;
+  font-size: 12px;
+  height: 14px;
+}
+.qty-stepper.small .count-num {
+  line-height: 14px;
+}

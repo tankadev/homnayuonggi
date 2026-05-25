@@ -8,6 +8,7 @@ import { UserRO } from '../../core/ro/user.ro';
 import {
   MockCartLine,
   MockDish,
+  MockDishSize,
   MockHistoryEntry,
   MockMember,
   MockMenuSection,
@@ -62,6 +63,18 @@ function summariseOptions(options: any): string | undefined {
   return extra > 0 ? `${names.join(', ')} +${extra}` : names.join(', ');
 }
 
+/** Extract a `sizes` list from a dish's first option-group with choices. Empty when none. */
+function extractSizes(d: Dish, fallbackPrice: number): MockDishSize[] {
+  const opts: any[] = (d.options as any) || [];
+  if (!Array.isArray(opts) || !opts.length) return [];
+  const group = opts.find((o) => Array.isArray(o?.choices) && o.choices.length);
+  if (!group) return [];
+  return group.choices.map((c: any) => ({
+    label: String(c.label ?? c.name ?? '').trim() || 'Lựa chọn',
+    price: Number(c.absolutePrice ?? c.price ?? fallbackPrice) || 0,
+  }));
+}
+
 /** Convert a Firebase Dish into the UI MockDish. */
 export function mapDish(d: Dish): MockDish {
   const key = String(d.id ?? d.name);
@@ -69,18 +82,51 @@ export function mapDish(d: Dish): MockDish {
   const full = priceValue(d.price);
   const hasDiscount = discount > 0 && discount < full;
   const finalPrice = hasDiscount ? discount : full;
+  const sizes = extractSizes(d, finalPrice);
   return {
     id: key,
     name: d.name || '(không tên)',
     desc: d.description || '',
-    options: summariseOptions(d.options),
-    price: finalPrice,
+    /* Only show the legacy "Tùy chọn: …" hint for non-size option groups —
+       size choices have their own pill UI in the dish card. */
+    options: sizes.length ? undefined : summariseOptions(d.options),
+    price: sizes.length ? Math.min(...sizes.map((s) => s.price)) : finalPrice,
     originalPrice: hasDiscount ? full : undefined,
     photoUrl: pickDishPhoto(d.photos),
     img: dishImageGradient(key),
     out: d.isAvailable === false || d.isDelete === true || d.isActive === false,
     votes: Number(d.totalLike || 0) || undefined,
+    sizes: sizes.length ? sizes : undefined,
   };
+}
+
+/** Build the composite cart key used to differentiate (dish × size) lines. */
+export function dishLineKey(dishId: string, sizeLabel?: string | null): string {
+  return sizeLabel ? `${dishId}#${sizeLabel}` : dishId;
+}
+
+/** Flatten menu sections into all orderable units — sized dishes become one
+ *  virtual MockDish per size so dishMap[compositeKey] resolves in the cart. */
+export function expandOrderableDishes(menu: MockMenuSection[]): MockDish[] {
+  const out: MockDish[] = [];
+  for (const s of menu) {
+    for (const d of s.items) {
+      if (d.sizes && d.sizes.length) {
+        for (const sz of d.sizes) {
+          out.push({
+            ...d,
+            id: dishLineKey(d.id, sz.label),
+            name: `${d.name} (${sz.label})`,
+            price: sz.price,
+            sizes: undefined,
+          });
+        }
+      } else {
+        out.push(d);
+      }
+    }
+  }
+  return out;
 }
 
 export interface PlaceOrderViewState {
@@ -95,6 +141,8 @@ export interface PlaceOrderViewState {
   };
   menu: MockMenuSection[];
   vouchers: MockVoucher[];
+  /** Source menu photos the orderer uploaded (base64 dataURLs). Empty when URL-mode. */
+  menuPhotos: string[];
   /** Total seconds the room started with (for the countdown ring max). */
   totalSeconds: number;
   /** Seconds remaining at the moment of mapping. */
@@ -142,6 +190,7 @@ export function mapDelivery(delivery: DeliveryRO | null, now = Date.now()): Plac
     },
     menu,
     vouchers,
+    menuPhotos: delivery.menuPhotos || [],
     totalSeconds: total,
     secondsLeft: left,
   };
@@ -240,24 +289,45 @@ export function mapHistory(
     }));
 }
 
-/** Find an OrderRO whose dish.id (or name) matches the given dishId; null if none. */
-export function findOrderByDish(orders: OrderRO[], roomKey: string, dishId: string): OrderRO | null {
+/** Find an OrderRO whose dish.id matches the given composite cart key; null if none. */
+export function findOrderByDish(orders: OrderRO[], roomKey: string, lineKey: string): OrderRO | null {
   for (const o of orders) {
     if (o.roomKey !== roomKey) continue;
     const oid = String(o.dish?.id ?? o.dish?.name ?? o.key);
-    if (oid === dishId) return o;
+    if (oid === lineKey) return o;
   }
   return null;
 }
 
-/** Find a dish from delivery.menus by id. */
-export function findDishInDelivery(delivery: DeliveryRO | null, dishId: string): Dish | null {
+/** Find a dish from delivery.menus by base id (i.e. *not* the composite cart key). */
+export function findDishInDelivery(delivery: DeliveryRO | null, baseDishId: string): Dish | null {
   if (!delivery?.delivery?.menus) return null;
   for (const m of delivery.delivery.menus) {
     for (const d of m.dishes || []) {
       const key = String(d.id ?? d.name);
-      if (key === dishId) return d;
+      if (key === baseDishId) return d;
     }
   }
   return null;
+}
+
+/** Clone a raw Dish into the variant that will be persisted in OrderRO. When a size
+ *  is picked we rewrite id/name/price so cart, payment-review and history naturally
+ *  show the chosen variant without needing extra schema fields. */
+export function buildOrderDish(
+  base: Dish,
+  lineKey: string,
+  sizeLabel?: string | null,
+  sizePrice?: number,
+): Dish {
+  if (!sizeLabel) return base;
+  const clone: any = JSON.parse(JSON.stringify(base));
+  clone.id = lineKey;
+  clone.name = `${base.name || ''} (${sizeLabel})`.trim();
+  clone.price = { text: String(sizePrice ?? ''), unit: 'VND', value: sizePrice ?? 0 };
+  /* Drop options on the stored variant — we've already collapsed the choice into
+     the line. Otherwise the dish would still look "sized" when re-rendered. */
+  clone.options = [];
+  clone.hasSize = false;
+  return clone as Dish;
 }

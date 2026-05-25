@@ -10,6 +10,11 @@ export interface MockMember {
   owner?: boolean;
 }
 
+export interface MockDishSize {
+  label: string;
+  price: number;
+}
+
 export interface MockDish {
   id: string;
   name: string;
@@ -24,6 +29,9 @@ export interface MockDish {
   out?: boolean;
   popular?: boolean;
   votes?: number;
+  /** When present, this dish must be ordered by picking one of these sizes. The
+   *  cart, history and payment-review treat each (dish × size) as its own line. */
+  sizes?: MockDishSize[];
 }
 
 export interface MockMenuSection {

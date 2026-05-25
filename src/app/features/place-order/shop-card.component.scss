@@ -175,3 +175,100 @@
   color: var(--muted);
   line-height: 1.4;
 }
+
+/* ─── Source menu photos (image-mode) ──────────────────────── */
+.menu-photos {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 10px;
+  background: var(--surface-2);
+  border-radius: 12px;
+  border: 1px dashed var(--line);
+}
+.menu-photos-head {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+}
+.menu-photos-head app-icon { color: var(--primary); }
+.menu-photos-strip {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  padding-bottom: 2px;
+}
+.menu-photos-strip::-webkit-scrollbar { height: 4px; }
+.menu-photos-strip::-webkit-scrollbar-thumb {
+  background: color-mix(in oklab, var(--ink) 20%, transparent);
+  border-radius: 99px;
+}
+.menu-photo {
+  appearance: none;
+  flex-shrink: 0;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 0;
+  overflow: hidden;
+  cursor: zoom-in;
+  transition: 0.15s;
+}
+.menu-photo:hover {
+  border-color: var(--primary);
+  transform: translateY(-1px);
+}
+.menu-photo img {
+  display: block;
+  width: 64px;
+  height: 64px;
+  object-fit: cover;
+}
+
+.shop-lightbox {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 18, 17, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 300;
+  padding: 24px;
+  overflow: auto;
+}
+.shop-lightbox img {
+  /* Bound against the viewport (minus padding) — `100%` of the flex parent
+     doesn't constrain a child img that's intrinsically taller than the box. */
+  max-width: calc(100vw - 48px);
+  max-height: calc(100vh - 48px);
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  border-radius: 8px;
+  box-shadow: 0 30px 80px -20px rgba(0, 0, 0, 0.6);
+  cursor: default;
+}
+.shop-lightbox-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  appearance: none;
+  background: rgba(255, 255, 255, 0.18);
+  color: white;
+  border: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  backdrop-filter: blur(8px);
+}
+.shop-lightbox-close:hover {
+  background: rgba(255, 255, 255, 0.32);
+}

@@ -11,6 +11,7 @@ export class DeliveryRO {
   createDateTime?: string;
   assignUserId?: string;
   delivery?: DeliveryDetailNowAPI;
+  menuPhotos?: string[];
   shippingFee?: number;
   serviceFee?: number;
   sponsorPrice?: number;

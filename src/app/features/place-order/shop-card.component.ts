@@ -15,6 +15,17 @@ export class ShopCardComponent {
   @Input() avatarEmoji = '🍚';
   /** Shop photo URL — when present, the avatar shows the real image instead of the emoji. */
   @Input() photoUrl: string | null = null;
+  /** Source menu photos the orderer uploaded (when image-mode was used). */
+  @Input() menuPhotos: string[] = [];
+
+  lightboxSrc: string | null = null;
+  openMenuPhoto(src: string): void {
+    this.lightboxSrc = src;
+  }
+  closeLightbox(): void {
+    this.lightboxSrc = null;
+  }
+  trackByPhoto = (i: number, _: string) => i;
 
   /** Pick a shop-name size class that shrinks once the name gets long. */
   get nameSizeClass(): 'sm' | 'xs' | '' {

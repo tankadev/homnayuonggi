@@ -1,7 +1,14 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { animate, style, transition, trigger } from '@angular/animations';
 
-import { MockCartLine, MockMenuSection } from './mock-data';
+import { MockCartLine, MockDish, MockDishSize, MockMenuSection } from './mock-data';
+import { dishLineKey } from './place-order.adapter';
+
+export interface DishAddEvent {
+  dishId: string;
+  sizeLabel?: string;
+  sizePrice?: number;
+}
 
 @Component({
   selector: 'app-dish-menu',
@@ -27,8 +34,8 @@ export class DishMenuComponent {
   @Input() section!: MockMenuSection;
   @Input() myCart: MockCartLine[] = [];
 
-  @Output() add = new EventEmitter<string>();
-  @Output() minus = new EventEmitter<string>();
+  @Output() add = new EventEmitter<DishAddEvent>();
+  @Output() minus = new EventEmitter<DishAddEvent>();
 
   /** Dish ids whose image finished loading — used to fade it in over the placeholder. */
   loaded: Record<string, boolean> = {};
@@ -39,9 +46,37 @@ export class DishMenuComponent {
     return Math.min(...this.section.items.map((d) => d.price));
   }
 
-  qtyFor(dishId: string): number {
-    return this.myCart.filter((l) => l.dishId === dishId).reduce((n, l) => n + l.qty, 0);
+  /** Total qty across all sizes (or just this dish when sizes are absent). */
+  qtyFor(d: MockDish): number {
+    if (d.sizes && d.sizes.length) {
+      return d.sizes.reduce((n, s) => n + this.qtyForSize(d, s), 0);
+    }
+    return this.myCart.filter((l) => l.dishId === d.id).reduce((n, l) => n + l.qty, 0);
   }
+
+  qtyForSize(d: MockDish, s: MockDishSize): number {
+    const key = dishLineKey(d.id, s.label);
+    return this.myCart.filter((l) => l.dishId === key).reduce((n, l) => n + l.qty, 0);
+  }
+
+  emitAdd(d: MockDish, s?: MockDishSize): void {
+    if (s) this.add.emit({ dishId: d.id, sizeLabel: s.label, sizePrice: s.price });
+    else this.add.emit({ dishId: d.id });
+  }
+
+  emitMinus(d: MockDish, s?: MockDishSize): void {
+    if (s) this.minus.emit({ dishId: d.id, sizeLabel: s.label, sizePrice: s.price });
+    else this.minus.emit({ dishId: d.id });
+  }
+
+  /** "15k – 30k" when sized, or just the single price (template formats via pipe). */
+  sizePriceRange(d: MockDish): { min: number; max: number } | null {
+    if (!d.sizes || !d.sizes.length) return null;
+    const prices = d.sizes.map((s) => s.price);
+    return { min: Math.min(...prices), max: Math.max(...prices) };
+  }
+
+  trackBySize = (_: number, s: MockDishSize) => s.label;
 
   onImgLoaded(dishId: string): void {
     this.loaded[dishId] = true;

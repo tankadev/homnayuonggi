@@ -11,6 +11,9 @@ import {
 } from './mock-data';
 import { RoomDraft } from './modals/room-draft';
 import {
+  buildOrderDish,
+  dishLineKey,
+  expandOrderableDishes,
   findDishInDelivery,
   findOrderByDish,
   mapDelivery,
@@ -19,6 +22,7 @@ import {
   mapMembers,
   mapOrders,
 } from './place-order.adapter';
+import { DishAddEvent } from './dish-menu.component';
 
 import { AuthService } from '../../core/services/auth.service';
 import { DeliveryService } from '../../core/services/delivery.service';
@@ -62,6 +66,7 @@ export class PlaceOrderPageComponent implements OnInit, OnChanges, OnDestroy {
   members: MockMember[] = [];
   vouchers: MockVoucher[] = [];
   menu: MockMenuSection[] = [];
+  menuPhotos: string[] = [];
   history: MockHistoryEntry[] = [];
   cart: MockCartLine[] = [];
 
@@ -162,7 +167,10 @@ export class PlaceOrderPageComponent implements OnInit, OnChanges, OnDestroy {
 
   /* ─── derived getters used by template ────────────────────── */
   get allDishes(): MockDish[] {
-    return this.menu.flatMap((s) => s.items);
+    /* Expand sized dishes into per-size virtual entries so cart lookups by composite
+       key (`${dishId}#${sizeLabel}`) resolve. The menu UI itself still iterates the
+       logical section.items, which keep `sizes` for the picker. */
+    return expandOrderableDishes(this.menu);
   }
   trackBySection = (_: number, s: MockMenuSection) => s.id;
   get dishMap(): Record<string, MockDish> {
@@ -257,6 +265,7 @@ export class PlaceOrderPageComponent implements OnInit, OnChanges, OnDestroy {
     if (view) {
       this.shop = view.shop;
       this.menu = view.menu;
+      this.menuPhotos = view.menuPhotos;
       this.vouchers = view.vouchers;
       this.totalSeconds = view.totalSeconds;
       /* Anchor the countdown to delivery's createDateTime + remainingTime so tick()
@@ -271,6 +280,7 @@ export class PlaceOrderPageComponent implements OnInit, OnChanges, OnDestroy {
       /* Delivery vanished — reset menu so the user isn't confused. */
       this.shop = { name: '—', rating: 0, reviews: '—', address: '', url: '', avatarEmoji: '🍚', photoUrl: null };
       this.menu = [];
+      this.menuPhotos = [];
       this.vouchers = [];
       this.totalSeconds = 0;
       this.secondsLeft = 0;
@@ -295,11 +305,12 @@ export class PlaceOrderPageComponent implements OnInit, OnChanges, OnDestroy {
 
   /* ─── cart mutations ──────────────────────────────────────── */
 
-  async onAdd(dishId: string): Promise<void> {
+  async onAdd(ev: DishAddEvent | string): Promise<void> {
+    const evt = this.normalizeEvent(ev);
     const me = this.auth.currentUser;
     if (!me || !this.room) return;
-    const dishMeta = findDishInDelivery(this.delivery, dishId);
-    const existing = findOrderByDish(this.rawOrders, this.room.key, dishId);
+    const lineKey = dishLineKey(evt.dishId, evt.sizeLabel);
+    const existing = findOrderByDish(this.rawOrders, this.room.key, lineKey);
 
     if (existing) {
       const notes = [...(existing.userNotes || [])];
@@ -311,21 +322,25 @@ export class PlaceOrderPageComponent implements OnInit, OnChanges, OnDestroy {
       }
       await this.orderService.updateOrder(existing.key, { userNotes: notes });
     } else {
+      const dishMeta = findDishInDelivery(this.delivery, evt.dishId);
       if (!dishMeta) return;
+      const variant = buildOrderDish(dishMeta, lineKey, evt.sizeLabel, evt.sizePrice);
       const dto: OrderDTO = {
         roomKey: this.room.key,
-        dish: dishMeta,
+        dish: variant,
         userNotes: [{ userId: me.key, content: '', quantity: 1 }],
       };
       await this.orderService.addOrder(dto);
     }
-    this.logHistory(0, this.dishName(dishId));
+    this.logHistory(0, this.dishName(lineKey));
   }
 
-  async onMinus(dishId: string): Promise<void> {
+  async onMinus(ev: DishAddEvent | string): Promise<void> {
+    const evt = this.normalizeEvent(ev);
     const me = this.auth.currentUser;
     if (!me || !this.room) return;
-    const existing = findOrderByDish(this.rawOrders, this.room.key, dishId);
+    const lineKey = dishLineKey(evt.dishId, evt.sizeLabel);
+    const existing = findOrderByDish(this.rawOrders, this.room.key, lineKey);
     if (!existing) return;
     const notes = [...(existing.userNotes || [])];
     const idx = notes.findIndex((n) => n.userId === me.key);
@@ -338,11 +353,22 @@ export class PlaceOrderPageComponent implements OnInit, OnChanges, OnDestroy {
       } else {
         await this.orderService.updateOrder(existing.key, { userNotes: notes });
       }
-      this.logHistory(1, this.dishName(dishId));
+      this.logHistory(1, this.dishName(lineKey));
     } else {
       notes[idx] = { ...cur, quantity: cur.quantity - 1 };
       await this.orderService.updateOrder(existing.key, { userNotes: notes });
     }
+  }
+
+  /** cart-panel still emits the legacy `string` dishId (composite or bare) — normalize
+   *  to a DishAddEvent so both call sites can share the size-aware code path. */
+  private normalizeEvent(ev: DishAddEvent | string): DishAddEvent {
+    if (typeof ev === 'string') {
+      const hash = ev.indexOf('#');
+      if (hash > 0) return { dishId: ev.slice(0, hash), sizeLabel: ev.slice(hash + 1) };
+      return { dishId: ev };
+    }
+    return ev;
   }
 
   /* ─── modal handlers ─────────────────────────────────────── */

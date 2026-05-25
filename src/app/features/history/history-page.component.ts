@@ -166,35 +166,72 @@ export class HistoryPageComponent implements OnInit, OnDestroy, AfterViewInit {
   get peopleBalance(): { id: string; amt: number; member: HMember }[] {
     const bal = this.balance;
     return Object.entries(bal.map)
-      .map(([id, amt]) => ({ id, amt, member: this.membersMap[id] }))
-      .filter((p) => p.member)
+      .map(([id, amt]) => ({
+        id,
+        amt,
+        member: this.membersMap[id] || { id, name: 'Người dùng cũ', initial: '?' },
+      }))
       .sort((a, b) => Math.abs(b.amt) - Math.abs(a.amt));
   }
 
+  /** "Mọi người đang nợ bạn" — computed DIRECTLY from orders, not from the net map.
+   *  Going through `balance.map` netted offsetting pairs to 0 (e.g. A owes me 45k in
+   *  one order and I owe A 45k in another), which silently dropped the row even
+   *  though the user still wants to see both sides. */
   get owedPairs(): PairEntry[] {
-    return this.peopleBalance
-      .filter((p) => p.amt > 0)
-      .map((p) => ({
-        ...p,
-        unpaidOrders: this.orders.filter(
-          (o) => o.ownerId === this.meId && o.payers.some((pp) => pp.memberId === p.id && !pp.paid),
-        ).length,
-      }));
+    const sum: Record<string, number> = {};
+    const count: Record<string, number> = {};
+    for (const o of this.orders) {
+      if (o.ownerId !== this.meId) continue;
+      for (const p of o.payers) {
+        if (p.paid) continue;
+        sum[p.memberId] = (sum[p.memberId] || 0) + p.share;
+        count[p.memberId] = (count[p.memberId] || 0) + 1;
+      }
+    }
+    return Object.entries(sum)
+      .map(([id, amt]) => ({
+        id,
+        amt,
+        member: this.membersMap[id] || { id, name: 'Người dùng cũ', initial: '?' },
+        unpaidOrders: count[id] || 0,
+      }))
+      .sort((a, b) => b.amt - a.amt);
   }
+
+  /** "Bạn đang nợ mọi người" — symmetric counterpart, also rebuilt from orders. */
   get owePairs(): PairEntry[] {
-    return this.peopleBalance
-      .filter((p) => p.amt < 0)
-      .map((p) => ({
-        ...p,
-        unpaidOrders: this.orders.filter(
-          (o) => o.ownerId === p.id && o.payers.some((pp) => pp.memberId === this.meId && !pp.paid),
-        ).length,
-      }));
+    const sum: Record<string, number> = {};
+    const count: Record<string, number> = {};
+    for (const o of this.orders) {
+      if (o.ownerId === this.meId) continue;
+      const mine = o.payers.find((p) => p.memberId === this.meId);
+      if (!mine || mine.paid) continue;
+      sum[o.ownerId] = (sum[o.ownerId] || 0) + mine.share;
+      count[o.ownerId] = (count[o.ownerId] || 0) + 1;
+    }
+    return Object.entries(sum)
+      .map(([id, amt]) => ({
+        id,
+        /* Negative to match pairs-card's `direction="negative"` styling (it picks
+           sign based on `direction`, but amt sign keeps the data honest). */
+        amt: -amt,
+        member: this.membersMap[id] || { id, name: 'Người dùng cũ', initial: '?' },
+        unpaidOrders: count[id] || 0,
+      }))
+      .sort((a, b) => Math.abs(b.amt) - Math.abs(a.amt));
   }
 
   get allClearMembers(): HMember[] {
-    const map = this.balance.map;
-    return Object.values(this.membersMap).filter((m) => m.id !== this.meId && !map[m.id]);
+    /* Someone is "sòng phẳng" only if they don't appear in either direction.
+       Going through `balance.map` would mark a netted-to-zero pair as clear,
+       which is misleading when both sides still have outstanding orders. */
+    const involved = new Set<string>();
+    for (const p of this.owedPairs) involved.add(p.id);
+    for (const p of this.owePairs) involved.add(p.id);
+    return Object.values(this.membersMap).filter(
+      (m) => m.id !== this.meId && !involved.has(m.id),
+    );
   }
 
   get filteredOrders(): HOrder[] {

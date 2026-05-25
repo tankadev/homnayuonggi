@@ -39,7 +39,21 @@
     </div>
   </dl>
 
-  <div class="qr-wrap">
+  <div *ngIf="menuPhotos?.length" class="menu-photos">
+    <div class="menu-photos-head">
+      <app-icon name="image" [size]="12"></app-icon>
+      Ảnh menu gốc ({{ menuPhotos.length }})
+    </div>
+    <div class="menu-photos-strip">
+      <button *ngFor="let p of menuPhotos; let i = index; trackBy: trackByPhoto"
+              type="button" class="menu-photo" (click)="openMenuPhoto(p)"
+              [attr.aria-label]="'Xem ảnh menu ' + (i + 1)">
+        <img [src]="p" alt="Ảnh menu" loading="lazy"/>
+      </button>
+    </div>
+  </div>
+
+  <div *ngIf="url" class="qr-wrap">
     <div class="qr-frame">
       <svg viewBox="0 0 21 21" width="84" height="84" shape-rendering="crispEdges">
         <rect width="21" height="21" fill="white"/>
@@ -57,3 +71,10 @@
     </div>
   </div>
 </section>
+
+<div *ngIf="lightboxSrc" class="shop-lightbox" (click)="closeLightbox()" role="dialog" aria-label="Ảnh menu">
+  <button type="button" class="shop-lightbox-close" (click)="closeLightbox()" aria-label="Đóng">
+    <app-icon name="x" [size]="18" [sw]="2.4"></app-icon>
+  </button>
+  <img [src]="lightboxSrc" alt="Ảnh menu" (click)="$event.stopPropagation()"/>
+</div>
