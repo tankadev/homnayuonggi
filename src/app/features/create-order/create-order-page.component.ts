@@ -400,7 +400,7 @@ export class CreateOrderPageComponent implements OnInit, OnDestroy {
     this.url = '';
   }
 
-  /** Form "Xác nhận" → run the extractor, move to the review step. */
+  /** Form "Xác nhận" → URL flow commits straight from the scraper; images go through review. */
   async submit(): Promise<void> {
     this.touched = true;
     this.errorMsg = null;
@@ -417,19 +417,18 @@ export class CreateOrderPageComponent implements OnInit, OnDestroy {
     this.submitting = true;
     this.view = 'extracting';
     try {
-      let scraped: DeliveryDetailNowAPI;
-      let photos: string[] = [];
       if (this.inputMode === 'url') {
         this.extractStage = 'analyzing';
-        scraped = await this.flow.extractFromUrl({ url: this.url.trim() });
-      } else {
-        /* Compress first so we POST smaller files AND save the dataURL for embed. */
-        this.extractStage = 'compressing';
-        const compressed = await Promise.all(this.images.map((p) => compressImage(p.file)));
-        photos = compressed.map((c) => c.dataUrl);
-        this.extractStage = 'uploading';
-        scraped = await this.flow.extractFromImages({ files: compressed.map((c) => c.file) });
+        const scraped = await this.flow.extractFromUrl({ url: this.url.trim() });
+        await this.commitScrapedDirect(scraped);
+        return;
       }
+      /* Compress first so we POST smaller files AND save the dataURL for embed. */
+      this.extractStage = 'compressing';
+      const compressed = await Promise.all(this.images.map((p) => compressImage(p.file)));
+      const photos = compressed.map((c) => c.dataUrl);
+      this.extractStage = 'uploading';
+      const scraped = await this.flow.extractFromImages({ files: compressed.map((c) => c.file) });
       this.populateReview(scraped, photos);
       this.view = 'review';
     } catch (e: any) {
@@ -437,6 +436,41 @@ export class CreateOrderPageComponent implements OnInit, OnDestroy {
       this.view = 'form';
     } finally {
       this.submitting = false;
+    }
+  }
+
+  /** URL flow: commit the scraped payload directly, skipping the review step. */
+  private async commitScrapedDirect(scraped: DeliveryDetailNowAPI): Promise<void> {
+    const orderer = this.orderer;
+    if (!orderer) {
+      this.errorMsg = 'Chưa chọn người đứng tên đặt hàng.';
+      this.view = 'form';
+      return;
+    }
+    const key = this.myDeliveryKey;
+    if (!key) {
+      this.errorMsg = 'Đã mất phiên tạo bình chọn. Vui lòng đóng và mở lại.';
+      this.view = 'form';
+      return;
+    }
+    this.myDeliveryKey = null;
+    try {
+      await this.flow.commitDelivery(key, {
+        scraped,
+        minutes: this.minutes,
+        ordererKey: orderer.id,
+      });
+      this.showToast(orderer.name, !!orderer.me, this.minutes);
+      this.resetImages();
+      this.resetReview();
+      this.url = '';
+      this.inputMode = 'url';
+      this.view = 'empty';
+      this.created.emit();
+    } catch (e: any) {
+      this.myDeliveryKey = key;
+      this.errorMsg = e?.message || 'Không tạo được bình chọn. Thử lại?';
+      this.view = 'form';
     }
   }
 
