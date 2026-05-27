@@ -223,14 +223,28 @@ export class HistoryPageComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   get allClearMembers(): HMember[] {
-    /* Someone is "sòng phẳng" only if they don't appear in either direction.
-       Going through `balance.map` would mark a netted-to-zero pair as clear,
-       which is misleading when both sides still have outstanding orders. */
+    /* "Sòng phẳng" requires BOTH:
+       (a) at least one past direct money flow with me — they were the orderer of an
+           order I paid into, OR they were a payer in an order I ordered. Co-payers
+           with me in someone else's order don't count: no money ever moved between us.
+       (b) no outstanding debt either way (not in owedPairs/owePairs).
+       Going through balance.map would net offsetting pairs to 0 and silently hide them,
+       so we check (b) against the raw unpaid sets instead. */
+    const hadInteraction = new Set<string>();
+    for (const o of this.orders) {
+      if (o.ownerId === this.meId) {
+        for (const p of o.payers) {
+          if (p.memberId !== this.meId) hadInteraction.add(p.memberId);
+        }
+      } else if (o.payers.some((p) => p.memberId === this.meId)) {
+        hadInteraction.add(o.ownerId);
+      }
+    }
     const involved = new Set<string>();
     for (const p of this.owedPairs) involved.add(p.id);
     for (const p of this.owePairs) involved.add(p.id);
     return Object.values(this.membersMap).filter(
-      (m) => m.id !== this.meId && !involved.has(m.id),
+      (m) => m.id !== this.meId && hadInteraction.has(m.id) && !involved.has(m.id),
     );
   }
 
