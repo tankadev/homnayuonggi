@@ -35,15 +35,18 @@
       [cart]="cart"
       [members]="members"
       [dishes]="allDishes"
+      [menu]="menu"
       [secondsLeft]="secondsLeft"
       [totalSeconds]="totalSeconds"
       [isOrderer]="isOrderer"
       [ordererName]="ordererName"
+      [viewMode]="cartViewMode"
       (addItem)="onAdd($event)"
       (minusItem)="onMinus($event)"
       (editNote)="onEditNote($event)"
       (clearAll)="askClear()"
       (submit)="askSubmit()"
+      (viewModeChange)="onCartViewModeChange($event)"
     ></app-cart-panel>
   </div>
 </main>

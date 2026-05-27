@@ -60,6 +60,10 @@ export class LocalStorageService {
     return localStorage.getItem(LocalStorage.THEME);
   }
 
+  getCartViewMode(): 'flat' | 'menu' {
+    return localStorage.getItem(LocalStorage.CART_VIEW_MODE) === 'menu' ? 'menu' : 'flat';
+  }
+
   setUser(user: UserRO) {
     localStorage.setItem(LocalStorage.USER_INFO, JSON.stringify(user));
   }
@@ -94,6 +98,10 @@ export class LocalStorageService {
 
   setTheme(theme: string) {
     localStorage.setItem(LocalStorage.THEME, theme);
+  }
+
+  setCartViewMode(mode: 'flat' | 'menu') {
+    localStorage.setItem(LocalStorage.CART_VIEW_MODE, mode);
   }
 
   setMyRoomsPwd(roomPwd: RoomPwdModel) {

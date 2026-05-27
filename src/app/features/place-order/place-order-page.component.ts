@@ -73,6 +73,9 @@ export class PlaceOrderPageComponent implements OnInit, OnChanges, OnDestroy {
   totalSeconds = 0;
   secondsLeft = 0;
 
+  /** Cart-list display mode — persisted per user in localStorage. */
+  cartViewMode: 'flat' | 'menu' = 'flat';
+
   /* ─── modal state ─────────────────────────────────────────── */
   editingNote: MockCartLine | null = null;
   cancelOpen = false;
@@ -113,11 +116,17 @@ export class PlaceOrderPageComponent implements OnInit, OnChanges, OnDestroy {
 
   ngOnInit(): void {
     if (this.room) this.refreshRoomDraft(this.room);
+    this.cartViewMode = this.storage.getCartViewMode();
     /* Paint immediately from the last cached snapshot so F5 doesn't flash a blank
        3-col layout while waiting for the 4 combineLatest streams to all resolve. */
     this.hydrateFromCache();
     this.subscribeAll();
     this.tickId = window.setInterval(() => this.tick(), 1000);
+  }
+
+  onCartViewModeChange(mode: 'flat' | 'menu'): void {
+    this.cartViewMode = mode;
+    this.storage.setCartViewMode(mode);
   }
 
   private hydrateFromCache(): void {

@@ -55,7 +55,9 @@ export type IconName =
   | 'at'
   | 'bolt'
   | 'image'
-  | 'upload';
+  | 'upload'
+  | 'list'
+  | 'layers';
 
 const PATHS: Record<IconName, string> = {
   lock: '<rect x="4" y="11" width="16" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>',
@@ -128,6 +130,10 @@ const PATHS: Record<IconName, string> = {
     '<rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="m21 17-5-5-9 9"/>',
   upload:
     '<path d="M12 16V4"/><path d="m6 10 6-6 6 6"/><path d="M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3"/>',
+  list:
+    '<path d="M8 6h13"/><path d="M8 12h13"/><path d="M8 18h13"/><circle cx="4" cy="6" r="1.2" fill="currentColor"/><circle cx="4" cy="12" r="1.2" fill="currentColor"/><circle cx="4" cy="18" r="1.2" fill="currentColor"/>',
+  layers:
+    '<path d="M12 3 2 8l10 5 10-5-10-5Z"/><path d="m2 13 10 5 10-5"/>',
 };
 
 @Component({

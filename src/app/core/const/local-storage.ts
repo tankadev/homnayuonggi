@@ -10,4 +10,5 @@ export class LocalStorage {
   static ROOM_PWD_LIST = 'room_pwd_list';
   static PAYMENT_PAID_LIST = 'payment_paid_list';
   static THEME = 'tug_theme';
+  static CART_VIEW_MODE = 'cart_view_mode';
 }
