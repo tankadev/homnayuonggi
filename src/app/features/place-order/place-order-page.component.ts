@@ -453,8 +453,9 @@ export class PlaceOrderPageComponent implements OnInit, OnChanges, OnDestroy {
       }
     }
 
-    /* Type 0 = chia đều, 2 = người đặt tài trợ 100%. */
-    const splitType = result.splitMode === 'sponsor' ? 2 : 0;
+    /* splitMoney.type: 0 = chia đều (legacy / set explicitly by payment-review toggle),
+       1 = chia theo món (default for new non-sponsor orders), 2 = người đặt tài trợ 100%. */
+    const splitType = result.splitMode === 'sponsor' ? 2 : 1;
 
     try {
       await this.deliveryService.update(this.delivery.key, {
@@ -492,19 +493,19 @@ export class PlaceOrderPageComponent implements OnInit, OnChanges, OnDestroy {
         usersPaid.push({ userId: ordererId, moneyPaid: result.total, isPaid: true });
       }
     } else {
-      /* Equal mode = each pays for their own dishes + fees/discount chia đều theo đầu người.
-         (Matches calcShares() in payment-review/mock-data.ts.) */
-      const shipShare = Math.round(result.shipping / n);
-      const serviceShare = Math.round(result.serviceFee / n);
-      const discShare = Math.round(result.discount / n);
+      /* Items mode (default) = pay for own dishes, fees/discount split proportionally to
+         subtotal. Matches calcShares() with mode='items' in payment-review/mock-data.ts so
+         the snapshot bill stays aligned with what payment-review displays by default. */
       usersPaid = memberIds.map((uid) => {
         const sub = subByMember[uid] || 0;
-        const moneyPaid = Math.max(0, sub + shipShare + serviceShare - discShare);
+        const r = subtotalAll === 0 ? 1 / n : sub / subtotalAll;
+        const moneyPaid = Math.max(
+          0,
+          Math.round(sub + result.shipping * r + result.serviceFee * r - result.discount * r),
+        );
         return { userId: uid, moneyPaid, isPaid: uid === ordererId };
       });
     }
-    /* Silence the unused-var warning — subtotalAll is kept for future "items" split mode. */
-    void subtotalAll;
 
     /* Skip writing /paymentsPaid when there's nothing to collect — i.e. only the orderer
        ordered, or sponsor mode where the orderer covers 100%. Saves an RTDB record that
