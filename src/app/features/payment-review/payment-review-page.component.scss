@@ -306,6 +306,34 @@
     0 12px 28px -8px color-mix(in oklab, var(--accent, #c14e63) 70%, transparent),
     0 0 0 6px color-mix(in oklab, var(--accent, #c14e63) 14%, transparent);
 }
+/* Download FAB: paper/outline so it reads as a secondary action next to the
+   gradient "Tạo đơn mới" / confirm buttons. */
+.pr-fab-new-order.pr-fab-download {
+  background: var(--card, #fff);
+  color: var(--primary-ink);
+  border: 1.5px solid var(--line);
+  box-shadow: 0 10px 24px -10px color-mix(in oklab, var(--ink) 35%, transparent);
+}
+.pr-fab-new-order.pr-fab-download .pr-fab-icon {
+  background: var(--primary-soft);
+  border-color: color-mix(in oklab, var(--primary) 18%, transparent);
+  color: var(--primary-ink);
+}
+.pr-fab-new-order.pr-fab-download:hover {
+  transform: translateY(-2px) scale(1.02);
+  border-color: color-mix(in oklab, var(--primary) 40%, var(--line));
+  box-shadow: 0 16px 30px -10px color-mix(in oklab, var(--primary) 45%, transparent);
+}
+.pr-fab-new-order.pr-fab-download:hover .pr-fab-icon {
+  background: var(--primary);
+  color: #fff;
+  border-color: var(--primary);
+}
+.pr-fab-new-order.pr-fab-download:disabled {
+  opacity: 0.6;
+  cursor: progress;
+  transform: none;
+}
 @keyframes fab-in {
   from { transform: translateY(20px) scale(0.85); opacity: 0; }
   to { transform: translateY(0) scale(1); opacity: 1; }

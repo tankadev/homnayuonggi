@@ -113,6 +113,21 @@
 
 <div class="pr-fab-stack">
   <button
+    *ngIf="members.length"
+    type="button"
+    class="pr-fab-new-order pr-fab-download"
+    title="Tải ảnh thống kê đơn để gửi vào nhóm"
+    [disabled]="downloading"
+    (click)="downloadSummary()"
+  >
+    <span class="pr-fab-icon"><app-icon name="image" [size]="16"></app-icon></span>
+    <span class="pr-fab-label">
+      <b>{{ downloading ? 'Đang tạo ảnh…' : 'Tải ảnh thống kê' }}</b>
+      <em>gửi nhóm báo thanh toán</em>
+    </span>
+  </button>
+
+  <button
     *ngIf="isOwner && isAllPaid"
     type="button"
     class="pr-fab-new-order pr-fab-confirm"

@@ -17,6 +17,7 @@ import { combineLatest, Subscription } from 'rxjs';
 
 import { calcShares, PrMember, PrOrder, PrShare, SplitMode } from './mock-data';
 import { mapPaymentReview, pickActiveCompletedDelivery, pickPaymentForDelivery } from './payment-review.adapter';
+import { downloadPaymentSummaryImage } from '../../core/utils/payment-summary-image';
 
 import { AuthService } from '../../core/services/auth.service';
 import { DeliveryService } from '../../core/services/delivery.service';
@@ -55,6 +56,8 @@ export class PaymentReviewPageComponent implements OnInit, OnChanges, OnDestroy,
   filter: Filter = 'all';
 
   newOrderOpen = false;
+  /** True while the summary PNG is being rendered, to disable the button. */
+  downloading = false;
 
   /** Underline indicator pos/width — driven by ViewChild on the active tab. */
   underlineX = 0;
@@ -393,6 +396,83 @@ export class PaymentReviewPageComponent implements OnInit, OnChanges, OnDestroy,
     }
     this.confettiPieces = pieces;
     window.setTimeout(() => (this.confettiPieces = []), 2800);
+  }
+
+  /**
+   * Render a spreadsheet-style PNG of the order (one row per dish + Grand Total +
+   * payment info) and trigger a download, so the orderer can post it to the group
+   * chat and ask everyone to check & pay.
+   */
+  async downloadSummary(): Promise<void> {
+    const items = this.members.flatMap((m) =>
+      m.items.map((it) => ({
+        name: m.name,
+        dish: it.name,
+        note: it.note || '',
+        price: it.price,
+        qty: it.qty,
+        subtotal: it.price * it.qty,
+      })),
+    );
+    if (this.downloading || !items.length) return;
+    this.downloading = true;
+    try {
+      const o = this.order;
+      await downloadPaymentSummaryImage(
+        {
+          shop: o.shop,
+          shopSub: o.shopSub,
+          roomName: this.roomName,
+          dateLabel: this.formatOrderDate(this.delivery?.createDateTime),
+          ordererName: this.shares.find((s) => s.owner)?.name || 'Người đặt đơn',
+          appUrl: 'todayuonggi.vercel.app',
+          shipFee: o.shipFee,
+          serviceFee: o.serviceFee,
+          discount: o.voucher ? o.voucher.amount : 0,
+          itemsSubtotal: this.subtotal,
+          grand: this.grand,
+          totalQty: items.reduce((s, i) => s + i.qty, 0),
+          paymentLine: this.buildPaymentLine(),
+          items,
+        },
+        this.summaryFileName(),
+      );
+    } catch (err) {
+      console.error('[payment-review] failed to render summary image', err);
+    } finally {
+      this.downloading = false;
+    }
+  }
+
+  private buildPaymentLine(): string {
+    const o = this.order;
+    if (o.paymentMethod === 'bank') {
+      const parts = [o.bank.name, o.bank.acc, o.bank.holder].map((s) => s?.trim()).filter(Boolean);
+      return parts.length ? parts.join(' · ') : 'Chuyển khoản';
+    }
+    if (o.paymentMethod === 'momo') {
+      const parts = ['Momo', o.momo.phone, o.momo.holder].map((s) => s?.trim()).filter(Boolean);
+      return parts.length ? parts.join(' · ') : 'Momo';
+    }
+    return 'Tiền mặt';
+  }
+
+  private formatOrderDate(iso?: string): string {
+    const d = iso ? new Date(iso) : new Date();
+    if (isNaN(d.getTime())) return '';
+    return d.toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' });
+  }
+
+  private summaryFileName(): string {
+    const slug = (this.order.shop || 'don-hang')
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/đ/gi, 'd')
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '')
+      .slice(0, 40) || 'don-hang';
+    return `thanh-toan-${slug}.png`;
   }
 
   openNewOrder(): void {
