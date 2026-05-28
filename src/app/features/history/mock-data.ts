@@ -1,7 +1,12 @@
+import { PaymentLine } from '../../core/utils/payment-info';
+
 export interface HMember {
   id: string;
   name: string;
   initial: string;
+  phone?: string;
+  /** Display-ready payment methods (how to pay this person), owner-relevant. */
+  payments?: PaymentLine[];
 }
 
 export interface HPayer {

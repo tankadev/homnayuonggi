@@ -234,6 +234,89 @@
   flex-direction: column;
 }
 
+/* "How to pay the orderer" panel — shown to non-orderers so they know where to send money. */
+.h-pay-to {
+  margin: 4px 0 8px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: color-mix(in oklab, var(--primary-soft) 45%, var(--surface));
+  border: 1px solid color-mix(in oklab, var(--primary) 16%, var(--line-soft));
+}
+.h-pay-to-head {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--primary-ink);
+  margin-bottom: 8px;
+}
+.h-pay-to-head b { font-weight: 800; }
+.h-pay-to-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.h-pay-to-item {
+  display: grid;
+  grid-template-columns: 22px auto 1fr auto;
+  gap: 8px;
+  align-items: center;
+  font-size: 12.5px;
+}
+.h-pay-to-item .m-ico {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: var(--surface);
+  border: 1px solid var(--line-soft);
+  color: var(--primary-ink);
+}
+.h-pay-to-item.cash .m-ico { color: var(--muted); }
+.h-pay-to-item .m-label {
+  font-weight: 700;
+  color: var(--ink);
+  white-space: nowrap;
+}
+.h-pay-to-item .m-value {
+  color: var(--ink-2, var(--ink));
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.01em;
+  overflow-wrap: anywhere;
+  user-select: text;
+}
+.h-pay-to-item.cash .m-value { color: var(--muted); }
+.m-copy {
+  appearance: none;
+  border: 1px solid color-mix(in oklab, var(--primary) 24%, var(--line));
+  background: var(--surface);
+  color: var(--primary-ink);
+  border-radius: 999px;
+  padding: 4px 10px;
+  font-size: 11px;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  transition: 0.16s;
+  white-space: nowrap;
+}
+.m-copy:hover {
+  background: var(--primary);
+  color: #fff;
+  border-color: var(--primary);
+}
+.m-copy.done {
+  background: color-mix(in oklab, var(--accent, var(--primary)) 16%, var(--surface));
+  border-color: color-mix(in oklab, var(--accent, var(--primary)) 40%, var(--line));
+  color: var(--primary-ink);
+}
+
 .h-pay-row {
   display: grid;
   grid-template-columns: 26px 1fr auto auto auto;

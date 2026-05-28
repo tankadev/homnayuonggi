@@ -45,6 +45,32 @@
   </header>
 
   <div *ngIf="open" class="h-order-body" @expand>
+    <div *ngIf="showPayTo" class="h-pay-to">
+      <div class="h-pay-to-head">
+        <app-icon name="wallet" [size]="13"></app-icon>
+        Chuyển tiền cho <b>{{ owner.name }}</b>
+      </div>
+      <ul class="h-pay-to-list">
+        <li *ngFor="let m of payTo" class="h-pay-to-item" [class.cash]="m.kind === 'cash'">
+          <span class="m-ico">
+            <app-icon [name]="m.kind === 'momo' ? 'phone' : m.kind === 'cash' ? 'wallet' : 'card'" [size]="12"></app-icon>
+          </span>
+          <span class="m-label">{{ m.label }}</span>
+          <span class="m-value">{{ m.value }}</span>
+          <button
+            *ngIf="m.copy"
+            type="button"
+            class="m-copy"
+            [class.done]="copied === m.copy"
+            (click)="copy(m.copy, $event)"
+          >
+            <app-icon [name]="copied === m.copy ? 'check' : 'copy'" [size]="11"></app-icon>
+            {{ copied === m.copy ? 'Đã chép' : 'Chép' }}
+          </button>
+        </li>
+      </ul>
+    </div>
+
     <ng-container *ngFor="let row of rows; trackBy: trackByRow">
       <ng-container *ngTemplateOutlet="payRow; context: { row: row }"></ng-container>
     </ng-container>

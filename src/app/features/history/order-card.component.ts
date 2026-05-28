@@ -11,6 +11,7 @@ import {
 import { animate, style, transition, trigger } from '@angular/animations';
 
 import { HMember, HOrder, HPayer, MyRole, OrderStatus, classifyMyRole, orderStatus } from './mock-data';
+import { PaymentLine } from '../../core/utils/payment-info';
 
 interface PayRow extends HPayer {
   isOwnerRow: boolean;
@@ -136,6 +137,33 @@ export class OrderCardComponent implements AfterViewInit, OnDestroy {
       return 0;
     });
     return [ownerRow, ...sorted.map((p) => ({ ...p, isOwnerRow: false }))];
+  }
+
+  /** Orderer's payment methods (how to pay them). */
+  get payTo(): PaymentLine[] {
+    return this.owner?.payments || [];
+  }
+  /** Show the "how to pay" panel only to non-orderers — the orderer is the one collecting. */
+  get showPayTo(): boolean {
+    return !this.isOwnerMe && this.payTo.length > 0;
+  }
+
+  /** Tracks the last copied token so the button can flash a confirmation. */
+  copied = '';
+  private copyTimer?: ReturnType<typeof setTimeout>;
+
+  async copy(text: string, event: Event): Promise<void> {
+    event.stopPropagation();
+    try {
+      await navigator.clipboard.writeText(text);
+      this.copied = text;
+      clearTimeout(this.copyTimer);
+      this.copyTimer = setTimeout(() => {
+        if (this.copied === text) this.copied = '';
+      }, 1600);
+    } catch {
+      /* clipboard unavailable (insecure context / denied) — silently no-op */
+    }
   }
 
   memberFor(id: string) {

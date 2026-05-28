@@ -4,7 +4,9 @@ import { PaymentPaidRO } from '../../core/ro/payment-paid.ro';
 import { RoomRO } from '../../core/ro/room.ro';
 import { UserRO } from '../../core/ro/user.ro';
 
-import { PayMethod, PrItem, PrMember, PrOrder, SplitMode } from './mock-data';
+import { parseOwnerPayment } from '../../core/utils/payment-info';
+
+import { PrItem, PrMember, PrOrder, SplitMode } from './mock-data';
 
 const FALLBACK_PAYMENT: PrOrder = {
   shop: '—',
@@ -24,25 +26,6 @@ function initialOf(name: string): string {
   if (!n) return '?';
   const head = n.split(/\s+/).pop() || n;
   return head[0]?.toUpperCase() || '?';
-}
-
-function paymentLookup(payment?: any[]): { method: PayMethod; bank: PrOrder['bank']; momo: PrOrder['momo'] } {
-  /* User payment is stored as a freeform [{label,value}] list. Best-effort parse. */
-  const get = (re: RegExp) => {
-    if (!payment) return '';
-    const hit = payment.find((p) => re.test(p.label || '') && p.checked !== false && !p.disabled);
-    return hit?.value || '';
-  };
-  const bankName = get(/ngân hàng|bank/i);
-  const bankAcc = get(/(số tài khoản|stk|acc)/i);
-  const bankHolder = get(/(chủ tài khoản|holder|tên)/i);
-  const momoPhone = get(/momo|sđt|phone/i);
-  const method: PayMethod = momoPhone && !bankAcc ? 'momo' : bankAcc ? 'bank' : 'cash';
-  return {
-    method,
-    bank: { name: bankName, acc: bankAcc, holder: bankHolder, branch: '' },
-    momo: { phone: momoPhone, holder: bankHolder },
-  };
 }
 
 export interface PaymentReviewView {
@@ -119,7 +102,7 @@ export function mapPaymentReview(
 
   /* Payment details — read from orderer's saved payment list, fall back to their phone. */
   const ordererUser = userMap[ordererId];
-  const pay = paymentLookup(ordererUser?.payment);
+  const pay = parseOwnerPayment(ordererUser?.payment);
   const ordererName = ordererUser?.displayName || ordererUser?.username || '';
   const momoPhone = pay.momo.phone || ordererUser?.phone || '';
 

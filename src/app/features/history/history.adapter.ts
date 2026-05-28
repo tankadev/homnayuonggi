@@ -1,6 +1,7 @@
 import { PaymentPaidRO } from '../../core/ro/payment-paid.ro';
 import { RoomRO } from '../../core/ro/room.ro';
 import { UserRO } from '../../core/ro/user.ro';
+import { parseOwnerPayment } from '../../core/utils/payment-info';
 
 import { HMember, HOrder, HPayer } from './mock-data';
 
@@ -53,7 +54,13 @@ export function mapHistory(
     if (!uid || members[uid]) return;
     const u = userMap[uid];
     const name = u?.displayName || u?.username || '—';
-    members[uid] = { id: uid, name, initial: initialOf(name) };
+    members[uid] = {
+      id: uid,
+      name,
+      initial: initialOf(name),
+      phone: u?.phone || '',
+      payments: parseOwnerPayment(u?.payment, u?.phone, name).lines,
+    };
   };
   if (meKey) addMember(meKey);
 
