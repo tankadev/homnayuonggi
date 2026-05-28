@@ -404,17 +404,24 @@ export class PaymentReviewPageComponent implements OnInit, OnChanges, OnDestroy,
    * chat and ask everyone to check & pay.
    */
   async downloadSummary(): Promise<void> {
-    const items = this.members.flatMap((m) =>
-      m.items.map((it) => ({
-        name: m.name,
-        dish: it.name,
-        note: it.note || '',
-        price: it.price,
-        qty: it.qty,
-        subtotal: it.price * it.qty,
-      })),
-    );
-    if (this.downloading || !items.length) return;
+    /* Group dishes by diner. `share` already includes each person's proportional
+       fees + discount (per the chosen split mode), so it's the real amount to transfer. */
+    const groups = this.shares
+      .map((s) => ({
+        name: s.name,
+        dishes: s.items.map((it) => ({
+          dish: it.name,
+          note: it.note || '',
+          price: it.price,
+          qty: it.qty,
+          subtotal: it.price * it.qty,
+        })),
+        fee: s.ship + s.service,
+        discount: s.disc,
+        total: s.share,
+      }))
+      .filter((g) => g.dishes.length > 0);
+    if (this.downloading || !groups.length) return;
     this.downloading = true;
     try {
       const o = this.order;
@@ -426,14 +433,13 @@ export class PaymentReviewPageComponent implements OnInit, OnChanges, OnDestroy,
           dateLabel: this.formatOrderDate(this.delivery?.createDateTime),
           ordererName: this.shares.find((s) => s.owner)?.name || 'Người đặt đơn',
           appUrl: 'todayuonggi.vercel.app',
+          paymentLine: this.buildPaymentLine(),
+          groups,
+          itemsSubtotal: this.subtotal,
           shipFee: o.shipFee,
           serviceFee: o.serviceFee,
           discount: o.voucher ? o.voucher.amount : 0,
-          itemsSubtotal: this.subtotal,
           grand: this.grand,
-          totalQty: items.reduce((s, i) => s + i.qty, 0),
-          paymentLine: this.buildPaymentLine(),
-          items,
         },
         this.summaryFileName(),
       );

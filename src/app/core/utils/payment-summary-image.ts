@@ -1,15 +1,14 @@
 /**
- * Renders a shareable PNG of a finalised order as a spreadsheet-style table
- * (one row per dish: name, món, note, price, qty, subtotal) plus a Grand Total
- * and the orderer's payment info — so the orderer can drop it in the group chat.
+ * Renders a shareable PNG of a finalised order as a spreadsheet-style table —
+ * each diner's dishes are grouped together with a per-person total — plus a
+ * Grand Total and the orderer's payment info, so the orderer can drop it in the
+ * group chat.
  *
  * Pure Canvas 2D (no html2canvas dependency). Colours come from the live theme
  * CSS vars so the image matches whichever palette is active.
  */
 
-export interface SummaryLineItem {
-  /** Who ordered this dish. */
-  name: string;
+export interface SummaryDish {
   /** Dish name + options. */
   dish: string;
   note: string;
@@ -20,6 +19,18 @@ export interface SummaryLineItem {
   subtotal: number;
 }
 
+export interface SummaryGroup {
+  /** Diner who ordered these dishes. */
+  name: string;
+  dishes: SummaryDish[];
+  /** This diner's share of fees (ship + service). */
+  fee: number;
+  /** This diner's share of the discount (≤ 0). */
+  discount: number;
+  /** Final amount this diner must pay — món subtotal + their fee − discount. */
+  total: number;
+}
+
 export interface PaymentSummaryData {
   shop: string;
   shopSub: string;
@@ -28,18 +39,17 @@ export interface PaymentSummaryData {
   /** Person who placed/collects the order. */
   ordererName: string;
   appUrl: string;
+  /** Where to send money, e.g. "Vietcombank · 0123456789 · NGUYEN VAN A". */
+  paymentLine: string;
+  groups: SummaryGroup[];
+  /** Order totals for the reconciliation cluster. */
+  itemsSubtotal: number;
   shipFee: number;
   serviceFee: number;
   /** Voucher amount — negative when a discount applies. */
   discount: number;
-  /** Sum of all line subtotals (before fees/discount). */
-  itemsSubtotal: number;
-  /** Final amount = itemsSubtotal + fees + discount. */
+  /** Final order total = itemsSubtotal + fees + discount. */
   grand: number;
-  totalQty: number;
-  /** Where to send money, e.g. "Vietcombank · 0123456789 · NGUYEN VAN A". */
-  paymentLine: string;
-  items: SummaryLineItem[];
 }
 
 interface Palette {
@@ -49,6 +59,7 @@ interface Palette {
   ink: string;
   muted: string;
   line: string;
+  lineSoft: string;
   primary: string;
   primaryInk: string;
   primarySoft: string;
@@ -58,7 +69,7 @@ interface Palette {
 }
 
 interface Col {
-  key: 'no' | 'name' | 'order' | 'note' | 'price' | 'sl' | 'sub';
+  key: 'no' | 'name' | 'order' | 'note' | 'price' | 'sl' | 'fee' | 'disc' | 'sub';
   title: string;
   w: number;
   align: 'left' | 'center' | 'right';
@@ -80,9 +91,14 @@ export async function downloadPaymentSummaryImage(
   const pal = resolvePalette();
 
   const DPR = 2;
-  const W = 820;
+  /* Add the per-person PHÍ / GIẢM columns only when the order actually has them. */
+  const showFee = data.groups.some((g) => Math.round(g.fee) !== 0);
+  const showDiscount = data.groups.some((g) => Math.round(g.discount) !== 0);
+  /* Widen the canvas per extra column so MÓN keeps its width. */
+  const W = 820 + (showFee ? 82 : 0) + (showDiscount ? 82 : 0);
   /* Generous working height; we crop to the real content height at the end. */
-  const WORK_H = 360 + data.items.length * 64;
+  const dishCount = data.groups.reduce((s, g) => s + g.dishes.length, 0);
+  const WORK_H = 480 + dishCount * 64;
 
   const work = document.createElement('canvas');
   work.width = W * DPR;
@@ -94,7 +110,7 @@ export async function downloadPaymentSummaryImage(
   ctx.fillStyle = pal.bg;
   ctx.fillRect(0, 0, W, WORK_H);
 
-  const cols = buildCols(W);
+  const cols = buildCols(W, showFee, showDiscount);
 
   drawTitle(ctx, pal, data, W);
   const contentH = drawTable(ctx, pal, data, cols, W, HEADER_H);
@@ -112,10 +128,13 @@ export async function downloadPaymentSummaryImage(
 
 /* ─────────────────────────── layout ─────────────────────────── */
 
-function buildCols(W: number): Col[] {
+function buildCols(W: number, showFee: boolean, showDiscount: boolean): Col[] {
   const tableW = W - MX * 2;
-  const fixed = { no: 40, name: 92, note: 140, price: 90, sl: 42, sub: 108 };
-  const orderW = tableW - (fixed.no + fixed.name + fixed.note + fixed.price + fixed.sl + fixed.sub);
+  const fixed = { no: 40, name: 92, note: 132, price: 88, sl: 38, fee: 82, disc: 82, sub: 106 };
+  let used = fixed.no + fixed.name + fixed.note + fixed.price + fixed.sl + fixed.sub;
+  if (showFee) used += fixed.fee;
+  if (showDiscount) used += fixed.disc;
+  const orderW = tableW - used;
   const defs: Omit<Col, 'x'>[] = [
     { key: 'no', title: 'STT', w: fixed.no, align: 'center' },
     { key: 'name', title: 'TÊN', w: fixed.name, align: 'left' },
@@ -123,8 +142,10 @@ function buildCols(W: number): Col[] {
     { key: 'note', title: 'GHI CHÚ', w: fixed.note, align: 'left' },
     { key: 'price', title: 'ĐƠN GIÁ', w: fixed.price, align: 'right' },
     { key: 'sl', title: 'SL', w: fixed.sl, align: 'center' },
-    { key: 'sub', title: 'THÀNH TIỀN', w: fixed.sub, align: 'right' },
   ];
+  if (showFee) defs.push({ key: 'fee', title: 'PHÍ', w: fixed.fee, align: 'right' });
+  if (showDiscount) defs.push({ key: 'disc', title: 'GIẢM', w: fixed.disc, align: 'right' });
+  defs.push({ key: 'sub', title: 'CẦN TRẢ', w: fixed.sub, align: 'right' });
   let x = MX;
   return defs.map((d) => {
     const col = { ...d, x };
@@ -178,72 +199,83 @@ function drawTable(ctx: C, pal: Palette, d: PaymentSummaryData, cols: Col[], W: 
   for (const c of cols) cellText(ctx, c.title, c, y, TH_H);
   y += TH_H;
 
-  /* ── data rows ── */
+  /* ── data rows — one block per diner, their dishes grouped together ── */
+  const colNo = cols.find((c) => c.key === 'no')!;
+  const colName = cols.find((c) => c.key === 'name')!;
   const colOrder = cols.find((c) => c.key === 'order')!;
   const colNote = cols.find((c) => c.key === 'note')!;
-  d.items.forEach((it, i) => {
+  const colPrice = cols.find((c) => c.key === 'price')!;
+  const colSl = cols.find((c) => c.key === 'sl')!;
+  const colFee = cols.find((c) => c.key === 'fee');
+  const colDisc = cols.find((c) => c.key === 'disc');
+  const colSub = cols.find((c) => c.key === 'sub')!;
+  /* Per-dish columns end at SL's right edge; merged columns sit after it. */
+  const perDishRight = colSl.x + colSl.w;
+
+  d.groups.forEach((g, gi) => {
+    /* Measure each dish so we know the block height before painting. */
     ctx.font = `500 11px ${FONT}`;
-    const orderLines = wrapLines(ctx, it.dish, colOrder.w - 16, 3);
-    const noteLines = wrapLines(ctx, it.note, colNote.w - 16, 3);
-    const nLines = Math.max(orderLines.length, noteLines.length, 1);
-    const rowH = ROW_PAD + nLines * LINE_H;
+    const layouts = g.dishes.map((dish) => {
+      const orderLines = wrapLines(ctx, dish.dish, colOrder.w - 16, 3);
+      const noteLines = wrapLines(ctx, dish.note, colNote.w - 16, 3);
+      const nLines = Math.max(orderLines.length, noteLines.length, 1);
+      return { dish, orderLines, noteLines, h: ROW_PAD + nLines * LINE_H };
+    });
+    const groupTop = y;
+    const groupH = layouts.reduce((s, l) => s + l.h, 0);
 
-    ctx.fillStyle = i % 2 === 0 ? pal.card : pal.zebra;
-    ctx.fillRect(MX, y, tableW, rowH);
+    ctx.fillStyle = gi % 2 === 0 ? pal.card : pal.zebra;
+    ctx.fillRect(MX, groupTop, tableW, groupH);
 
-    for (const c of cols) {
-      switch (c.key) {
-        case 'no':
-          ctx.fillStyle = pal.muted;
-          ctx.font = `600 11px ${FONT}`;
-          cellText(ctx, String(i + 1), c, y, rowH);
-          break;
-        case 'name':
-          ctx.fillStyle = pal.ink;
-          ctx.font = `700 11px ${FONT}`;
-          cellText(ctx, it.name, c, y, rowH);
-          break;
-        case 'order':
-          ctx.fillStyle = pal.ink;
-          ctx.font = `500 11px ${FONT}`;
-          multiline(ctx, orderLines, c, y, rowH);
-          break;
-        case 'note':
-          ctx.fillStyle = pal.muted;
-          ctx.font = `500 11px ${FONT}`;
-          multiline(ctx, noteLines, c, y, rowH);
-          break;
-        case 'price':
-          ctx.fillStyle = pal.ink;
-          ctx.font = `500 11px ${FONT}`;
-          cellText(ctx, `${fmt(it.price)}đ`, c, y, rowH);
-          break;
-        case 'sl':
-          ctx.fillStyle = pal.ink;
-          ctx.font = `600 11px ${FONT}`;
-          cellText(ctx, String(it.qty), c, y, rowH);
-          break;
-        case 'sub':
-          ctx.fillStyle = pal.ink;
-          ctx.font = `700 11px ${FONT}`;
-          cellText(ctx, `${fmt(it.subtotal)}đ`, c, y, rowH);
-          break;
-      }
+    /* Per-dish cells: món, ghi chú, đơn giá, SL. */
+    let dy = groupTop;
+    layouts.forEach((l, di) => {
+      ctx.fillStyle = pal.ink;
+      ctx.font = `500 11px ${FONT}`;
+      multiline(ctx, l.orderLines, colOrder, dy, l.h);
+      ctx.fillStyle = pal.muted;
+      ctx.font = `500 11px ${FONT}`;
+      multiline(ctx, l.noteLines, colNote, dy, l.h);
+      ctx.fillStyle = pal.ink;
+      ctx.font = `500 11px ${FONT}`;
+      cellText(ctx, `${fmt(l.dish.price)}đ`, colPrice, dy, l.h);
+      ctx.font = `600 11px ${FONT}`;
+      cellText(ctx, String(l.dish.qty), colSl, dy, l.h);
+      /* Faint divider between this diner's dishes (kept clear of the merged
+         STT/TÊN/PHÍ/GIẢM/CẦN TRẢ columns so those read as one cell). */
+      if (di < layouts.length - 1) hLine(ctx, colOrder.x, perDishRight, dy + l.h, pal.lineSoft);
+      dy += l.h;
+    });
+
+    /* Merged columns centred across the whole block: STT, TÊN, per-diner PHÍ /
+       GIẢM (when shown), and the final CẦN TRẢ. */
+    ctx.fillStyle = pal.muted;
+    ctx.font = `600 11px ${FONT}`;
+    cellText(ctx, String(gi + 1), colNo, groupTop, groupH);
+    ctx.fillStyle = pal.ink;
+    ctx.font = `700 11px ${FONT}`;
+    cellText(ctx, g.name, colName, groupTop, groupH);
+    if (colFee) {
+      ctx.fillStyle = pal.ink;
+      ctx.font = `600 11px ${FONT}`;
+      cellText(ctx, g.fee ? `${fmt(g.fee)}đ` : '—', colFee, groupTop, groupH);
     }
-    hLine(ctx, MX, MX + tableW, y + rowH, pal.line);
-    y += rowH;
-  });
+    if (colDisc) {
+      ctx.fillStyle = g.discount ? pal.rose : pal.muted;
+      ctx.font = `600 11px ${FONT}`;
+      cellText(ctx, g.discount ? `${fmt(g.discount)}đ` : '—', colDisc, groupTop, groupH);
+    }
+    ctx.fillStyle = pal.ink;
+    ctx.font = `800 11.5px ${FONT}`;
+    cellText(ctx, `${fmt(g.total)}đ`, colSub, groupTop, groupH);
 
-  /* ── totals ── */
-  y = totalRow(ctx, pal, cols, 'Tạm tính', d.totalQty, d.itemsSubtotal, false, y);
-  if (d.shipFee) y = totalRow(ctx, pal, cols, 'Phí giao hàng', null, d.shipFee, false, y);
-  if (d.serviceFee) y = totalRow(ctx, pal, cols, 'Phí dịch vụ', null, d.serviceFee, false, y);
-  if (d.discount) y = totalRow(ctx, pal, cols, 'Giảm giá', null, d.discount, false, y);
-  y = totalRow(ctx, pal, cols, 'TỔNG CỘNG', d.totalQty, d.grand, true, y);
+    hLine(ctx, MX, MX + tableW, groupTop + groupH, pal.line);
+    y += groupH;
+  });
 
   const tableBottom = y;
 
-  /* ── grid: column separators over body + totals, then outer border ── */
+  /* ── grid: column separators over body, then outer border ── */
   ctx.strokeStyle = pal.line;
   ctx.lineWidth = 1;
   for (let i = 1; i < cols.length; i++) {
@@ -251,63 +283,91 @@ function drawTable(ctx: C, pal: Palette, d: PaymentSummaryData, cols: Col[], W: 
   }
   strokeRect(ctx, MX, tableTop, tableW, tableBottom - tableTop, pal.line, 1.25);
 
-  /* ── payment footer ── */
-  y = tableBottom + 22;
-  ctx.fillStyle = pal.ink;
-  ctx.font = `700 12px ${FONT}`;
-  const lead = `Chuyển tiền cho ${d.ordererName || 'người đặt'}:  `;
-  ctx.fillText(lead, MX, y);
-  const leadW = ctx.measureText(lead).width;
-  ctx.fillStyle = pal.primaryInk;
-  ctx.font = `600 12px ${FONT}`;
-  ctx.fillText(fit(ctx, d.paymentLine, W - MX * 2 - leadW), MX + leadW, y);
+  /* ── reconciliation cluster (right) + payment block (left) ── */
+  const blockTop = tableBottom + 20;
+  const boxW = Math.min(320, tableW);
+  const boxX = MX + tableW - boxW;
+  const boxBottom = drawSummaryBox(ctx, pal, d, boxX, boxW, blockTop);
+  const payBottom = drawPaymentBlock(ctx, pal, d, MX, boxX - MX - 24, blockTop);
 
-  y += 22;
-  ctx.fillStyle = pal.muted;
-  ctx.font = `500 11px ${FONT}`;
-  ctx.fillText('Mở app, kiểm tra đơn của bạn và đánh dấu đã thanh toán.', MX, y);
-
-  return y + 18;
+  return Math.max(boxBottom, payBottom) + 16;
 }
 
-function totalRow(
-  ctx: C,
-  pal: Palette,
-  cols: Col[],
-  label: string,
-  qty: number | null,
-  value: number,
-  highlight: boolean,
-  y0: number,
-): number {
-  const tableW = cols.reduce((s, c) => s + c.w, 0);
-  const rowH = highlight ? 32 : 26;
-  ctx.fillStyle = highlight ? pal.primarySoft : pal.card;
-  ctx.fillRect(MX, y0, tableW, rowH);
+/** Receipt-style cluster: tạm tính món, phí, giảm giá, tổng đơn. */
+function drawSummaryBox(ctx: C, pal: Palette, d: PaymentSummaryData, x: number, w: number, y0: number): number {
+  const rows: { label: string; value: number; neg?: boolean }[] = [
+    { label: 'Tạm tính (tổng món)', value: d.itemsSubtotal },
+  ];
+  if (d.shipFee) rows.push({ label: 'Phí giao hàng', value: d.shipFee });
+  if (d.serviceFee) rows.push({ label: 'Phí dịch vụ', value: d.serviceFee });
+  if (d.discount) rows.push({ label: 'Giảm giá', value: d.discount, neg: true });
 
-  const colSl = cols.find((c) => c.key === 'sl')!;
-  const colSub = cols.find((c) => c.key === 'sub')!;
-  const cy = y0 + rowH / 2 + 4;
+  const padX = 14;
+  const rowH = 22;
+  const grandH = 32;
+  const padTop = 10;
+  const padBot = 10;
+  const divGap = 8;
+  const boxH = padTop + rows.length * rowH + divGap + grandH + padBot;
 
-  /* Label, right-aligned just before the SL column. */
-  ctx.fillStyle = highlight ? pal.primaryInk : pal.ink;
-  ctx.font = highlight ? `800 13px ${FONT}` : `600 11px ${FONT}`;
-  ctx.textAlign = 'right';
-  ctx.fillText(label, colSl.x - 10, cy);
+  fillRoundRect(ctx, x, y0, w, boxH, 12, pal.card);
+  strokeRoundRect(ctx, x, y0, w, boxH, 12, pal.line, 1.25);
 
-  if (qty != null) {
-    ctx.textAlign = 'center';
-    ctx.fillText(String(qty), colSl.x + colSl.w / 2, cy);
+  let cy = y0 + padTop;
+  for (const r of rows) {
+    ctx.textAlign = 'left';
+    ctx.font = `500 11.5px ${FONT}`;
+    ctx.fillStyle = pal.muted;
+    ctx.fillText(fit(ctx, r.label, w - padX * 2 - 90), x + padX, cy + 15);
+    ctx.textAlign = 'right';
+    ctx.font = `600 11.5px ${FONT}`;
+    ctx.fillStyle = r.neg ? pal.rose : pal.ink;
+    ctx.fillText(`${fmt(r.value)}đ`, x + w - padX, cy + 15);
+    cy += rowH;
   }
 
+  hLine(ctx, x + padX, x + w - padX, cy + 4, pal.line);
+  cy += divGap;
+
+  /* Grand total — emphasised. */
+  fillRoundRect(ctx, x + 4, cy, w - 8, grandH, 8, pal.primarySoft);
+  ctx.textAlign = 'left';
+  ctx.font = `800 13px ${FONT}`;
+  ctx.fillStyle = pal.primaryInk;
+  ctx.fillText('Tổng đơn', x + padX, cy + 21);
   ctx.textAlign = 'right';
-  ctx.font = highlight ? `800 13px ${FONT}` : `700 11px ${FONT}`;
-  ctx.fillStyle = highlight ? pal.primaryInk : pal.ink;
-  ctx.fillText(`${fmt(value)}đ`, colSub.x + colSub.w - 8, cy);
+  ctx.font = `800 14px ${FONT}`;
+  ctx.fillStyle = pal.primaryInk;
+  ctx.fillText(`${fmt(d.grand)}đ`, x + w - padX, cy + 21);
   ctx.textAlign = 'left';
 
-  hLine(ctx, MX, MX + tableW, y0 + rowH, pal.line);
-  return y0 + rowH;
+  return y0 + boxH;
+}
+
+/** Left block: where to send money + a reconciliation hint. */
+function drawPaymentBlock(ctx: C, pal: Palette, d: PaymentSummaryData, x: number, w: number, y0: number): number {
+  let cy = y0 + 14;
+  ctx.textAlign = 'left';
+  ctx.font = `700 12px ${FONT}`;
+  ctx.fillStyle = pal.ink;
+  ctx.fillText(fit(ctx, `Chuyển tiền cho ${d.ordererName || 'người đặt'}`, w), x, cy);
+  cy += 20;
+
+  ctx.font = `600 12px ${FONT}`;
+  ctx.fillStyle = pal.primaryInk;
+  for (const ln of wrapLines(ctx, d.paymentLine, w, 3)) {
+    ctx.fillText(fit(ctx, ln, w), x, cy);
+    cy += 17;
+  }
+
+  cy += 6;
+  ctx.font = `500 11px ${FONT}`;
+  ctx.fillStyle = pal.muted;
+  for (const ln of wrapLines(ctx, 'CẦN TRẢ = tiền món + phí − giảm. Mọi người chuyển đúng cột CẦN TRẢ nhé.', w, 3)) {
+    ctx.fillText(fit(ctx, ln, w), x, cy);
+    cy += 15;
+  }
+  return cy;
 }
 
 /* ─────────────────────────── helpers ─────────────────────────── */
@@ -398,6 +458,30 @@ function strokeRect(ctx: C, x: number, y: number, w: number, h: number, color: s
   ctx.strokeRect(x, y, w, h);
 }
 
+function pathRoundRect(ctx: C, x: number, y: number, w: number, h: number, r: number): void {
+  const rr = Math.min(r, w / 2, h / 2);
+  ctx.beginPath();
+  ctx.moveTo(x + rr, y);
+  ctx.arcTo(x + w, y, x + w, y + h, rr);
+  ctx.arcTo(x + w, y + h, x, y + h, rr);
+  ctx.arcTo(x, y + h, x, y, rr);
+  ctx.arcTo(x, y, x + w, y, rr);
+  ctx.closePath();
+}
+
+function fillRoundRect(ctx: C, x: number, y: number, w: number, h: number, r: number, fill: string): void {
+  pathRoundRect(ctx, x, y, w, h, r);
+  ctx.fillStyle = fill;
+  ctx.fill();
+}
+
+function strokeRoundRect(ctx: C, x: number, y: number, w: number, h: number, r: number, stroke: string, lw: number): void {
+  pathRoundRect(ctx, x, y, w, h, r);
+  ctx.strokeStyle = stroke;
+  ctx.lineWidth = lw;
+  ctx.stroke();
+}
+
 async function ensureFonts(): Promise<void> {
   try {
     await (document as unknown as { fonts?: { ready: Promise<unknown> } }).fonts?.ready;
@@ -427,6 +511,7 @@ function resolvePalette(): Palette {
     ink: read('--ink', '#1f1813'),
     muted: read('--muted', '#8a7a64'),
     line: read('--line', '#e6d6bb'),
+    lineSoft: read('--line-soft', '#efe2cb'),
     primary: read('--primary', '#b5502f'),
     primaryInk: read('--primary-ink', '#8a3a20'),
     primarySoft: read('--primary-soft', '#f6e3d8'),
