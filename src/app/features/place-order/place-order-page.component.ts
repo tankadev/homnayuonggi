@@ -76,6 +76,9 @@ export class PlaceOrderPageComponent implements OnInit, OnChanges, OnDestroy {
   /** Cart-list display mode — persisted per user in localStorage. */
   cartViewMode: 'flat' | 'menu' = 'flat';
 
+  /** Free-text dish filter for the menu column. */
+  dishQuery = '';
+
   /* ─── modal state ─────────────────────────────────────────── */
   editingNote: MockCartLine | null = null;
   cancelOpen = false;
@@ -182,6 +185,21 @@ export class PlaceOrderPageComponent implements OnInit, OnChanges, OnDestroy {
     return expandOrderableDishes(this.menu);
   }
   trackBySection = (_: number, s: MockMenuSection) => s.id;
+
+  /** Menu sections filtered by `dishQuery` (matches dish name/desc/options; keeps a
+   *  section only if it still has matching items). Empty query → full menu. */
+  get filteredMenu(): MockMenuSection[] {
+    const q = this.dishQuery.trim().toLowerCase();
+    if (!q) return this.menu;
+    return this.menu
+      .map((s) => ({
+        ...s,
+        items: s.items.filter((d) =>
+          [d.name, d.desc, d.options].some((f) => (f || '').toLowerCase().includes(q)),
+        ),
+      }))
+      .filter((s) => s.items.length > 0);
+  }
   get dishMap(): Record<string, MockDish> {
     return Object.fromEntries(this.allDishes.map((d) => [d.id, d]));
   }

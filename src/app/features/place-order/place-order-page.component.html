@@ -21,13 +21,39 @@
 
   <section class="col-mid">
     <app-voucher-strip [vouchers]="vouchers"></app-voucher-strip>
+
+    <div class="dish-search">
+      <app-icon name="search" [size]="15"></app-icon>
+      <input
+        type="text"
+        [(ngModel)]="dishQuery"
+        placeholder="Tìm món…"
+        aria-label="Tìm món"
+      />
+      <button
+        *ngIf="dishQuery"
+        type="button"
+        class="ds-clear"
+        title="Xoá tìm kiếm"
+        (click)="dishQuery = ''"
+      >
+        <app-icon name="x" [size]="13"></app-icon>
+      </button>
+    </div>
+
     <app-dish-menu
-      *ngFor="let s of menu; trackBy: trackBySection"
+      *ngFor="let s of filteredMenu; trackBy: trackBySection"
       [section]="s"
       [myCart]="myCart"
       (add)="onAdd($event)"
       (minus)="onMinus($event)"
     ></app-dish-menu>
+
+    <div *ngIf="dishQuery && filteredMenu.length === 0" class="dish-search-empty">
+      <app-icon name="search" [size]="24"></app-icon>
+      <p>Không tìm thấy món nào</p>
+      <span>Thử từ khoá khác cho “{{ dishQuery }}”</span>
+    </div>
   </section>
 
   <div class="col-right">

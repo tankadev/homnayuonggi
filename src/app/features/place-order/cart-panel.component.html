@@ -136,12 +136,17 @@
               (click)="editNote.emit(l)"
             >
               <app-icon name="pencil" [size]="11"></app-icon>
-              <span class="nb-text" [class.has-value]="l.note" [class.placeholder]="!l.note">
+              <span
+                class="nb-text"
+                [class.has-value]="l.note"
+                [class.placeholder]="!l.note"
+                [title]="l.note || ''"
+              >
                 {{ l.note ? '"' + l.note + '"' : 'Thêm ghi chú gửi quán…' }}
               </span>
             </button>
             <ng-template #readonlyNote>
-              <div *ngIf="l.note" class="cgl-note">"{{ l.note }}"</div>
+              <div *ngIf="l.note" class="cgl-note" [title]="l.note">"{{ l.note }}"</div>
             </ng-template>
           </div>
         </li>
