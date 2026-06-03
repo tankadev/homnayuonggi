@@ -36,6 +36,15 @@
       >
         <app-icon name="pencil" [size]="13"></app-icon>
       </button>
+      <button
+        class="edit"
+        type="button"
+        aria-label="Sao chép link phòng"
+        title="Sao chép link phòng"
+        (click)="copyRoomLink()"
+      >
+        <app-icon name="link" [size]="13"></app-icon>
+      </button>
     </div>
     <ng-template #noRoom>
       <div class="room-pill room-pill-empty">

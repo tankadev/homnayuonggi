@@ -7,6 +7,7 @@ import { RoomRO } from '../../core/ro/room.ro';
 import { LocalStorageService } from '../../core/services/localstorage.service';
 import { PaymentPaidService } from '../../core/services/payment-paid.service';
 import { DeliveryService } from '../../core/services/delivery.service';
+import { ToastService } from '../../core/services/toast.service';
 
 export type HeaderMode = 'welcome' | 'rooms' | 'create-order' | 'place-order' | 'payment-review' | 'history';
 
@@ -50,6 +51,7 @@ export class HeaderComponent implements OnInit, OnChanges, OnDestroy {
     private storage: LocalStorageService,
     private paymentPaidService: PaymentPaidService,
     private deliveryService: DeliveryService,
+    private toast: ToastService,
   ) {}
 
   ngOnInit(): void {
@@ -103,6 +105,27 @@ export class HeaderComponent implements OnInit, OnChanges, OnDestroy {
   onLeaveRoom(): void {
     this.storage.quitRoom();
     this.leaveRoom.emit();
+  }
+
+  /** Copy a shareable deep link (?room=<key>) for the current room to the clipboard. */
+  async copyRoomLink(): Promise<void> {
+    const key = this.room?.key;
+    if (!key) return;
+    const url = `${window.location.origin}${window.location.pathname}?room=${encodeURIComponent(key)}`;
+    try {
+      await navigator.clipboard.writeText(url);
+    } catch {
+      /* Fallback for non-secure contexts. */
+      const ta = document.createElement('textarea');
+      ta.value = url;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.select();
+      try { document.execCommand('copy'); } catch { /* swallow */ }
+      document.body.removeChild(ta);
+    }
+    this.toast.success('Đã sao chép link phòng — gửi cho cả nhóm nhé!');
   }
 
   onLogout(): void {

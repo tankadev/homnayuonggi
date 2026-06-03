@@ -39,6 +39,9 @@ export class AppComponent implements OnInit, OnDestroy {
   room: RoomRO | null = null;
   mode: AppMode = 'welcome';
 
+  /** Room key from a shared deep link (?room=<key>) waiting to be auto-joined. */
+  pendingRoomKey: string | null = null;
+
   editRoomTrigger = 0;
   placeOrderEpoch = 0;
 
@@ -54,18 +57,28 @@ export class AppComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
+    /* Deep link: ?room=<key> — a shared room URL pasted into chat. Kept pending until
+       the rooms list can resolve + auto-join it (after login if needed). */
+    this.pendingRoomKey = new URLSearchParams(window.location.search).get('room');
+
     /* Restore session + last room from localStorage so F5 keeps the user in place. */
     const restored = this.auth.restore();
     if (restored?.theme) this.theme.syncFromUser(restored.theme);
     if (restored) {
       const savedRoom = this.safeReadRoom();
-      if (savedRoom) {
+      if (this.pendingRoomKey && this.pendingRoomKey !== savedRoom?.key) {
+        /* The link points at a different room than the saved one — go to the rooms list
+           and let it auto-join (it owns the password prompt for private rooms). */
+        this.mode = 'rooms';
+      } else if (savedRoom) {
+        this.pendingRoomKey = null;
         this.room = savedRoom;
         /* Seed from the last cached /deliveries snapshot so F5 lands on the right screen
            without flashing 'create-order' while waiting for Firebase to reply. */
         this.latestDeliveries = this.safeReadDeliveries();
         this.mode = 'create-order';
         this.deriveModeFromDeliveries();
+        this.syncUrl(savedRoom.key);
       } else {
         this.mode = 'rooms';
       }
@@ -114,17 +127,26 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   enterRoom(picked: RoomRO): void {
+    this.pendingRoomKey = null;
     this.room = picked;
     this.storage.setSelectedRoom(picked);
+    this.syncUrl(picked.key);
     /* Start at create-order, then immediately re-derive against the cached deliveries
        list so we jump straight to place-order / payment-review if one already exists. */
     this.mode = 'create-order';
     this.deriveModeFromDeliveries();
   }
 
+  /** The shared link could not be honored (room deleted or password prompt cancelled). */
+  onAutoJoinFailed(): void {
+    this.pendingRoomKey = null;
+    this.syncUrl(null);
+  }
+
   leaveRoom(): void {
     this.room = null;
     this.storage.setSelectedRoom(null as any);
+    this.syncUrl(null);
     this.mode = 'rooms';
   }
 
@@ -150,6 +172,7 @@ export class AppComponent implements OnInit, OnDestroy {
     this.mode = 'rooms';
     this.room = null;
     this.storage.setSelectedRoom(null as any);
+    this.syncUrl(null);
   }
 
   openEditRoom(): void {
@@ -189,5 +212,16 @@ export class AppComponent implements OnInit, OnDestroy {
     this.room = null;
     this.storage.setSelectedRoom(null as any);
     this.mode = 'welcome';
+    /* Keep ?room=<key> in the URL while a shared link is still pending login —
+       only clear it on a real logout / session reset. */
+    if (!this.pendingRoomKey) this.syncUrl(null);
+  }
+
+  /** Reflect the selected room in the address bar so the URL can be copied & shared.
+      No router — replaceState only, so no navigation/reload happens. */
+  private syncUrl(roomKey: string | null): void {
+    const base = window.location.pathname;
+    const url = roomKey ? `${base}?room=${encodeURIComponent(roomKey)}` : base;
+    window.history.replaceState(null, '', url);
   }
 }

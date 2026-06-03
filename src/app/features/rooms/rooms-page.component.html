@@ -89,5 +89,5 @@
   [room]="joining"
   [storedCipher]="cipherFor(joining.key)"
   (joined)="onJoined($event)"
-  (closed)="joining = null"
+  (closed)="onJoinCancelled()"
 ></app-join-room-modal>

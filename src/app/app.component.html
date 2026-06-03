@@ -17,7 +17,12 @@
 
     <div class="app-pages" [@page]="mode">
       <ng-container [ngSwitch]="mode">
-        <app-rooms-page *ngSwitchCase="'rooms'" (enter)="enterRoom($event)"></app-rooms-page>
+        <app-rooms-page
+          *ngSwitchCase="'rooms'"
+          [autoJoinKey]="pendingRoomKey"
+          (enter)="enterRoom($event)"
+          (autoJoinFailed)="onAutoJoinFailed()"
+        ></app-rooms-page>
 
         <app-create-order-page
           *ngSwitchCase="'create-order'"

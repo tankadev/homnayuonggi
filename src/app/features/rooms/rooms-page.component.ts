@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { combineLatest, Subscription } from 'rxjs';
 
 import { encryptPassword, mapRoom, RoomView } from './room-view';
@@ -7,6 +7,7 @@ import { RoomsService } from '../../core/services/rooms.service';
 import { DeliveryService } from '../../core/services/delivery.service';
 import { AuthService } from '../../core/services/auth.service';
 import { LocalStorageService } from '../../core/services/localstorage.service';
+import { ToastService } from '../../core/services/toast.service';
 import { RoomDTO } from '../../core/dto/room.dto';
 import { RoomRO } from '../../core/ro/room.ro';
 import { DeliveryRO } from '../../core/ro/delivery.ro';
@@ -20,7 +21,11 @@ type Filter = 'all' | 'live' | 'idle' | 'private';
   styleUrls: ['./rooms-page.component.scss'],
 })
 export class RoomsPageComponent implements OnInit, OnDestroy {
+  /** Room key from a shared deep link (?room=<key>) — auto-join it once rooms load. */
+  @Input() autoJoinKey: string | null = null;
   @Output() enter = new EventEmitter<RoomRO>();
+  /** Emitted when the deep-linked room can't be joined (deleted, or pwd prompt cancelled). */
+  @Output() autoJoinFailed = new EventEmitter<void>();
 
   rooms: RoomView[] = [];
   /** Raw RoomRO list — kept so we can re-emit a real RoomRO on enter(). */
@@ -38,6 +43,11 @@ export class RoomsPageComponent implements OnInit, OnDestroy {
   createOpen = false;
   joining: RoomView | null = null;
 
+  /** Set once the deep-link auto-join has been attempted — prevents re-trigger on every snapshot. */
+  private autoJoinAttempted = false;
+  /** True while the open password modal was triggered by the auto-join flow. */
+  private autoJoinPrompting = false;
+
   private sub?: Subscription;
 
   constructor(
@@ -45,6 +55,7 @@ export class RoomsPageComponent implements OnInit, OnDestroy {
     private deliveryService: DeliveryService,
     private auth: AuthService,
     private storage: LocalStorageService,
+    private toast: ToastService,
   ) {}
 
   ngOnInit(): void {
@@ -57,6 +68,7 @@ export class RoomsPageComponent implements OnInit, OnDestroy {
     const cachedDeliveries = this.safeReadDeliveries();
     if (cachedRooms.length) {
       this.applySnapshot(cachedRooms, cachedDeliveries);
+      this.tryAutoJoin(false);
     }
 
     this.sub = combineLatest([
@@ -67,6 +79,7 @@ export class RoomsPageComponent implements OnInit, OnDestroy {
         this.applySnapshot(rooms, deliveries);
         this.storage.setRoomsList(rooms);
         this.storage.setDeliveriesList(deliveries);
+        this.tryAutoJoin(true);
       },
       error: (e) => {
         this.loading = false;
@@ -150,7 +163,34 @@ export class RoomsPageComponent implements OnInit, OnDestroy {
 
   onJoined(room: RoomView): void {
     this.joining = null;
+    this.autoJoinPrompting = false;
     this.emitEnter(room.key);
+  }
+
+  onJoinCancelled(): void {
+    this.joining = null;
+    if (this.autoJoinPrompting) {
+      /* User backed out of the password prompt for a deep-linked room — drop the link. */
+      this.autoJoinPrompting = false;
+      this.autoJoinFailed.emit();
+    }
+  }
+
+  /** Auto-join the room from a shared deep link once it appears in the list.
+      `live` = snapshot came from Firebase (vs the localStorage seed) — only a live
+      snapshot can prove the room no longer exists. */
+  private tryAutoJoin(live: boolean): void {
+    if (!this.autoJoinKey || this.autoJoinAttempted) return;
+    const view = this.rooms.find((r) => r.key === this.autoJoinKey);
+    if (view) {
+      this.autoJoinAttempted = true;
+      this.autoJoinPrompting = view.private;
+      this.onJoin(view);
+    } else if (live) {
+      this.autoJoinAttempted = true;
+      this.toast.error('Phòng trong link không tồn tại hoặc đã bị xoá.');
+      this.autoJoinFailed.emit();
+    }
   }
 
   openCreate(): void {
