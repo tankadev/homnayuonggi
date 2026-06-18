@@ -56,6 +56,8 @@ export class PaymentReviewPageComponent implements OnInit, OnChanges, OnDestroy,
   filter: Filter = 'all';
 
   newOrderOpen = false;
+  /** Lucky-wheel modal — picks who fetches the drinks. */
+  wheelOpen = false;
   /** True while the summary PNG is being rendered, to disable the button. */
   downloading = false;
 
@@ -342,6 +344,11 @@ export class PaymentReviewPageComponent implements OnInit, OnChanges, OnDestroy,
     }
   }
 
+  /** Orderer/chủ đơn id — exposed for the lucky-wheel modal. */
+  get ordererKey(): string {
+    return this.ordererId;
+  }
+
   trackByMember = (_: number, m: PrShare) => m.id;
   trackConfetti = (_: number, p: ConfettiPiece) => p.id;
 
@@ -483,6 +490,10 @@ export class PaymentReviewPageComponent implements OnInit, OnChanges, OnDestroy,
 
   openNewOrder(): void {
     this.newOrderOpen = true;
+  }
+
+  openWheel(): void {
+    this.wheelOpen = true;
   }
 
   /**

@@ -37,6 +37,7 @@ import { MemberCardComponent } from './features/payment-review/member-card.compo
 import { YouPayCardComponent } from './features/payment-review/you-pay-card.component';
 import { PaymentDetailComponent } from './features/payment-review/payment-detail.component';
 import { NewOrderModalComponent } from './features/payment-review/modals/new-order-modal.component';
+import { LuckyWheelModalComponent } from './features/payment-review/modals/lucky-wheel-modal.component';
 import { HistoryPageComponent } from './features/history/history-page.component';
 import { SummaryCardComponent } from './features/history/summary-card.component';
 import { FiltersCardComponent } from './features/history/filters-card.component';
@@ -79,6 +80,7 @@ export function initTheme(theme: ThemeService) {
     YouPayCardComponent,
     PaymentDetailComponent,
     NewOrderModalComponent,
+    LuckyWheelModalComponent,
     HistoryPageComponent,
     SummaryCardComponent,
     FiltersCardComponent,

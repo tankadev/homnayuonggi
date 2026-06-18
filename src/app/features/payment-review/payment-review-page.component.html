@@ -141,6 +141,20 @@
     </span>
   </button>
 
+  <button
+    *ngIf="members.length"
+    type="button"
+    class="pr-fab-new-order pr-fab-wheel"
+    title="Quay chọn người đi lấy nước"
+    (click)="openWheel()"
+  >
+    <span class="pr-fab-icon">🎡</span>
+    <span class="pr-fab-label">
+      <b>Vòng quay may mắn</b>
+      <em>chọn người lấy nước</em>
+    </span>
+  </button>
+
   <button type="button" class="pr-fab-new-order" title="Tạo đơn mới ở quán khác" (click)="openNewOrder()">
     <span class="pr-fab-icon"><app-icon name="sparkle" [size]="16" [filled]="true"></app-icon></span>
     <span class="pr-fab-label">
@@ -159,3 +173,10 @@
   (confirm)="confirmNewOrder()"
   (closed)="newOrderOpen = false"
 ></app-new-order-modal>
+
+<app-lucky-wheel-modal
+  *ngIf="wheelOpen"
+  [members]="members"
+  [ordererId]="ordererKey"
+  (closed)="wheelOpen = false"
+></app-lucky-wheel-modal>

@@ -334,6 +334,28 @@
   cursor: progress;
   transform: none;
 }
+/* Wheel FAB: amber accent so the playful "spin" action stands apart from the
+   green primary actions. */
+.pr-fab-new-order.pr-fab-wheel {
+  background: linear-gradient(135deg, var(--amber), color-mix(in oklab, var(--amber) 60%, var(--ink)));
+  box-shadow:
+    0 12px 28px -8px color-mix(in oklab, var(--amber) 70%, transparent),
+    0 0 0 6px color-mix(in oklab, var(--amber) 14%, transparent);
+}
+.pr-fab-new-order.pr-fab-wheel .pr-fab-icon {
+  font-size: 16px;
+}
+.pr-fab-new-order.pr-fab-wheel:hover {
+  box-shadow:
+    0 18px 34px -8px color-mix(in oklab, var(--amber) 85%, transparent),
+    0 0 0 6px color-mix(in oklab, var(--amber) 22%, transparent);
+}
+.pr-fab-new-order.pr-fab-wheel:hover .pr-fab-icon {
+  background: rgba(255, 255, 255, 0.3);
+  color: inherit;
+  border-color: rgba(255, 255, 255, 0.5);
+  transform: rotate(120deg);
+}
 @keyframes fab-in {
   from { transform: translateY(20px) scale(0.85); opacity: 0; }
   to { transform: translateY(0) scale(1); opacity: 1; }

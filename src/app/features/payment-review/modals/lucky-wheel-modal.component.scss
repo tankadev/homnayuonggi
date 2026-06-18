@@ -1,0 +1,212 @@
+/* ── Winner-count row (mirrors the global .toggle-row look) ── */
+.lw-count {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 12px;
+  align-items: center;
+  padding: 10px 12px;
+  background: var(--surface-2);
+  border: 1px solid var(--line-soft);
+  border-radius: 12px;
+  margin-top: 10px;
+  transition: 0.18s;
+}
+.lw-count.disabled {
+  opacity: 0.6;
+  pointer-events: none;
+}
+.lw-stepper {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 2px;
+  flex-shrink: 0;
+}
+.lw-stepper button {
+  width: 26px;
+  height: 26px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--ink-2);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  transition: 0.15s;
+}
+.lw-stepper button:hover:not(:disabled) {
+  background: var(--primary-soft);
+  color: var(--primary-ink);
+}
+.lw-stepper button:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+.lw-count-val {
+  min-width: 22px;
+  text-align: center;
+  font-weight: 800;
+  font-size: 14px;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── Wheel stage ───────────────────────────────────────────── */
+.lw-stage {
+  position: relative;
+  width: 260px;
+  max-width: 100%;
+  aspect-ratio: 1;
+  margin: 18px auto 6px;
+}
+
+/* Pointer at the top, pointing down into the wheel. */
+.lw-pointer {
+  position: absolute;
+  top: -4px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  z-index: 3;
+  border-left: 11px solid transparent;
+  border-right: 11px solid transparent;
+  border-top: 18px solid var(--ink);
+  filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.25));
+}
+
+.lw-wheel {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  padding: 6px;
+  background: var(--surface);
+  box-shadow:
+    0 0 0 4px color-mix(in oklab, var(--primary) 30%, var(--surface)),
+    0 10px 30px -8px rgba(0, 0, 0, 0.35);
+}
+.lw-wheel svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+}
+
+.wheel-rot {
+  transform-origin: 50% 50%;
+  transition: transform 4.2s cubic-bezier(0.13, 0.86, 0.18, 1);
+  will-change: transform;
+}
+
+.lw-slice {
+  stroke: var(--surface);
+  stroke-width: 0.6;
+  transition: opacity 0.2s;
+}
+.lw-label {
+  font-family: var(--sans);
+  font-size: 5px;
+  font-weight: 800;
+  fill: #fff;
+  paint-order: stroke;
+  stroke: rgba(0, 0, 0, 0.22);
+  stroke-width: 0.5;
+  pointer-events: none;
+}
+.seg-won {
+  opacity: 0.32;
+}
+
+/* Center hub. */
+.lw-hub {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--surface);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25), inset 0 0 0 2px color-mix(in oklab, var(--primary) 25%, var(--line));
+  display: grid;
+  place-items: center;
+  font-size: 18px;
+  z-index: 2;
+}
+
+/* ── Empty state ───────────────────────────────────────────── */
+.lw-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  text-align: center;
+  padding: 28px 16px;
+  color: var(--muted);
+}
+.lw-empty app-icon {
+  color: color-mix(in oklab, var(--primary) 50%, var(--muted));
+}
+.lw-empty b {
+  color: var(--ink);
+  font-size: 13px;
+}
+.lw-empty span {
+  font-size: 11.5px;
+  line-height: 1.4;
+  max-width: 220px;
+}
+
+/* ── Winners ───────────────────────────────────────────────── */
+.lw-winners {
+  margin-top: 12px;
+  padding: 12px;
+  border-radius: 12px;
+  background: color-mix(in oklab, var(--amber) 12%, var(--surface-2));
+  border: 1px solid color-mix(in oklab, var(--amber) 35%, var(--line));
+}
+.lw-winners-lbl {
+  display: block;
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--ink);
+  margin-bottom: 8px;
+}
+.lw-winners-lbl em {
+  font-style: normal;
+  font-weight: 700;
+  color: var(--muted);
+}
+.lw-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.lw-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px 4px 4px;
+  background: var(--surface);
+  border: 1px solid color-mix(in oklab, var(--amber) 40%, var(--line));
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--ink);
+  animation: badge-bump 0.4s ease;
+}
+.lw-chip-ava {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: 10px;
+  font-weight: 800;
+  color: #fff;
+  background: var(--primary);
+}
