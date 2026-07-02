@@ -12,4 +12,5 @@ export class SummaryCardComponent {
   @Input() balance!: Balance;
   @Input() owedOrderCount = 0;
   @Input() oweOrderCount = 0;
+  @Input() meName = '';
 }

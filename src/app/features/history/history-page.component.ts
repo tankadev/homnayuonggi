@@ -60,6 +60,10 @@ export class HistoryPageComponent implements OnInit, OnDestroy, AfterViewInit {
 
   meId = '';
 
+  get meName(): string {
+    return this.membersMap[this.meId]?.name || this.auth.currentUser?.displayName || '';
+  }
+
   range: RangeFilter = '7d';
   memberFilter = 'all';
   roomFilter = 'all';

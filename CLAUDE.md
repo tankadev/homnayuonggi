@@ -153,6 +153,36 @@ usersPaid        { userId, moneyPaid, isPaid }[]
 Service: `PaymentPaidService` — `getAll()` (live), `create`, `update(key,…)`,
 `remove(key)`. When every `usersPaid[].isPaid === true` the record is removed.
 
+### `/wheelSpins` — WheelSpinRO (lucky-wheel anti-cheat log, per delivery)
+One record per spin (incl. re-spins) so members can watch the result feed live.
+Only the orderer writes; wiped when a new order starts.
+```
+key            string
+roomKey        string     // → /rooms key
+deliveryId     string     // → /deliveries key
+spinnerId      string     // → /users key (must be the orderer)
+winnerId       string     // → /users key picked by this spin
+winnerName     string     // denormalised for display
+candidateCount number     // people on the wheel for this spin
+createAt       string     // ISO
+```
+Service: `WheelSpinService` — `getAll()` (live), `create`, `removeOne(key)`,
+`removeForDelivery(deliveryId, spins)` (called from payment-review `cleanupForNextPoll`).
+
+### `/waterHistory` — WaterHistoryRO ("ai đã từng đi lấy nước", per room, max 20)
+Long-lived; written when the orderer confirms the wheel result. NOT cleared per order.
+```
+key         string
+roomKey     string                     // → /rooms key
+deliveryId  string                     // → /deliveries key
+spinnerId   string                     // → /users key (orderer who confirmed)
+winners     { userId, name }[]         // people chosen to fetch drinks
+spinCount   number                     // spins before confirming — anti-cheat signal
+createAt    string                     // ISO
+```
+Service: `WaterHistoryService` — `getAll()` (live), `create(dto, existingForRoom)`
+(pushes then trims the room back to `MAX_PER_ROOM = 20`), `removeForRoom(roomKey, list)`.
+
 ### External: ShopeeFood scraper
 `GET {apiURL}/get-detail?url={shopeeFoodUrl}` → `DeliveryDetailNowAPI`
 (restaurant info, menus, dishes, vouchers, result status). Wired in `DeliveryService`.

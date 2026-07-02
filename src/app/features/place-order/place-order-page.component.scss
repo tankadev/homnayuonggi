@@ -51,7 +51,9 @@
 .col-right {
   display: flex;
   min-height: 0;
+  min-width: 0;
   height: 100%;
+  overflow: hidden;
 }
 
 .dish-search {

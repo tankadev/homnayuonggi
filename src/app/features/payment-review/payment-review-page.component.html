@@ -178,5 +178,11 @@
   *ngIf="wheelOpen"
   [members]="members"
   [ordererId]="ordererKey"
+  [isOrderer]="isOwner"
+  [spins]="wheelSpins"
+  [roomHistory]="roomWaterHistory"
+  [confirmedWinners]="wheelConfirmedWinners"
+  (spun)="onWheelSpun($event)"
+  (confirmed)="onWheelConfirmed($event)"
   (closed)="wheelOpen = false"
 ></app-lucky-wheel-modal>

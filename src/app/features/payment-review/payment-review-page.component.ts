@@ -25,11 +25,17 @@ import { OrderService } from '../../core/services/order.service';
 import { PaymentPaidService } from '../../core/services/payment-paid.service';
 import { UserService } from '../../core/services/user.service';
 import { LocalStorageService } from '../../core/services/localstorage.service';
+import { WheelSpinService } from '../../core/services/wheel-spin.service';
+import { WaterHistoryService } from '../../core/services/water-history.service';
 import { UserRO } from '../../core/ro/user.ro';
 import { DeliveryRO } from '../../core/ro/delivery.ro';
 import { OrderRO } from '../../core/ro/order.ro';
 import { PaymentPaidRO } from '../../core/ro/payment-paid.ro';
 import { RoomRO } from '../../core/ro/room.ro';
+import { WheelSpinRO } from '../../core/ro/wheel-spin.ro';
+import { WaterHistoryRO } from '../../core/ro/water-history.ro';
+import { WaterWinner } from '../../core/dto/water-history.dto';
+import { WheelSpunEvent, WheelConfirmEvent } from './modals/lucky-wheel-modal.component';
 
 type Filter = 'all' | 'unpaid' | 'paid';
 
@@ -58,6 +64,12 @@ export class PaymentReviewPageComponent implements OnInit, OnChanges, OnDestroy,
   newOrderOpen = false;
   /** Lucky-wheel modal — picks who fetches the drinks. */
   wheelOpen = false;
+  /** This order's spin log (anti-cheat) — passed to the wheel modal. */
+  wheelSpins: WheelSpinRO[] = [];
+  /** This room's "who fetched drinks" history (already capped at 20). */
+  roomWaterHistory: WaterHistoryRO[] = [];
+  /** Confirmed water-fetchers for the CURRENT delivery — shown on the wheel to viewers too. */
+  wheelConfirmedWinners: WaterWinner[] = [];
   /** True while the summary PNG is being rendered, to disable the button. */
   downloading = false;
 
@@ -90,6 +102,8 @@ export class PaymentReviewPageComponent implements OnInit, OnChanges, OnDestroy,
     private userService: UserService,
     private auth: AuthService,
     private storage: LocalStorageService,
+    private wheelSpinService: WheelSpinService,
+    private waterHistoryService: WaterHistoryService,
   ) {}
 
   ngOnInit(): void {
@@ -126,8 +140,11 @@ export class PaymentReviewPageComponent implements OnInit, OnChanges, OnDestroy,
       this.orderService.getListOrders(),
       this.userService.getAll(),
       this.paymentPaidService.getAll(),
-    ]).subscribe(([deliveries, orders, users, payments]) => {
+      this.wheelSpinService.getAll(),
+      this.waterHistoryService.getAll(),
+    ]).subscribe(([deliveries, orders, users, payments, spins, waterHistory]) => {
       this.applySnapshot(deliveries, orders, users, payments, roomKey, meKey);
+      this.applyWheelData(spins, waterHistory, roomKey);
       this.storage.setDeliveriesList(deliveries);
       this.storage.setOrdersList(orders);
       this.storage.setUserList(users);
@@ -175,6 +192,17 @@ export class PaymentReviewPageComponent implements OnInit, OnChanges, OnDestroy,
     this.isOwner = view.isOwner;
     this.ordererId = view.ordererId;
     this.checkCelebration(this.isAllPaid);
+  }
+
+  /** Slice the shared spin/water streams down to this delivery / room. */
+  private applyWheelData(spins: WheelSpinRO[], waterHistory: WaterHistoryRO[], roomKey: string): void {
+    const deliveryId = this.delivery?.key || '';
+    this.wheelSpins = deliveryId ? spins.filter((s) => s.deliveryId === deliveryId) : [];
+    this.roomWaterHistory = waterHistory.filter((h) => h.roomKey === roomKey);
+    /* Latest confirmed result for this delivery — so viewers see it on the wheel. */
+    const confirmed = deliveryId ? this.roomWaterHistory.filter((h) => h.deliveryId === deliveryId) : [];
+    const latest = [...confirmed].sort((a, b) => (b.createAt || '').localeCompare(a.createAt || ''))[0];
+    this.wheelConfirmedWinners = latest?.winners || [];
   }
 
   private safeReadArray<T>(read: () => T[] | null | undefined): T[] {
@@ -496,6 +524,44 @@ export class PaymentReviewPageComponent implements OnInit, OnChanges, OnDestroy,
     this.wheelOpen = true;
   }
 
+  /** A wheel spin landed — append it to the anti-cheat log (orderer only). */
+  async onWheelSpun(e: WheelSpunEvent): Promise<void> {
+    if (!this.isOwner || !this.room || !this.delivery) return;
+    try {
+      await this.wheelSpinService.create({
+        roomKey: this.room.key,
+        deliveryId: this.delivery.key,
+        spinnerId: this.auth.currentUser?.key || this.ordererId,
+        winnerId: e.winner.id,
+        winnerName: e.winner.name,
+        candidateCount: e.candidateCount,
+        createAt: new Date().toISOString(),
+      });
+    } catch (err) {
+      console.error('[payment-review] failed to log wheel spin', err);
+    }
+  }
+
+  /** Orderer confirmed the final water-fetchers — persist to the room history (max 20). */
+  async onWheelConfirmed(e: WheelConfirmEvent): Promise<void> {
+    if (!this.isOwner || !this.room || !this.delivery) return;
+    try {
+      await this.waterHistoryService.create(
+        {
+          roomKey: this.room.key,
+          deliveryId: this.delivery.key,
+          spinnerId: this.auth.currentUser?.key || this.ordererId,
+          winners: e.winners.map((w) => ({ userId: w.id, name: w.name })),
+          spinCount: e.spinCount,
+          createAt: new Date().toISOString(),
+        },
+        this.roomWaterHistory,
+      );
+    } catch (err) {
+      console.error('[payment-review] failed to save water history', err);
+    }
+  }
+
   /**
    * Orderer chose "Tạo đơn mới" — wipe the active delivery + cart + history feed so a fresh
    * poll can start in this room. Keep /paymentsPaid intact when members still owe; drop it
@@ -538,6 +604,16 @@ export class PaymentReviewPageComponent implements OnInit, OnChanges, OnDestroy,
 
     const orderTargets = this.rawOrders.filter((o) => o.roomKey === roomKey);
     await Promise.all(orderTargets.map((o) => this.orderService.deleteOrder(o.key)));
+
+    /* Wipe this order's spin log — the anti-cheat trail is per-order only. Room
+       water history is kept. */
+    if (this.delivery && this.wheelSpins.length) {
+      try {
+        await this.wheelSpinService.removeForDelivery(this.delivery.key, this.wheelSpins);
+      } catch {
+        /* swallow */
+      }
+    }
 
     if (this.delivery) {
       try {

@@ -2,83 +2,193 @@
   <div class="modal-head">
     <div>
       <h3 class="modal-title">🎡 Vòng quay may mắn</h3>
-      <p class="modal-sub">Quay chọn người đi lấy nước từ danh sách thành viên đặt món.</p>
+      <p class="modal-sub" *ngIf="isOrderer">Quay chọn người đi lấy nước từ danh sách thành viên đặt món.</p>
+      <p class="modal-sub" *ngIf="!isOrderer">Chỉ chủ đơn được quay — bạn có thể xem lịch sử kết quả quay.</p>
     </div>
     <button type="button" class="modal-close" (click)="closed.emit()" aria-label="Đóng">
       <app-icon name="x" [size]="14"></app-icon>
     </button>
   </div>
 
-  <div class="modal-body">
-    <!-- ── Config ─────────────────────────────────────────── -->
-    <div class="toggle-row" *ngIf="hasOwner" [class.on]="excludeOwner" [class.disabled]="configLocked">
-      <div class="tr-info">
-        <span class="tr-title"><app-icon name="crown" [size]="12" [filled]="true"></app-icon> Bỏ chủ đơn ra</span>
-        <span class="tr-sub">Người đặt đơn sẽ không nằm trong vòng quay.</span>
-      </div>
-      <button type="button" class="switch" [class.on]="excludeOwner" [disabled]="configLocked" (click)="toggleExclude()"></button>
-    </div>
-
-    <div class="lw-count" [class.disabled]="configLocked">
-      <div class="tr-info">
-        <span class="tr-title"><app-icon name="users" [size]="12" [filled]="true"></app-icon> Số người cần quay trúng</span>
-        <span class="tr-sub">{{ wheelMembers.length }} người trên vòng quay.</span>
-      </div>
-      <div class="lw-stepper">
-        <button type="button" (click)="decWinner()" [disabled]="configLocked || winnerCount <= 1" aria-label="Giảm">
-          <app-icon name="minus" [size]="13"></app-icon>
-        </button>
-        <span class="lw-count-val">{{ winnerCount }}</span>
-        <button type="button" (click)="incWinner()" [disabled]="configLocked || winnerCount >= maxWinners" aria-label="Tăng">
-          <app-icon name="plus" [size]="13"></app-icon>
-        </button>
-      </div>
-    </div>
-
-    <!-- ── Wheel ──────────────────────────────────────────── -->
-    <div class="lw-stage" *ngIf="wheelMembers.length; else emptyWheel">
-      <span class="lw-pointer" aria-hidden="true"></span>
-      <div class="lw-wheel">
-        <svg viewBox="0 0 100 100" class="wheel-rot" [class.spinning]="spinning" [style.transform]="'rotate(' + rotation + 'deg)'">
-          <g *ngFor="let s of segs; trackBy: trackSeg" [class.seg-won]="s.won">
-            <path [attr.d]="s.path" [attr.fill]="s.color" class="lw-slice" />
-            <text [attr.x]="s.lx" [attr.y]="s.ly" class="lw-label" text-anchor="middle" dominant-baseline="middle">
-              {{ s.member.name }}
-            </text>
-          </g>
-        </svg>
-        <span class="lw-hub" aria-hidden="true">🥤</span>
-      </div>
-    </div>
-    <ng-template #emptyWheel>
-      <div class="lw-empty">
-        <app-icon name="users" [size]="26"></app-icon>
-        <b>Không có ai để quay</b>
-        <span>Bỏ chọn "Bỏ chủ đơn ra" hoặc chờ thành viên đặt món.</span>
-      </div>
-    </ng-template>
-
-    <!-- ── Winners ────────────────────────────────────────── -->
-    <div class="lw-winners" *ngIf="winners.length">
-      <span class="lw-winners-lbl">
-        🎉 {{ winners.length === 1 ? 'Người đi lấy nước' : 'Những người đi lấy nước' }}
-        <em *ngIf="winnerCount > 1">({{ winners.length }}/{{ winnerCount }})</em>
-      </span>
-      <div class="lw-chips">
-        <span class="lw-chip" *ngFor="let w of winners; trackBy: trackWinner">
-          <span class="lw-chip-ava">{{ w.initial }}</span>{{ w.name }}
-        </span>
-      </div>
-    </div>
+  <!-- ── Tabs ─────────────────────────────────────────────── -->
+  <div class="lw-tabs">
+    <button type="button" [class.active]="tab === 'wheel'" (click)="tab = 'wheel'">Vòng quay</button>
+    <button type="button" [class.active]="tab === 'spins'" (click)="tab = 'spins'">
+      Lần quay đơn này <em *ngIf="spins.length">{{ spins.length }}</em>
+    </button>
+    <button type="button" [class.active]="tab === 'room'" (click)="tab = 'room'">
+      Lịch sử phòng <em *ngIf="roomHistory.length">{{ roomHistory.length }}</em>
+    </button>
   </div>
 
-  <div class="modal-foot split-2">
-    <button type="button" class="btn-ghost" (click)="winners.length ? reset() : closed.emit()" [disabled]="spinning">
-      {{ winners.length ? 'Quay lại' : 'Đóng' }}
-    </button>
-    <button type="button" class="btn-primary btn-grow" (click)="spin()" [disabled]="!canSpin">
-      <app-icon name="refresh" [size]="13"></app-icon>
-      {{ spinning ? 'Đang quay…' : isDone ? 'Đã xong 🎉' : winners.length ? 'Quay tiếp' : 'Quay ngay' }}
-    </button>
+  <div class="modal-body">
+    <!-- ══ TAB: WHEEL ══════════════════════════════════════ -->
+    <ng-container *ngIf="tab === 'wheel'">
+      <!-- Read-only note for non-orderers -->
+      <div class="lw-readonly" *ngIf="!isOrderer">
+        <app-icon name="crown" [size]="13" [filled]="true"></app-icon>
+        Chỉ chủ đơn được quay. Kết quả sẽ hiện ở đây theo thời gian thực.
+      </div>
+
+      <!-- ── Wheel (prioritised — always at the top) ─────────── -->
+      <div class="lw-stage" *ngIf="wheelMembers.length; else emptyWheel">
+        <span class="lw-pointer" aria-hidden="true"></span>
+        <div class="lw-wheel">
+          <svg viewBox="0 0 100 100" class="wheel-rot" [class.spinning]="spinning" [style.transform]="'rotate(' + rotation + 'deg)'">
+            <g *ngFor="let s of segs; trackBy: trackSeg" [class.seg-won]="s.won">
+              <path [attr.d]="s.path" [attr.fill]="s.color" class="lw-slice" />
+              <text [attr.x]="s.lx" [attr.y]="s.ly" class="lw-label" text-anchor="middle" dominant-baseline="middle">
+                {{ s.member.name }}
+              </text>
+            </g>
+          </svg>
+          <span class="lw-hub" aria-hidden="true">🥤</span>
+        </div>
+      </div>
+      <ng-template #emptyWheel>
+        <div class="lw-empty">
+          <app-icon name="users" [size]="26"></app-icon>
+          <b>Không có ai để quay</b>
+          <span>Bật lại người trong danh sách hoặc chờ thành viên đặt món.</span>
+        </div>
+      </ng-template>
+
+      <!-- ── Result spotlight (shown to orderer + live viewers) ── -->
+      <div class="lw-winners" *ngIf="resultWinners.length" [class.live]="resultIsLive">
+        <span class="lw-winners-lbl">
+          <ng-container *ngIf="resultConfirmed">🎉 Đã chốt người đi lấy nước</ng-container>
+          <ng-container *ngIf="!resultConfirmed && resultIsLive">🎡 Kết quả quay gần nhất</ng-container>
+          <ng-container *ngIf="!resultConfirmed && !resultIsLive">
+            🎉 {{ resultWinners.length === 1 ? 'Người đi lấy nước' : 'Những người đi lấy nước' }}
+            <em *ngIf="isOrderer && winnerCount > 1">({{ winners.length }}/{{ winnerCount }})</em>
+          </ng-container>
+        </span>
+        <div class="lw-chips">
+          <span class="lw-chip" *ngFor="let w of resultWinners">
+            <span class="lw-chip-ava">{{ w.initial }}</span>{{ w.name }}
+          </span>
+        </div>
+        <p class="lw-confirm-hint" *ngIf="canConfirm">Bấm "Chốt" để lưu vào lịch sử phòng.</p>
+        <p class="lw-confirm-hint done" *ngIf="confirmedDone">✅ Đã chốt & lưu vào lịch sử phòng.</p>
+        <p class="lw-confirm-hint" *ngIf="resultIsLive">Chủ đơn đang quay… kết quả cập nhật theo thời gian thực.</p>
+      </div>
+
+      <!-- ── Config (orderer only, below the wheel) ──────────── -->
+      <div class="lw-config" *ngIf="isOrderer">
+        <div class="lw-config-label"><app-icon name="filter" [size]="11"></app-icon> Tùy chỉnh vòng quay</div>
+
+        <div class="toggle-row" *ngIf="hasOwner" [class.on]="excludeOwner" [class.disabled]="configLocked">
+          <div class="tr-info">
+            <span class="tr-title"><app-icon name="crown" [size]="12" [filled]="true"></app-icon> Bỏ chủ đơn ra</span>
+            <span class="tr-sub">Người đặt đơn sẽ không nằm trong vòng quay.</span>
+          </div>
+          <button type="button" class="switch" [class.on]="excludeOwner" [disabled]="configLocked" (click)="toggleOwner()"></button>
+        </div>
+
+        <!-- Per-member exclusion (non-owner members) -->
+        <div class="lw-exclude" *ngIf="members.length > 1" [class.disabled]="configLocked">
+          <div class="tr-info">
+            <span class="tr-title"><app-icon name="users" [size]="12" [filled]="true"></app-icon> Ai tham gia vòng quay</span>
+            <span class="tr-sub">Tắt để loại người đó ra khỏi vòng quay.</span>
+          </div>
+          <div class="lw-member-rows">
+            <ng-container *ngFor="let m of members; trackBy: trackMember">
+              <div class="lw-member-row" *ngIf="m.id !== ordererId">
+                <span class="lw-mr-ava">{{ m.initial }}</span>
+                <span class="lw-mr-name" [class.off]="isExcluded(m.id)">{{ m.name }}</span>
+                <button type="button" class="switch sm" [class.on]="!isExcluded(m.id)" [disabled]="configLocked" (click)="toggleExclude(m.id)"></button>
+              </div>
+            </ng-container>
+          </div>
+        </div>
+
+        <div class="lw-count" [class.disabled]="configLocked">
+          <div class="tr-info">
+            <span class="tr-title"><app-icon name="users" [size]="12" [filled]="true"></app-icon> Số người cần quay trúng</span>
+            <span class="tr-sub">{{ wheelMembers.length }} người trên vòng quay.</span>
+          </div>
+          <div class="lw-stepper">
+            <button type="button" (click)="decWinner()" [disabled]="configLocked || winnerCount <= 1" aria-label="Giảm">
+              <app-icon name="minus" [size]="13"></app-icon>
+            </button>
+            <span class="lw-count-val">{{ winnerCount }}</span>
+            <button type="button" (click)="incWinner()" [disabled]="configLocked || winnerCount >= maxWinners" aria-label="Tăng">
+              <app-icon name="plus" [size]="13"></app-icon>
+            </button>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+
+    <!-- ══ TAB: SPIN LOG (anti-cheat) ══════════════════════ -->
+    <ng-container *ngIf="tab === 'spins'">
+      <div class="lw-log-head" *ngIf="spins.length">
+        Đơn này đã quay <b>{{ spins.length }}</b> lần.
+      </div>
+      <div class="lw-log" *ngIf="spinLog.length; else emptySpins">
+        <div class="lw-log-row" *ngFor="let s of spinLog; let i = index; trackBy: trackSpin">
+          <span class="lw-log-no">#{{ spinLog.length - i }}</span>
+          <span class="lw-log-ava">{{ s.winnerName?.charAt(0) }}</span>
+          <span class="lw-log-main">
+            <b>{{ s.winnerName }}</b>
+            <em>{{ s.candidateCount }} người trên vòng</em>
+          </span>
+          <span class="lw-log-time">{{ s.createAt | date: 'HH:mm' }}</span>
+        </div>
+      </div>
+      <ng-template #emptySpins>
+        <div class="lw-empty sm">
+          <app-icon name="refresh" [size]="22"></app-icon>
+          <b>Chưa có lượt quay nào</b>
+          <span>Mọi lần quay của đơn này sẽ hiện ở đây.</span>
+        </div>
+      </ng-template>
+    </ng-container>
+
+    <!-- ══ TAB: ROOM HISTORY ═══════════════════════════════ -->
+    <ng-container *ngIf="tab === 'room'">
+      <div class="lw-log-head" *ngIf="roomHistory.length">
+        20 lượt gần nhất của phòng · ai đã từng đi lấy nước.
+      </div>
+      <div class="lw-log" *ngIf="roomLog.length; else emptyRoom">
+        <div class="lw-room-row" *ngFor="let h of roomLog; trackBy: trackRoom">
+          <span class="lw-room-date">{{ h.createAt | date: 'dd/MM HH:mm' }}</span>
+          <div class="lw-room-winners">
+            <span class="lw-chip sm" *ngFor="let w of h.winners">
+              <span class="lw-chip-ava">{{ w.name?.charAt(0) }}</span>{{ w.name }}
+            </span>
+          </div>
+          <span class="lw-room-spins" *ngIf="h.spinCount > 1" title="Số lần quay trước khi chốt">
+            <app-icon name="refresh" [size]="10"></app-icon> {{ h.spinCount }}
+          </span>
+        </div>
+      </div>
+      <ng-template #emptyRoom>
+        <div class="lw-empty sm">
+          <app-icon name="clock" [size]="22"></app-icon>
+          <b>Phòng chưa có lịch sử quay</b>
+          <span>Kết quả đã chốt sẽ được lưu ở đây (tối đa 20).</span>
+        </div>
+      </ng-template>
+    </ng-container>
+  </div>
+
+  <!-- ── Footer ─────────────────────────────────────────── -->
+  <div class="modal-foot" [class.split-2]="tab === 'wheel' && isOrderer">
+    <ng-container *ngIf="tab === 'wheel' && isOrderer; else justClose">
+      <button type="button" class="btn-ghost" (click)="winners.length ? reset() : closed.emit()" [disabled]="spinning">
+        {{ winners.length ? 'Quay lại' : 'Đóng' }}
+      </button>
+      <button *ngIf="!canConfirm" type="button" class="btn-primary btn-grow" (click)="spin()" [disabled]="!canSpin">
+        <app-icon name="refresh" [size]="13"></app-icon>
+        {{ spinning ? 'Đang quay…' : isDone ? 'Đã xong 🎉' : winners.length ? 'Quay tiếp' : 'Quay ngay' }}
+      </button>
+      <button *ngIf="canConfirm" type="button" class="btn-primary btn-grow" (click)="confirm()">
+        <app-icon name="check" [size]="13" [sw]="2.4"></app-icon> Chốt người đi lấy nước
+      </button>
+    </ng-container>
+    <ng-template #justClose>
+      <button type="button" class="btn-ghost btn-grow" (click)="closed.emit()">Đóng</button>
+    </ng-template>
   </div>
 </app-modal>
