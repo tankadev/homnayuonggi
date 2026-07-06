@@ -17,5 +17,7 @@ export class DeliveryDTO {
   sponsorPrice?: number;
   splitMoney?: SplitMoneyDeliveryModel;
   deliveryStatus?: number; // 1: delivering, 2: received
+  /** Lucky-draw visual the orderer picked — shared so viewers see the same arena. */
+  luckyMode?: 'wheel' | 'duck' | 'boat';
   roomKey: string;
 }

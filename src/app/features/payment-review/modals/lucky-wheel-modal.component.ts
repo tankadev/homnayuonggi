@@ -88,10 +88,14 @@ export class LuckyWheelModalComponent implements OnInit, OnChanges, OnDestroy {
   @Input() roomHistory: WaterHistoryRO[] = [];
   /** Confirmed winners for THIS delivery (if the orderer already chốt) — shown to viewers too. */
   @Input() confirmedWinners: WaterWinner[] = [];
+  /** Visual the orderer broadcast (persisted on the delivery) so viewers mirror it. */
+  @Input() sharedMode: RaceMode = 'wheel';
 
   @Output() closed = new EventEmitter<void>();
   @Output() spun = new EventEmitter<WheelSpunEvent>();
   @Output() confirmed = new EventEmitter<WheelConfirmEvent>();
+  /** Orderer switched visual — the page persists it onto the delivery. */
+  @Output() modeChange = new EventEmitter<RaceMode>();
 
   tab: Tab = 'wheel';
 
@@ -128,11 +132,18 @@ export class LuckyWheelModalComponent implements OnInit, OnChanges, OnDestroy {
   private membersSig = '';
 
   ngOnInit(): void {
+    /* Start on the broadcast visual. The orderer then drives it locally (and
+       re-broadcasts via modeChange); viewers keep mirroring sharedMode. */
+    this.mode = this.sharedMode || 'wheel';
     this.membersSig = this.sigOf(this.members);
     this.rebuild();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
+    /* Viewers follow whatever visual the orderer picked. */
+    if (changes['sharedMode'] && !this.isOrderer) {
+      this.mode = this.sharedMode || 'wheel';
+    }
     if (!changes['members']) return;
     const next = this.sigOf(this.members);
     /* Only rebuild when the candidate set actually changed — not on every
@@ -175,6 +186,7 @@ export class LuckyWheelModalComponent implements OnInit, OnChanges, OnDestroy {
     this.mode = m;
     this.lanePos = {};
     this.rotation = 0;
+    this.modeChange.emit(m); // broadcast so viewers mirror the arena
   }
   get isRace(): boolean {
     return this.mode !== 'wheel';
@@ -315,18 +327,32 @@ export class LuckyWheelModalComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   /* ─── Race track (duck / boat modes) ─── */
+  /** Ids parked at the finish. Orderer: their live picks. Viewer: the shared
+      result (confirmed set, else the latest logged spin) so they see who won. */
+  get displayWonIds(): Set<string> {
+    if (this.isOrderer) return new Set(this.winners.map((w) => w.id));
+    const ids = new Set<string>();
+    if (this.confirmedWinners.length) {
+      this.confirmedWinners.forEach((w) => w.userId && ids.add(w.userId));
+    } else if (this.spinLog.length) {
+      const latest = this.spinLog[0];
+      if (latest.winnerId) ids.add(latest.winnerId);
+    }
+    return ids;
+  }
   /** All candidates as lanes; already-won ones are parked at the finish. */
   get laneList(): RaceLane[] {
+    const won = this.displayWonIds;
     return this.wheelMembers.map((m, i) => ({
       member: m,
       color: WHEEL_COLORS[i % WHEEL_COLORS.length],
-      won: this.winners.some((w) => w.id === m.id),
+      won: won.has(m.id),
     }));
   }
   /** Current track position for a member (won → parked at the finish line). */
   lanePosOf(id: string): number {
     if (id in this.lanePos) return this.lanePos[id];
-    return this.winners.some((w) => w.id === id) ? 100 : 0;
+    return this.displayWonIds.has(id) ? 100 : 0;
   }
   /** Racer's left offset — travels within an inset rail so it never overflows
       the lane and its centre lands on the finish line at 100%. */

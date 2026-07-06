@@ -17,5 +17,7 @@ export class DeliveryRO {
   sponsorPrice?: number;
   splitMoney?: SplitMoneyDeliveryModel;
   deliveryStatus?: number;
+  /** Lucky-draw visual the orderer picked — shared so viewers see the same arena. */
+  luckyMode?: 'wheel' | 'duck' | 'boat';
   roomKey: string;
 }

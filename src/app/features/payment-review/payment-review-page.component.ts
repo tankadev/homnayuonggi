@@ -35,7 +35,7 @@ import { RoomRO } from '../../core/ro/room.ro';
 import { WheelSpinRO } from '../../core/ro/wheel-spin.ro';
 import { WaterHistoryRO } from '../../core/ro/water-history.ro';
 import { WaterWinner } from '../../core/dto/water-history.dto';
-import { WheelSpunEvent, WheelConfirmEvent } from './modals/lucky-wheel-modal.component';
+import { WheelSpunEvent, WheelConfirmEvent, RaceMode } from './modals/lucky-wheel-modal.component';
 
 type Filter = 'all' | 'unpaid' | 'paid';
 
@@ -377,6 +377,17 @@ export class PaymentReviewPageComponent implements OnInit, OnChanges, OnDestroy,
     return this.ordererId;
   }
 
+  /** Lucky-draw visual chosen by the orderer, shared via the delivery record. */
+  get luckyMode(): RaceMode {
+    return (this.delivery?.luckyMode as RaceMode) || 'wheel';
+  }
+  get luckyIcon(): string {
+    return this.luckyMode === 'duck' ? '🦆' : this.luckyMode === 'boat' ? '🚤' : '🎡';
+  }
+  get luckyTitle(): string {
+    return this.luckyMode === 'duck' ? 'Đua vịt' : this.luckyMode === 'boat' ? 'Đua thuyền' : 'Vòng quay may mắn';
+  }
+
   trackByMember = (_: number, m: PrShare) => m.id;
   trackConfetti = (_: number, p: ConfettiPiece) => p.id;
 
@@ -522,6 +533,18 @@ export class PaymentReviewPageComponent implements OnInit, OnChanges, OnDestroy,
 
   openWheel(): void {
     this.wheelOpen = true;
+  }
+
+  /** Orderer switched visual — persist onto the delivery so viewers mirror it. */
+  async onWheelModeChange(m: RaceMode): Promise<void> {
+    if (!this.isOwner || !this.delivery) return;
+    if ((this.delivery.luckyMode || 'wheel') === m) return;
+    this.delivery.luckyMode = m; // optimistic local update
+    try {
+      await this.deliveryService.update(this.delivery.key, { luckyMode: m });
+    } catch (err) {
+      console.error('[payment-review] failed to sync lucky mode', err);
+    }
   }
 
   /** A wheel spin landed — append it to the anti-cheat log (orderer only). */

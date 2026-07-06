@@ -145,12 +145,12 @@
     *ngIf="members.length"
     type="button"
     class="pr-fab-new-order pr-fab-wheel"
-    title="Quay chọn người đi lấy nước"
+    title="Chọn người đi lấy nước"
     (click)="openWheel()"
   >
-    <span class="pr-fab-icon">🎡</span>
+    <span class="pr-fab-icon">{{ luckyIcon }}</span>
     <span class="pr-fab-label">
-      <b>Vòng quay may mắn</b>
+      <b>{{ luckyTitle }}</b>
       <em>chọn người lấy nước</em>
     </span>
   </button>
@@ -182,7 +182,9 @@
   [spins]="wheelSpins"
   [roomHistory]="roomWaterHistory"
   [confirmedWinners]="wheelConfirmedWinners"
+  [sharedMode]="luckyMode"
   (spun)="onWheelSpun($event)"
   (confirmed)="onWheelConfirmed($event)"
+  (modeChange)="onWheelModeChange($event)"
   (closed)="wheelOpen = false"
 ></app-lucky-wheel-modal>
