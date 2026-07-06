@@ -38,6 +38,23 @@ const R = 48;
 const LABEL_R = 30; // label distance from center
 const SPIN_MS = 4200; // keep in sync with .wheel-rot transition in scss
 
+/* Race mode: N waypoint frames, each animated by the .lw-racer css transition.
+   RACE_FRAMES * RACE_FRAME_MS must stay < SPIN_MS so the winner reaches the
+   finish line before spin() commits the result. */
+const RACE_FRAMES = 7;
+const RACE_FRAME_MS = 580; // keep in sync with .lw-racer transition in scss
+
+/** Which visual the orderer picked. Only the picking animation differs — the
+    random winner selection in spin() is identical for all three. */
+export type RaceMode = 'wheel' | 'duck' | 'boat';
+
+/** One lane on the race track (duck/boat modes). */
+export interface RaceLane {
+  member: PrMember;
+  color: string;
+  won: boolean;
+}
+
 /* Slice palette — leans on the active theme's tokens so it recolors per palette. */
 const WHEEL_COLORS = [
   'var(--primary)',
@@ -78,6 +95,16 @@ export class LuckyWheelModalComponent implements OnInit, OnChanges, OnDestroy {
 
   tab: Tab = 'wheel';
 
+  /** Visual chosen by the orderer — wheel (default), duck race, or boat race.
+      Local state only (like the spin animation) — not synced to viewers. */
+  mode: RaceMode = 'wheel';
+
+  /** Per-member position on the race track, 0 (start) → 100 (finish line). */
+  lanePos: Record<string, number> = {};
+  /** True for the instant we snap racers back to the start, so the css
+      transition doesn't animate the reset backwards between races. */
+  raceNoAnim = false;
+
   /** Members the orderer has ticked off the wheel (by id). */
   excludedIds = new Set<string>();
   /** How many people the spin should pick. */
@@ -93,6 +120,8 @@ export class LuckyWheelModalComponent implements OnInit, OnChanges, OnDestroy {
   confirmedDone = false;
 
   private spinTimer?: number;
+  /** Pending race-frame timers, cleared on reset / rebuild / destroy. */
+  private raceTimers: number[] = [];
   /** id-signature of the last member set we rebuilt from — guards against the
       live subscription handing us a new array reference every snapshot (which
       would otherwise reset the wheel rotation right after a spin lands). */
@@ -119,6 +148,12 @@ export class LuckyWheelModalComponent implements OnInit, OnChanges, OnDestroy {
 
   ngOnDestroy(): void {
     if (this.spinTimer) window.clearTimeout(this.spinTimer);
+    this.clearRaceTimers();
+  }
+
+  private clearRaceTimers(): void {
+    this.raceTimers.forEach((t) => window.clearTimeout(t));
+    this.raceTimers = [];
   }
 
   /** Rebuild the candidate list from the current config and reset spin state. */
@@ -126,10 +161,40 @@ export class LuckyWheelModalComponent implements OnInit, OnChanges, OnDestroy {
     this.wheelMembers = this.members.filter((m) => !this.excludedIds.has(m.id));
     this.winners = [];
     this.rotation = 0;
+    this.lanePos = {};
     this.spinning = false;
     this.confirmedDone = false;
     if (this.spinTimer) window.clearTimeout(this.spinTimer);
+    this.clearRaceTimers();
     this.winnerCount = Math.min(Math.max(1, this.winnerCount), this.maxWinners);
+  }
+
+  /** Switch visual — only before spinning / picking has started. */
+  setMode(m: RaceMode): void {
+    if (this.configLocked || this.mode === m) return;
+    this.mode = m;
+    this.lanePos = {};
+    this.rotation = 0;
+  }
+  get isRace(): boolean {
+    return this.mode !== 'wheel';
+  }
+  get modeIcon(): string {
+    return this.mode === 'duck' ? '🦆' : this.mode === 'boat' ? '🚤' : '🎡';
+  }
+  get modeTitle(): string {
+    return this.mode === 'duck' ? 'Đua vịt' : this.mode === 'boat' ? 'Đua thuyền' : 'Vòng quay may mắn';
+  }
+  /** Footer verb — "Quay" for the wheel, "Đua" for the races. */
+  get spinBtnLabel(): string {
+    if (this.spinning) return this.isRace ? 'Đang đua…' : 'Đang quay…';
+    if (this.isDone) return 'Đã xong 🎉';
+    const verb = this.isRace ? 'Đua' : 'Quay';
+    return this.winners.length ? `${verb} tiếp` : `${verb} ngay`;
+  }
+  get resetBtnLabel(): string {
+    if (!this.winners.length) return 'Đóng';
+    return this.isRace ? 'Đua lại' : 'Quay lại';
   }
 
   get hasOwner(): boolean {
@@ -249,12 +314,49 @@ export class LuckyWheelModalComponent implements OnInit, OnChanges, OnDestroy {
     this.winnerCount = Math.max(1, this.winnerCount - 1);
   }
 
+  /* ─── Race track (duck / boat modes) ─── */
+  /** All candidates as lanes; already-won ones are parked at the finish. */
+  get laneList(): RaceLane[] {
+    return this.wheelMembers.map((m, i) => ({
+      member: m,
+      color: WHEEL_COLORS[i % WHEEL_COLORS.length],
+      won: this.winners.some((w) => w.id === m.id),
+    }));
+  }
+  /** Current track position for a member (won → parked at the finish line). */
+  lanePosOf(id: string): number {
+    if (id in this.lanePos) return this.lanePos[id];
+    return this.winners.some((w) => w.id === id) ? 100 : 0;
+  }
+  /** Racer's left offset — travels within an inset rail so it never overflows
+      the lane and its centre lands on the finish line at 100%. */
+  laneLeft(id: string): string {
+    return `calc(6px + (100% - 52px) * ${this.lanePosOf(id) / 100})`;
+  }
+
   spin(): void {
     if (!this.canSpin) return;
     const remaining = this.wheelMembers.filter((m) => !this.winners.some((w) => w.id === m.id));
     if (!remaining.length) return;
 
+    /* Identical random pick for every mode — only the animation below differs. */
     const pick = remaining[Math.floor(Math.random() * remaining.length)];
+    const candidateCount = this.wheelMembers.length;
+
+    this.spinning = true;
+    if (this.isRace) this.animateRace(pick, remaining);
+    else this.animateWheel(pick);
+
+    this.spinTimer = window.setTimeout(() => {
+      this.winners = [...this.winners, pick];
+      this.spinning = false;
+      /* Log every spin (incl. re-spins) so members can see the full trail. */
+      this.spun.emit({ winner: pick, candidateCount });
+    }, SPIN_MS + 80);
+  }
+
+  /** Rotate the wheel so the picked slice lands under the top pointer. */
+  private animateWheel(pick: PrMember): void {
     const idx = this.wheelMembers.indexOf(pick);
     const n = this.wheelMembers.length;
     const step = 360 / n;
@@ -267,16 +369,52 @@ export class LuckyWheelModalComponent implements OnInit, OnChanges, OnDestroy {
     let target = -(center + jitter);
     const minTarget = this.rotation + 360 * 5;
     target += Math.ceil((minTarget - target) / 360) * 360;
-
-    const candidateCount = n;
-    this.spinning = true;
     this.rotation = target;
-    this.spinTimer = window.setTimeout(() => {
-      this.winners = [...this.winners, pick];
-      this.spinning = false;
-      /* Log every spin (incl. re-spins) so members can see the full trail. */
-      this.spun.emit({ winner: pick, candidateCount });
-    }, SPIN_MS + 80);
+  }
+
+  /** Race the racing lanes across the track. Losers jockey for the lead with
+      random wobble; the picked racer starts slow then bursts across the finish. */
+  private animateRace(pick: PrMember, remaining: PrMember[]): void {
+    this.clearRaceTimers();
+
+    /* Pre-compute each lane's per-frame targets. Losers cap short of the finish
+       (60–92) so only the winner ever reaches 100. */
+    const curves: Record<string, number[]> = {};
+    for (const m of remaining) {
+      const isWin = m.id === pick.id;
+      const end = isWin ? 100 : 60 + Math.random() * 32;
+      const frames: number[] = [];
+      let prev = 0;
+      for (let f = 1; f <= RACE_FRAMES; f++) {
+        const t = f / RACE_FRAMES;
+        /* Winner lags on an ease-in curve, then the final frame snaps to 100 —
+           that jump is the "burst". Losers advance closer to linear. */
+        const base = isWin ? end * Math.pow(t, 1.9) : end * t;
+        const wobble = f < RACE_FRAMES ? (Math.random() - 0.5) * 16 : 0;
+        let v = base + wobble;
+        v = Math.max(prev, Math.min(isWin ? 100 : end + 4, v)); // never move backwards
+        if (f === RACE_FRAMES) v = end; // land exactly on the computed end
+        frames.push(v);
+        prev = v;
+      }
+      curves[m.id] = frames;
+    }
+
+    /* Snap racers to the start with no animation, then run the frames. */
+    this.raceNoAnim = true;
+    remaining.forEach((m) => (this.lanePos[m.id] = 0));
+    this.raceTimers.push(
+      window.setTimeout(() => {
+        this.raceNoAnim = false;
+        let f = 0;
+        const tick = () => {
+          remaining.forEach((m) => (this.lanePos[m.id] = curves[m.id][f]));
+          f++;
+          if (f < RACE_FRAMES) this.raceTimers.push(window.setTimeout(tick, RACE_FRAME_MS));
+        };
+        this.raceTimers.push(window.setTimeout(tick, 20));
+      }, 40),
+    );
   }
 
   confirm(): void {
@@ -289,12 +427,15 @@ export class LuckyWheelModalComponent implements OnInit, OnChanges, OnDestroy {
     if (!this.isOrderer) return;
     this.winners = [];
     this.rotation = 0;
+    this.lanePos = {};
     this.spinning = false;
     this.confirmedDone = false;
     if (this.spinTimer) window.clearTimeout(this.spinTimer);
+    this.clearRaceTimers();
   }
 
   trackSeg = (_: number, s: WheelSeg) => s.member.id;
+  trackLane = (_: number, l: RaceLane) => l.member.id;
   trackWinner = (_: number, m: PrMember) => m.id;
   trackMember = (_: number, m: PrMember) => m.id;
   trackSpin = (_: number, s: WheelSpinRO) => s.key;

@@ -138,6 +138,193 @@
   z-index: 2;
 }
 
+/* ── Mode picker (wheel / duck / boat) ─────────────────────── */
+.lw-modes {
+  display: flex;
+  gap: 4px;
+  padding: 4px;
+  margin: 10px 0 2px;
+  background: var(--surface-2);
+  border: 1px solid var(--line-soft);
+  border-radius: 12px;
+}
+.lw-modes.disabled {
+  opacity: 0.55;
+  pointer-events: none;
+}
+.lw-modes button {
+  flex: 1;
+  border: 0;
+  background: transparent;
+  border-radius: 9px;
+  padding: 8px 6px;
+  font-family: var(--sans);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--muted);
+  cursor: pointer;
+  transition: 0.15s;
+}
+.lw-modes button:hover:not(:disabled) {
+  color: var(--ink);
+}
+.lw-modes button.active {
+  background: var(--surface);
+  color: var(--ink);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+}
+
+/* ── Race stage — everyone racing on one big shared river ──── */
+.lw-race {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  margin: 16px auto 6px;
+  width: 100%;
+  padding: 12px 0 6px;
+  border-radius: 14px;
+}
+
+/* Each racer's row — a transparent slot on the shared river, no divider. */
+.lw-track {
+  position: relative;
+  z-index: 2;
+  height: 50px;
+}
+.lw-track.lane-won {
+  opacity: 0.55;
+  filter: saturate(0.7);
+}
+
+/* The single river surface spanning every lane. */
+.lw-water {
+  position: absolute;
+  inset: 0;
+  border-radius: 14px;
+  overflow: hidden;
+  background: linear-gradient(180deg, color-mix(in oklab, #3aa0d8 26%, var(--surface)), color-mix(in oklab, #2b7fbf 40%, var(--surface)));
+  box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.12), inset 0 -8px 14px -8px rgba(0, 0, 0, 0.18);
+}
+/* Two layers of curved ripple lines (tiled SVG waves) drifting at different
+   speeds for a sense of depth. */
+.lw-water::before,
+.lw-water::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-repeat: repeat;
+}
+/* Back ripples — larger, softer, slower. */
+.lw-water::before {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='72' height='40'%3E%3Cpath d='M0 20 q18 -8 36 0 t36 0' fill='none' stroke='white' stroke-opacity='0.24' stroke-width='1.6' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-size: 72px 40px;
+  animation: ripple-back 6s linear infinite;
+}
+/* Front ripples — tighter, brighter, faster, offset vertically. */
+.lw-water::after {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='30'%3E%3Cpath d='M0 15 q12 -5 24 0 t24 0' fill='none' stroke='white' stroke-opacity='0.34' stroke-width='1.4' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-size: 48px 30px;
+  animation: ripple-front 3.8s linear infinite;
+}
+/* Ripples drift faster while a race is running. */
+.lw-race.running .lw-water::before { animation-duration: 2.6s; }
+.lw-race.running .lw-water::after { animation-duration: 1.6s; }
+@keyframes ripple-back {
+  from { background-position: 0 0; }
+  to { background-position: -72px 0; }
+}
+@keyframes ripple-front {
+  from { background-position: 0 14px; }
+  to { background-position: -48px 14px; }
+}
+
+/* One checkered finish line down the whole river, behind the racers. */
+.lw-finish {
+  position: absolute;
+  top: 6px;
+  bottom: 6px;
+  right: 12px;
+  width: 7px;
+  z-index: 1;
+  border-radius: 2px;
+  background-image:
+    linear-gradient(45deg, rgba(20, 24, 22, 0.9) 25%, transparent 25%, transparent 75%, rgba(20, 24, 22, 0.9) 75%),
+    linear-gradient(45deg, rgba(20, 24, 22, 0.9) 25%, transparent 25%, transparent 75%, rgba(20, 24, 22, 0.9) 75%),
+    linear-gradient(#fff, #fff);
+  background-size: 7px 7px, 7px 7px, 100% 100%;
+  background-position: 0 0, 3.5px 3.5px, 0 0;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.5);
+}
+
+/* The racer unit (svg + name banner), positioned by inline `left`. */
+.lw-racer {
+  position: absolute;
+  left: 6px;
+  bottom: 3px;
+  width: 46px;
+  height: 36px;
+  z-index: 4;
+  transition: left 0.58s linear;
+  will-change: left;
+}
+.no-anim .lw-racer {
+  transition: none;
+}
+.lw-racer .racer-svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.28));
+}
+
+/* Name rides above the racer on a small banner. */
+.lw-racer-name {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  margin-bottom: -2px;
+  max-width: 92px;
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: var(--surface);
+  border: 1.5px solid var(--primary);
+  font-size: 10.5px;
+  font-weight: 800;
+  line-height: 1.5;
+  color: var(--ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.18);
+  pointer-events: none;
+}
+
+/* Bobbing while racing — ducks waddle, boats rock; ripples pulse. */
+.lw-racer.moving .racer-svg {
+  animation: racer-bob 0.42s ease-in-out infinite;
+}
+.lw-race.boat .lw-racer.moving .racer-svg {
+  animation: racer-rock 0.7s ease-in-out infinite;
+}
+.rc-ripple {
+  animation: ripple-pulse 1.4s ease-in-out infinite;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+@keyframes racer-bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
+}
+@keyframes racer-rock {
+  0%, 100% { transform: rotate(-5deg); }
+  50% { transform: rotate(5deg); }
+}
+@keyframes ripple-pulse {
+  0%, 100% { transform: scaleX(0.85); opacity: 0.45; }
+  50% { transform: scaleX(1.1); opacity: 0.65; }
+}
+
 /* ── Empty state ───────────────────────────────────────────── */
 .lw-empty {
   display: flex;

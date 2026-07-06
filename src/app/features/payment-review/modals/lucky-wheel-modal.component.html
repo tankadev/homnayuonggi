@@ -1,9 +1,9 @@
 <app-modal size="sm" (closed)="closed.emit()">
   <div class="modal-head">
     <div>
-      <h3 class="modal-title">🎡 Vòng quay may mắn</h3>
-      <p class="modal-sub" *ngIf="isOrderer">Quay chọn người đi lấy nước từ danh sách thành viên đặt món.</p>
-      <p class="modal-sub" *ngIf="!isOrderer">Chỉ chủ đơn được quay — bạn có thể xem lịch sử kết quả quay.</p>
+      <h3 class="modal-title">{{ modeIcon }} {{ modeTitle }}</h3>
+      <p class="modal-sub" *ngIf="isOrderer">Chọn ngẫu nhiên người đi lấy nước từ danh sách thành viên đặt món.</p>
+      <p class="modal-sub" *ngIf="!isOrderer">Chỉ chủ đơn được chơi — bạn có thể xem lịch sử kết quả.</p>
     </div>
     <button type="button" class="modal-close" (click)="closed.emit()" aria-label="Đóng">
       <app-icon name="x" [size]="14"></app-icon>
@@ -27,24 +27,76 @@
       <!-- Read-only note for non-orderers -->
       <div class="lw-readonly" *ngIf="!isOrderer">
         <app-icon name="crown" [size]="13" [filled]="true"></app-icon>
-        Chỉ chủ đơn được quay. Kết quả sẽ hiện ở đây theo thời gian thực.
+        Chỉ chủ đơn được chơi. Kết quả sẽ hiện ở đây theo thời gian thực.
       </div>
 
-      <!-- ── Wheel (prioritised — always at the top) ─────────── -->
-      <div class="lw-stage" *ngIf="wheelMembers.length; else emptyWheel">
-        <span class="lw-pointer" aria-hidden="true"></span>
-        <div class="lw-wheel">
-          <svg viewBox="0 0 100 100" class="wheel-rot" [class.spinning]="spinning" [style.transform]="'rotate(' + rotation + 'deg)'">
-            <g *ngFor="let s of segs; trackBy: trackSeg" [class.seg-won]="s.won">
-              <path [attr.d]="s.path" [attr.fill]="s.color" class="lw-slice" />
-              <text [attr.x]="s.lx" [attr.y]="s.ly" class="lw-label" text-anchor="middle" dominant-baseline="middle">
-                {{ s.member.name }}
-              </text>
-            </g>
-          </svg>
-          <span class="lw-hub" aria-hidden="true">🥤</span>
-        </div>
+      <!-- ── Mode picker (orderer only) ──────────────────────── -->
+      <div class="lw-modes" *ngIf="isOrderer" [class.disabled]="configLocked">
+        <button type="button" [class.active]="mode === 'wheel'" [disabled]="configLocked" (click)="setMode('wheel')">
+          🎡 Vòng quay
+        </button>
+        <button type="button" [class.active]="mode === 'duck'" [disabled]="configLocked" (click)="setMode('duck')">
+          🦆 Đua vịt
+        </button>
+        <button type="button" [class.active]="mode === 'boat'" [disabled]="configLocked" (click)="setMode('boat')">
+          🚤 Đua thuyền
+        </button>
       </div>
+
+      <ng-container *ngIf="wheelMembers.length; else emptyWheel">
+        <!-- ── Wheel stage ───────────────────────────────────── -->
+        <div class="lw-stage" *ngIf="!isRace">
+          <span class="lw-pointer" aria-hidden="true"></span>
+          <div class="lw-wheel">
+            <svg viewBox="0 0 100 100" class="wheel-rot" [class.spinning]="spinning" [style.transform]="'rotate(' + rotation + 'deg)'">
+              <g *ngFor="let s of segs; trackBy: trackSeg" [class.seg-won]="s.won">
+                <path [attr.d]="s.path" [attr.fill]="s.color" class="lw-slice" />
+                <text [attr.x]="s.lx" [attr.y]="s.ly" class="lw-label" text-anchor="middle" dominant-baseline="middle">
+                  {{ s.member.name }}
+                </text>
+              </g>
+            </svg>
+            <span class="lw-hub" aria-hidden="true">🥤</span>
+          </div>
+        </div>
+
+        <!-- ── Race stage — ducks / boats on one big river ───── -->
+        <div class="lw-race" *ngIf="isRace" [class.no-anim]="raceNoAnim" [class.running]="spinning" [class.boat]="mode === 'boat'" [class.duck]="mode === 'duck'">
+          <span class="lw-water" aria-hidden="true"></span>
+          <span class="lw-finish" aria-hidden="true"></span>
+          <div class="lw-track" *ngFor="let l of laneList; trackBy: trackLane" [class.lane-won]="l.won">
+            <div class="lw-racer" [class.moving]="spinning && !l.won" [style.left]="laneLeft(l.member.id)">
+              <span class="lw-racer-name" [style.border-color]="l.color">{{ l.member.name }}</span>
+
+              <!-- Duck -->
+              <svg *ngIf="mode === 'duck'" class="racer-svg" viewBox="0 0 46 34" aria-hidden="true">
+                <ellipse class="rc-ripple" cx="22" cy="31" rx="16" ry="2.6" fill="rgba(255,255,255,.5)" />
+                <path d="M7 20 L1 14 Q2 22 9 23 Z" [attr.fill]="l.color" />
+                <ellipse cx="20" cy="21" rx="15" ry="9.5" [attr.fill]="l.color" />
+                <ellipse cx="21" cy="24.5" rx="11" ry="5" fill="rgba(255,255,255,.28)" />
+                <path d="M12 18 Q21 12 31 18 Q24 27 15 24.5 Z" fill="rgba(255,255,255,.42)" />
+                <circle cx="33" cy="11" r="8" [attr.fill]="l.color" />
+                <circle cx="30" cy="8" r="3" fill="rgba(255,255,255,.3)" />
+                <path d="M40 9 L46 8 Q47 11 46 13 L40 13 Q39 11 40 9 Z" fill="#F7A81B" />
+                <path d="M40 12.2 L46 12.2" stroke="#D98A0B" stroke-width="0.7" />
+                <circle cx="35" cy="9.5" r="1.7" fill="#16241a" />
+                <circle cx="35.6" cy="8.9" r="0.55" fill="#fff" />
+              </svg>
+
+              <!-- Boat -->
+              <svg *ngIf="mode === 'boat'" class="racer-svg" viewBox="0 0 46 36" aria-hidden="true">
+                <ellipse class="rc-ripple" cx="23" cy="33.5" rx="18" ry="2.4" fill="rgba(255,255,255,.5)" />
+                <rect x="22" y="4" width="2" height="22" rx="1" fill="#6b4a2b" />
+                <path d="M25 5 Q37 14 39 23 L25 23 Z" fill="rgba(255,255,255,.92)" />
+                <path d="M21 8 Q13 16 12 23 L21 23 Z" [attr.fill]="l.color" />
+                <path d="M24 4 L31 6 L24 8 Z" [attr.fill]="l.color" />
+                <path d="M6 24 L40 24 Q38 32 30 33 L16 33 Q8 32 6 24 Z" [attr.fill]="l.color" />
+                <path d="M8 26.4 L38 26.4 Q37.3 28.4 36.4 29.4 L9.6 29.4 Q8.7 28.4 8 26.4 Z" fill="rgba(255,255,255,.5)" />
+              </svg>
+            </div>
+          </div>
+        </div>
+      </ng-container>
       <ng-template #emptyWheel>
         <div class="lw-empty">
           <app-icon name="users" [size]="26"></app-icon>
@@ -177,11 +229,11 @@
   <div class="modal-foot" [class.split-2]="tab === 'wheel' && isOrderer">
     <ng-container *ngIf="tab === 'wheel' && isOrderer; else justClose">
       <button type="button" class="btn-ghost" (click)="winners.length ? reset() : closed.emit()" [disabled]="spinning">
-        {{ winners.length ? 'Quay lại' : 'Đóng' }}
+        {{ resetBtnLabel }}
       </button>
       <button *ngIf="!canConfirm" type="button" class="btn-primary btn-grow" (click)="spin()" [disabled]="!canSpin">
         <app-icon name="refresh" [size]="13"></app-icon>
-        {{ spinning ? 'Đang quay…' : isDone ? 'Đã xong 🎉' : winners.length ? 'Quay tiếp' : 'Quay ngay' }}
+        {{ spinBtnLabel }}
       </button>
       <button *ngIf="canConfirm" type="button" class="btn-primary btn-grow" (click)="confirm()">
         <app-icon name="check" [size]="13" [sw]="2.4"></app-icon> Chốt người đi lấy nước
