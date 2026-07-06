@@ -156,8 +156,10 @@
 
         <div class="lw-count" [class.disabled]="configLocked">
           <div class="tr-info">
-            <span class="tr-title"><app-icon name="users" [size]="12" [filled]="true"></app-icon> Số người cần quay trúng</span>
-            <span class="tr-sub">{{ wheelMembers.length }} người trên vòng quay.</span>
+            <span class="tr-title"><app-icon name="users" [size]="12" [filled]="true"></app-icon> Số người cần chọn</span>
+            <span class="tr-sub">
+              {{ wheelMembers.length }} người tham gia<span *ngIf="isRace"> · {{ winnerCount }} con về đích trước được chọn</span>.
+            </span>
           </div>
           <div class="lw-stepper">
             <button type="button" (click)="decWinner()" [disabled]="configLocked || winnerCount <= 1" aria-label="Giảm">

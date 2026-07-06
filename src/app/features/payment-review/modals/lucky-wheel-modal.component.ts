@@ -364,19 +364,35 @@ export class LuckyWheelModalComponent implements OnInit, OnChanges, OnDestroy {
     if (!this.canSpin) return;
     const remaining = this.wheelMembers.filter((m) => !this.winners.some((w) => w.id === m.id));
     if (!remaining.length) return;
-
-    /* Identical random pick for every mode — only the animation below differs. */
-    const pick = remaining[Math.floor(Math.random() * remaining.length)];
     const candidateCount = this.wheelMembers.length;
 
-    this.spinning = true;
-    if (this.isRace) this.animateRace(pick, remaining);
-    else this.animateWheel(pick);
+    if (this.isRace) {
+      /* Race modes: ONE race decides everyone — the winnerCount fastest racers
+         cross the finish line together, no need to race again. */
+      const k = Math.min(this.winnerCount, remaining.length);
+      const pool = [...remaining];
+      const picked: PrMember[] = [];
+      for (let i = 0; i < k; i++) {
+        picked.push(pool.splice(Math.floor(Math.random() * pool.length), 1)[0]);
+      }
+      this.spinning = true;
+      this.animateRace(new Set(picked.map((p) => p.id)), remaining);
+      this.spinTimer = window.setTimeout(() => {
+        this.winners = [...picked];
+        this.spinning = false;
+        /* Log each finisher so the trail + room history reflect them all. */
+        picked.forEach((w) => this.spun.emit({ winner: w, candidateCount }));
+      }, SPIN_MS + 80);
+      return;
+    }
 
+    /* Wheel mode: one pick per spin, spin again for each extra winner. */
+    const pick = remaining[Math.floor(Math.random() * remaining.length)];
+    this.spinning = true;
+    this.animateWheel(pick);
     this.spinTimer = window.setTimeout(() => {
       this.winners = [...this.winners, pick];
       this.spinning = false;
-      /* Log every spin (incl. re-spins) so members can see the full trail. */
       this.spun.emit({ winner: pick, candidateCount });
     }, SPIN_MS + 80);
   }
@@ -398,24 +414,26 @@ export class LuckyWheelModalComponent implements OnInit, OnChanges, OnDestroy {
     this.rotation = target;
   }
 
-  /** Race the racing lanes across the track. Losers jockey for the lead with
-      random wobble; the picked racer starts slow then bursts across the finish. */
-  private animateRace(pick: PrMember, remaining: PrMember[]): void {
+  /** Race the lanes across the track. Every winner reaches the finish (100);
+      losers cap short of it. Winners ease-in then burst so it looks like a
+      pack surging to the line; the number of finishers === winnerCount. */
+  private animateRace(winnerIds: Set<string>, remaining: PrMember[]): void {
     this.clearRaceTimers();
 
     /* Pre-compute each lane's per-frame targets. Losers cap short of the finish
-       (60–92) so only the winner ever reaches 100. */
+       (55–88) so only the chosen winners ever reach 100. */
     const curves: Record<string, number[]> = {};
     for (const m of remaining) {
-      const isWin = m.id === pick.id;
-      const end = isWin ? 100 : 60 + Math.random() * 32;
+      const isWin = winnerIds.has(m.id);
+      const end = isWin ? 100 : 55 + Math.random() * 33;
+      /* Vary each winner's curve so they don't move in lockstep. */
+      const exp = isWin ? 1.5 + Math.random() * 0.8 : 1;
       const frames: number[] = [];
       let prev = 0;
       for (let f = 1; f <= RACE_FRAMES; f++) {
         const t = f / RACE_FRAMES;
-        /* Winner lags on an ease-in curve, then the final frame snaps to 100 —
-           that jump is the "burst". Losers advance closer to linear. */
-        const base = isWin ? end * Math.pow(t, 1.9) : end * t;
+        /* Winners lag on an ease-in curve, then burst at the final frame. */
+        const base = end * Math.pow(t, exp);
         const wobble = f < RACE_FRAMES ? (Math.random() - 0.5) * 16 : 0;
         let v = base + wobble;
         v = Math.max(prev, Math.min(isWin ? 100 : end + 4, v)); // never move backwards
