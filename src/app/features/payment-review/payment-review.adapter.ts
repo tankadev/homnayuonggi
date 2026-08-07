@@ -4,6 +4,7 @@ import { PaymentPaidRO } from '../../core/ro/payment-paid.ro';
 import { RoomRO } from '../../core/ro/room.ro';
 import { UserRO } from '../../core/ro/user.ro';
 
+import { orderedUnitPrice } from '../../core/utils/dish-price';
 import { parseOwnerPayment } from '../../core/utils/payment-info';
 
 import { PrItem, PrMember, PrOrder, SplitMode } from './mock-data';
@@ -58,7 +59,8 @@ export function mapPaymentReview(
     if (o.roomKey !== room.key) continue;
     const dish = o.dish;
     if (!dish) continue;
-    const price = dish.discountPrice?.value || dish.price?.value || 0;
+    /* Same rule the cart uses, so the bill can never disagree with it. */
+    const price = orderedUnitPrice(dish);
     for (const note of o.userNotes || []) {
       const list = (itemsByUser[note.userId] = itemsByUser[note.userId] || []);
       list.push({

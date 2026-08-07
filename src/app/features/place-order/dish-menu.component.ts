@@ -1,13 +1,11 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { animate, style, transition, trigger } from '@angular/animations';
 
-import { MockCartLine, MockDish, MockDishSize, MockMenuSection } from './mock-data';
-import { dishLineKey } from './place-order.adapter';
+import { MockCartLine, MockDish, MockMenuSection } from './mock-data';
+import { baseDishId } from './place-order.adapter';
 
 export interface DishAddEvent {
   dishId: string;
-  sizeLabel?: string;
-  sizePrice?: number;
 }
 
 @Component({
@@ -36,6 +34,8 @@ export class DishMenuComponent {
 
   @Output() add = new EventEmitter<DishAddEvent>();
   @Output() minus = new EventEmitter<DishAddEvent>();
+  /** Dish has option groups — the parent opens the picker instead of adding. */
+  @Output() pick = new EventEmitter<MockDish>();
 
   /** Dish ids whose image finished loading — used to fade it in over the placeholder. */
   loaded: Record<string, boolean> = {};
@@ -46,37 +46,42 @@ export class DishMenuComponent {
     return Math.min(...this.section.items.map((d) => d.price));
   }
 
-  /** Total qty across all sizes (or just this dish when sizes are absent). */
+  /** My portions of this dish. For an optioned dish that means every variant of
+   *  it, since each combination of choices lives on its own cart line. */
   qtyFor(d: MockDish): number {
-    if (d.sizes && d.sizes.length) {
-      return d.sizes.reduce((n, s) => n + this.qtyForSize(d, s), 0);
-    }
-    return this.myCart.filter((l) => l.dishId === d.id).reduce((n, l) => n + l.qty, 0);
+    return this.myCart
+      .filter((l) => (d.optionGroups?.length ? baseDishId(l.dishId) === d.id : l.dishId === d.id))
+      .reduce((n, l) => n + l.qty, 0);
   }
 
-  qtyForSize(d: MockDish, s: MockDishSize): number {
-    const key = dishLineKey(d.id, s.label);
-    return this.myCart.filter((l) => l.dishId === key).reduce((n, l) => n + l.qty, 0);
+  /** How many distinct variants of this dish I have — "2 kiểu" on the card. */
+  variantCount(d: MockDish): number {
+    return new Set(
+      this.myCart.filter((l) => baseDishId(l.dishId) === d.id).map((l) => l.dishId),
+    ).size;
   }
 
-  emitAdd(d: MockDish, s?: MockDishSize): void {
-    if (s) this.add.emit({ dishId: d.id, sizeLabel: s.label, sizePrice: s.price });
-    else this.add.emit({ dishId: d.id });
+  emitAdd(d: MockDish): void {
+    this.add.emit({ dishId: d.id });
   }
 
-  emitMinus(d: MockDish, s?: MockDishSize): void {
-    if (s) this.minus.emit({ dishId: d.id, sizeLabel: s.label, sizePrice: s.price });
-    else this.minus.emit({ dishId: d.id });
+  emitMinus(d: MockDish): void {
+    this.minus.emit({ dishId: d.id });
   }
 
-  /** "15k – 30k" when sized, or just the single price (template formats via pipe). */
-  sizePriceRange(d: MockDish): { min: number; max: number } | null {
-    if (!d.sizes || !d.sizes.length) return null;
-    const prices = d.sizes.map((s) => s.price);
-    return { min: Math.min(...prices), max: Math.max(...prices) };
+  /** Short "Size, Topping +2" line so the card says what's configurable. */
+  optionSummary(d: MockDish): string {
+    const groups = d.optionGroups || [];
+    const names = groups.slice(0, 2).map((g) => g.name);
+    const extra = groups.length - names.length;
+    return extra > 0 ? `${names.join(' · ')} +${extra}` : names.join(' · ');
   }
 
-  trackBySize = (_: number, s: MockDishSize) => s.label;
+  /** True when at least one group must be picked — the card says "chọn tùy chọn"
+   *  rather than implying one tap is enough. */
+  hasRequiredOption(d: MockDish): boolean {
+    return (d.optionGroups || []).some((g) => g.required);
+  }
 
   onImgLoaded(dishId: string): void {
     this.loaded[dishId] = true;

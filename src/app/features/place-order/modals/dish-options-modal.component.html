@@ -1,0 +1,91 @@
+<app-modal size="md" (closed)="closed.emit()">
+  <div class="modal-head">
+    <div>
+      <h2 class="modal-title">{{ dish.name }}</h2>
+      <p class="modal-sub">
+        {{ base | vnd }}đ
+        <span *ngIf="dish.desc" class="dom-desc" [title]="dish.desc">· {{ dish.desc }}</span>
+      </p>
+    </div>
+    <button type="button" class="modal-close" (click)="closed.emit()" aria-label="Đóng">
+      <app-icon name="x" [size]="14"></app-icon>
+    </button>
+  </div>
+
+  <div class="modal-body dom-body">
+    <section
+      *ngFor="let g of groups; trackBy: trackByGroup"
+      class="dom-group"
+      [class.unmet]="!satisfied(g)"
+    >
+      <header class="dom-group-head">
+        <span class="dom-group-name">{{ g.name }}</span>
+        <span class="dom-group-rule" [class.required]="g.required">
+          <app-icon *ngIf="satisfied(g)" name="check" [size]="10"></app-icon>
+          {{ ruleFor(g) }}<ng-container *ngIf="g.multi"> · đã chọn {{ countFor(g) }}</ng-container>
+        </span>
+      </header>
+
+      <ul class="dom-choices" [attr.role]="g.multi ? 'group' : 'radiogroup'" [attr.aria-label]="g.name">
+        <li *ngFor="let c of g.choices; trackBy: trackByChoice">
+          <button
+            type="button"
+            class="dom-choice"
+            [class.picked]="isPicked(g, c)"
+            [class.blocked]="isBlocked(g, c)"
+            [disabled]="isBlocked(g, c)"
+            [attr.role]="g.multi ? 'checkbox' : 'radio'"
+            [attr.aria-checked]="isPicked(g, c)"
+            [title]="isBlocked(g, c) ? 'Đã chọn tối đa ' + g.max : c.label"
+            (click)="toggle(g, c)"
+          >
+            <span class="dom-tick" [class.round]="!g.multi">
+              <app-icon *ngIf="isPicked(g, c)" name="check" [size]="11"></app-icon>
+            </span>
+            <span class="dom-choice-label">{{ c.label }}</span>
+            <span class="dom-choice-price" [class.free]="!c.delta">
+              {{ c.delta ? '+' + (c.delta | vnd) + 'đ' : 'miễn phí' }}
+            </span>
+          </button>
+        </li>
+      </ul>
+    </section>
+  </div>
+
+  <div class="modal-foot dom-foot">
+    <div class="dom-summary">
+      <div class="dom-qty" role="group" aria-label="Số phần">
+        <button type="button" [disabled]="qty <= 1" title="Bớt 1 phần" (click)="setQty(qty - 1)">
+          <app-icon name="minus" [size]="13"></app-icon>
+        </button>
+        <span class="dom-qty-num">{{ qty }}</span>
+        <button type="button" [disabled]="qty >= 20" title="Thêm 1 phần" (click)="setQty(qty + 1)">
+          <app-icon name="plus" [size]="13"></app-icon>
+        </button>
+      </div>
+      <div class="dom-breakdown">
+        <span class="dom-bd-line">
+          {{ base | vnd }}đ<ng-container *ngIf="surcharge"> + {{ surcharge | vnd }}đ tùy chọn</ng-container>
+        </span>
+        <b class="dom-total">{{ total | vnd }}<span>đ</span></b>
+      </div>
+    </div>
+
+    <div class="dom-actions">
+      <button type="button" class="btn-ghost" (click)="closed.emit()">Hủy</button>
+      <button
+        type="button"
+        class="btn-primary btn-grow"
+        [disabled]="!valid"
+        [title]="missing ? 'Còn thiếu: ' + missing.name : 'Thêm vào đơn'"
+        (click)="submit()"
+      >
+        <app-icon name="cart" [size]="15"></app-icon>
+        <ng-container *ngIf="valid; else needPick">
+          Thêm {{ qty }} phần · {{ total | vnd }}đ
+        </ng-container>
+        <ng-template #needPick>Chọn "{{ missing?.name }}"</ng-template>
+      </button>
+    </div>
+  </div>
+</app-modal>

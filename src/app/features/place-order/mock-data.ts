@@ -10,15 +10,35 @@ export interface MockMember {
   owner?: boolean;
 }
 
-export interface MockDishSize {
+export interface MockOptionChoice {
+  /** Stable within its group — the ShopeeFood choice id when we have one,
+   *  otherwise the label. Used to build the cart line key. */
+  id: string;
   label: string;
-  price: number;
+  /** Surcharge on top of the dish's base price. Absolute-priced choices
+   *  (image-extracted menus) are converted to a delta at map time. */
+  delta: number;
+  isDefault?: boolean;
+}
+
+export interface MockOptionGroup {
+  id: string;
+  name: string;
+  /** Selection bounds straight from the source — a combo can demand exactly 3. */
+  min: number;
+  max: number;
+  /** True when `min > 0`; the dish can't be added until the group is satisfied. */
+  required: boolean;
+  /** `max > 1`. Rendered as checkboxes; single groups render as radios. */
+  multi: boolean;
+  choices: MockOptionChoice[];
 }
 
 export interface MockDish {
   id: string;
   name: string;
   desc: string;
+  /** Short "Tùy chọn: …" hint, only for dishes we can't open a picker for. */
   options?: string;
   price: number;
   /** Original price (before discount), only set when a discount is applied. */
@@ -29,9 +49,20 @@ export interface MockDish {
   out?: boolean;
   popular?: boolean;
   votes?: number;
-  /** When present, this dish must be ordered by picking one of these sizes. The
-   *  cart, history and payment-review treat each (dish × size) as its own line. */
-  sizes?: MockDishSize[];
+  /** When present the dish is ordered through the options modal, and each
+   *  distinct combination of choices becomes its own cart line. */
+  optionGroups?: MockOptionGroup[];
+  /** Price before any option surcharge. Only differs from `price` when the dish
+   *  has required options — `price` then shows the cheapest orderable total. */
+  basePrice?: number;
+  /** Set on ordered variants only: the menu dish this line was built from, so
+   *  the cart can still resolve the variant back to its menu section. */
+  baseId?: string;
+  /** Set on ordered variants only: what the user picked, for display. */
+  picked?: { groupName: string; label: string; delta: number }[];
+  /** Dish name without the chosen-option suffix. Use where `picked` is rendered
+   *  separately, so the labels aren't shown twice. */
+  shortName?: string;
 }
 
 export interface MockMenuSection {

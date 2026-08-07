@@ -47,6 +47,7 @@
       [myCart]="myCart"
       (add)="onAdd($event)"
       (minus)="onMinus($event)"
+      (pick)="onPick($event)"
     ></app-dish-menu>
 
     <div *ngIf="dishQuery && filteredMenu.length === 0" class="dish-search-empty">
@@ -76,6 +77,13 @@
     ></app-cart-panel>
   </div>
 </main>
+
+<app-dish-options-modal
+  *ngIf="optionsDish"
+  [dish]="optionsDish"
+  (confirm)="onOptionsConfirm($event)"
+  (closed)="optionsDish = null"
+></app-dish-options-modal>
 
 <app-note-edit-modal
   *ngIf="editingNote && dishMap[editingNote.dishId]"

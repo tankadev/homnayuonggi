@@ -1,17 +1,23 @@
 import { DeliveryRO } from '../../core/ro/delivery.ro';
-import { DeliveryDetailNowAPI, Dish } from '../../core/ro/delivery-detail-now-api.ro';
+import {
+  DeliveryDetailNowAPI,
+  Dish,
+  SelectedOption,
+} from '../../core/ro/delivery-detail-now-api.ro';
 import { OrderRO } from '../../core/ro/order.ro';
 import { OrderHistoryRO } from '../../core/ro/order-history.ro';
 import { RoomRO } from '../../core/ro/room.ro';
 import { UserRO } from '../../core/ro/user.ro';
+import { orderedUnitPrice } from '../../core/utils/dish-price';
 
 import {
   MockCartLine,
   MockDish,
-  MockDishSize,
   MockHistoryEntry,
   MockMember,
   MockMenuSection,
+  MockOptionChoice,
+  MockOptionGroup,
   MockVoucher,
 } from './mock-data';
 
@@ -63,16 +69,76 @@ function summariseOptions(options: any): string | undefined {
   return extra > 0 ? `${names.join(', ')} +${extra}` : names.join(', ');
 }
 
-/** Extract a `sizes` list from a dish's first option-group with choices. Empty when none. */
-function extractSizes(d: Dish, fallbackPrice: number): MockDishSize[] {
+/** Normalise one option group into the UI model, tolerating all three shapes we
+ *  can receive:
+ *    - `/get-detail` today: `{ choices: [{ id, label, priceDelta, isDefault }] }`
+ *    - `/extract-from-image` + the manual builder: same, but `absolutePrice`
+ *    - deliveries created before the API normalised options, still sitting in
+ *      Firebase: raw ShopeeFood `{ option_items: { min_select, max_select, items } }`
+ *  Returns null when the group has nothing selectable. */
+function mapOptionGroup(raw: any, index: number, basePrice: number): MockOptionGroup | null {
+  if (!raw || typeof raw !== 'object') return null;
+
+  /* Raw ShopeeFood: the item list is nested in an object, and item prices are
+     surcharges under `price.value`. */
+  const bucket = raw.option_items;
+  const isRaw = !!bucket && !Array.isArray(bucket) && Array.isArray(bucket.items);
+  const rawChoices: any[] = isRaw ? bucket.items : Array.isArray(raw.choices) ? raw.choices : [];
+  if (!rawChoices.length) return null;
+
+  const choices: MockOptionChoice[] = rawChoices
+    .map((c: any, i: number) => {
+      const label = String(c?.label ?? c?.name ?? '').trim();
+      /* absolutePrice is a full price for the variant, so back it out into a
+         delta — the modal adds deltas to the base price uniformly. */
+      const absolute = c?.absolutePrice;
+      const delta =
+        absolute !== null && absolute !== undefined
+          ? Number(absolute) - basePrice
+          : Number(c?.priceDelta ?? c?.price?.value ?? 0);
+      return {
+        id: String(c?.id ?? label ?? i),
+        label: label || 'Lựa chọn',
+        delta: Number.isFinite(delta) ? delta : 0,
+        isDefault: !!(c?.isDefault ?? c?.is_default),
+      };
+    })
+    .filter((c) => !!c.label);
+  if (!choices.length) return null;
+
+  const min = Number(raw.minSelect ?? bucket?.min_select ?? (raw.required ? 1 : 0)) || 0;
+  const rawMax = Number(raw.maxSelect ?? bucket?.max_select ?? 1);
+  /* Clamp so a bad upstream value can never make max < min or exceed the list. */
+  const max = Math.min(choices.length, Math.max(min, Number.isFinite(rawMax) ? rawMax : 1)) || 1;
+
+  return {
+    id: String(raw.id ?? raw.name ?? index),
+    name: String(raw.name ?? '').trim() || 'Tùy chọn',
+    min,
+    max,
+    /* `required` and `mandatory` are advisory; min is what actually gates. */
+    required: min > 0,
+    multi: max > 1,
+    choices,
+  };
+}
+
+function mapOptionGroups(d: Dish, basePrice: number): MockOptionGroup[] {
   const opts: any[] = (d.options as any) || [];
-  if (!Array.isArray(opts) || !opts.length) return [];
-  const group = opts.find((o) => Array.isArray(o?.choices) && o.choices.length);
-  if (!group) return [];
-  return group.choices.map((c: any) => ({
-    label: String(c.label ?? c.name ?? '').trim() || 'Lựa chọn',
-    price: Number(c.absolutePrice ?? c.price ?? fallbackPrice) || 0,
-  }));
+  if (!Array.isArray(opts)) return [];
+  return opts
+    .map((raw, i) => mapOptionGroup(raw, i, basePrice))
+    .filter((g): g is MockOptionGroup => !!g);
+}
+
+/** Cheapest orderable price: base + the unavoidable surcharge of every required
+ *  group (its `min` cheapest choices). Shown as "từ …đ" on the dish card. */
+export function minPriceWithOptions(basePrice: number, groups: MockOptionGroup[]): number {
+  return groups.reduce((sum, g) => {
+    if (!g.required) return sum;
+    const cheapest = [...g.choices].sort((a, b) => a.delta - b.delta).slice(0, g.min);
+    return sum + cheapest.reduce((s, c) => s + c.delta, 0);
+  }, basePrice);
 }
 
 /** Convert a Firebase Dish into the UI MockDish. */
@@ -82,49 +148,77 @@ export function mapDish(d: Dish): MockDish {
   const full = priceValue(d.price);
   const hasDiscount = discount > 0 && discount < full;
   const finalPrice = hasDiscount ? discount : full;
-  const sizes = extractSizes(d, finalPrice);
+  const optionGroups = mapOptionGroups(d, finalPrice);
   return {
     id: key,
     name: d.name || '(không tên)',
+    shortName: d.baseName || d.name || '(không tên)',
     desc: d.description || '',
-    /* Only show the legacy "Tùy chọn: …" hint for non-size option groups —
-       size choices have their own pill UI in the dish card. */
-    options: sizes.length ? undefined : summariseOptions(d.options),
-    price: sizes.length ? Math.min(...sizes.map((s) => s.price)) : finalPrice,
+    /* Only a fallback hint: dishes with a usable picker get the modal instead. */
+    options: optionGroups.length ? undefined : summariseOptions(d.options),
+    price: optionGroups.length ? minPriceWithOptions(finalPrice, optionGroups) : finalPrice,
     originalPrice: hasDiscount ? full : undefined,
     photoUrl: pickDishPhoto(d.photos),
     img: dishImageGradient(key),
     out: d.isAvailable === false || d.isDelete === true || d.isActive === false,
     votes: Number(d.totalLike || 0) || undefined,
-    sizes: sizes.length ? sizes : undefined,
+    optionGroups: optionGroups.length ? optionGroups : undefined,
+    basePrice: finalPrice,
+    /* For a variant the key is composite (`123#45+67`); strip it back to the
+       menu dish so the cart's "group by menu section" view still resolves. */
+    baseId: baseDishId(key),
+    picked: d.selectedOptions?.length
+      ? d.selectedOptions.map((s) => ({ groupName: s.groupName, label: s.label, delta: s.delta }))
+      : undefined,
   };
 }
 
-/** Build the composite cart key used to differentiate (dish × size) lines. */
-export function dishLineKey(dishId: string, sizeLabel?: string | null): string {
-  return sizeLabel ? `${dishId}#${sizeLabel}` : dishId;
+/** Build the composite cart key identifying one (dish × exact set of choices).
+ *  Choice ids are sorted so the same picks always collapse onto the same line
+ *  regardless of the order the user ticked them. */
+export function dishLineKey(dishId: string, choiceIds?: string[] | null): string {
+  if (!choiceIds || !choiceIds.length) return dishId;
+  return `${dishId}#${[...choiceIds].sort().join('+')}`;
 }
 
-/** Flatten menu sections into all orderable units — sized dishes become one
- *  virtual MockDish per size so dishMap[compositeKey] resolves in the cart. */
-export function expandOrderableDishes(menu: MockMenuSection[]): MockDish[] {
+/** Split a composite cart key back into its base dish id. */
+export function baseDishId(lineKey: string): string {
+  const hash = lineKey.indexOf('#');
+  return hash > 0 ? lineKey.slice(0, hash) : lineKey;
+}
+
+/** Every unit the cart can address: plain menu dishes (orderable as-is) plus one
+ *  entry per ordered variant, read back from the orders themselves.
+ *
+ *  Variants can't be enumerated from the menu the way sizes once were — a dish
+ *  with 4 option groups has thousands of combinations — so the orders are the
+ *  source of truth for which ones actually exist. */
+export function orderableDishes(
+  menu: MockMenuSection[],
+  orders: OrderRO[],
+  roomKey: string,
+): MockDish[] {
   const out: MockDish[] = [];
+  const seen = new Set<string>();
   for (const s of menu) {
     for (const d of s.items) {
-      if (d.sizes && d.sizes.length) {
-        for (const sz of d.sizes) {
-          out.push({
-            ...d,
-            id: dishLineKey(d.id, sz.label),
-            name: `${d.name} (${sz.label})`,
-            price: sz.price,
-            sizes: undefined,
-          });
-        }
-      } else {
-        out.push(d);
-      }
+      if (d.optionGroups?.length) continue; // only reachable through a variant
+      out.push(d);
+      seen.add(d.id);
     }
+  }
+  for (const o of orders) {
+    if (o.roomKey !== roomKey || !o.dish) continue;
+    const id = String(o.dish.id ?? o.dish.name ?? o.key);
+    if (seen.has(id)) continue;
+    seen.add(id);
+    const d = mapDish(o.dish);
+    /* A placed line is charged exactly what was stored on it, and can't be
+       re-configured in place. Orders written before options existed hold the
+       plain menu dish, option groups and all — mapping those the normal way
+       would re-price them at base + cheapest required choice and silently move
+       money in a room that is already collecting. */
+    out.push({ ...d, price: orderedUnitPrice(o.dish), optionGroups: undefined });
   }
   return out;
 }
@@ -300,33 +394,41 @@ export function findOrderByDish(orders: OrderRO[], roomKey: string, lineKey: str
 }
 
 /** Find a dish from delivery.menus by base id (i.e. *not* the composite cart key). */
-export function findDishInDelivery(delivery: DeliveryRO | null, baseDishId: string): Dish | null {
+export function findDishInDelivery(delivery: DeliveryRO | null, dishId: string): Dish | null {
   if (!delivery?.delivery?.menus) return null;
   for (const m of delivery.delivery.menus) {
     for (const d of m.dishes || []) {
       const key = String(d.id ?? d.name);
-      if (key === baseDishId) return d;
+      if (key === dishId) return d;
     }
   }
   return null;
 }
 
-/** Clone a raw Dish into the variant that will be persisted in OrderRO. When a size
- *  is picked we rewrite id/name/price so cart, payment-review and history naturally
- *  show the chosen variant without needing extra schema fields. */
+/** Clone a menu Dish into the variant persisted in OrderRO. The chosen options are
+ *  collapsed into id/name/price so cart, history and payment-review — which all read
+ *  the stored dish, not the menu — show and charge the right thing with no extra
+ *  lookups. `selectedOptions` is kept alongside purely for display.
+ *
+ *  Deliberately does *not* keep `options`: the source groups are ~3KB per dish, and a
+ *  stored variant that still carried them would re-render as if nothing was picked. */
 export function buildOrderDish(
   base: Dish,
   lineKey: string,
-  sizeLabel?: string | null,
-  sizePrice?: number,
+  selections: SelectedOption[],
+  finalPrice: number,
 ): Dish {
-  if (!sizeLabel) return base;
+  if (!selections.length) return base;
   const clone: any = JSON.parse(JSON.stringify(base));
   clone.id = lineKey;
-  clone.name = `${base.name || ''} (${sizeLabel})`.trim();
-  clone.price = { text: String(sizePrice ?? ''), unit: 'VND', value: sizePrice ?? 0 };
-  /* Drop options on the stored variant — we've already collapsed the choice into
-     the line. Otherwise the dish would still look "sized" when re-rendered. */
+  clone.baseName = base.name || '';
+  clone.name = `${base.name || ''} (${selections.map((s) => s.label).join(', ')})`.trim();
+  clone.price = { text: String(finalPrice), unit: 'VND', value: finalPrice };
+  /* payment-review prefers discountPrice over price, so a stale discount on a
+     variant would undo the surcharge we just added. The discount is already
+     folded into finalPrice. */
+  clone.discountPrice = null;
+  clone.selectedOptions = selections;
   clone.options = [];
   clone.hasSize = false;
   return clone as Dish;

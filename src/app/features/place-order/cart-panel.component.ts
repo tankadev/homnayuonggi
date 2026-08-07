@@ -92,14 +92,11 @@ export class CartPanelComponent implements OnChanges {
       this.memberMap = Object.fromEntries(this.members.map((m) => [m.id, m]));
     }
     if (changes['menu']) {
+      /* Indexed by base dish id — variants resolve through `dish.baseId`, since
+         their composite keys can't be enumerated from the menu. */
       this.dishSection = {};
       for (const s of this.menu) {
-        for (const d of s.items) {
-          this.dishSection[d.id] = s;
-          if (d.sizes?.length) {
-            for (const sz of d.sizes) this.dishSection[`${d.id}#${sz.label}`] = s;
-          }
-        }
+        for (const d of s.items) this.dishSection[d.id] = s;
       }
     }
     if (changes['cart'] || changes['dishes'] || changes['members'] || changes['menu']) this.recompute();
@@ -136,7 +133,7 @@ export class CartPanelComponent implements OnChanges {
        follows the menu's declared order; dish order within a section follows cart-add order. */
     const bySection = new Map<string, MenuGroup>();
     for (const g of this.grouped) {
-      const section = this.dishSection[g.dish.id];
+      const section = this.dishSection[g.dish.baseId || g.dish.id];
       if (!section) continue;
       let bucket = bySection.get(section.id);
       if (!bucket) {

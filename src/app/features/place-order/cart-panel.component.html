@@ -93,7 +93,12 @@
           />
         </div>
         <div class="cg-info">
-          <div class="cg-name">{{ g.dish.name }}</div>
+          <div class="cg-name">{{ g.dish.shortName || g.dish.name }}</div>
+          <ul *ngIf="g.dish.picked?.length" class="cg-opts">
+            <li *ngFor="let p of g.dish.picked" [title]="p.groupName + ': ' + p.label">
+              {{ p.label }}<b *ngIf="p.delta"> +{{ p.delta | vnd }}đ</b>
+            </li>
+          </ul>
           <div class="cg-meta">{{ g.qty }} phần · {{ g.dish.price | vnd }}đ/phần</div>
         </div>
         <div class="cg-price">{{ g.subtotal | vnd }}<span>đ</span></div>

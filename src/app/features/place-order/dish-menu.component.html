@@ -12,7 +12,6 @@
       class="dish"
       [class.out]="d.out"
       [class.in-cart]="qtyFor(d) > 0"
-      [class.has-sizes]="d.sizes?.length"
       [style.--img-a]="d.img[0]"
       [style.--img-b]="d.img[1]"
     >
@@ -53,8 +52,8 @@
             <span *ngIf="d.out" class="dish-out-badge">Hết hàng</span>
           </div>
 
-          <!-- ─── No sizes: single price + add/stepper ───────── -->
-          <ng-container *ngIf="!d.sizes?.length; else sizedTpl">
+          <!-- ─── No options: single price + add/stepper ─────── -->
+          <ng-container *ngIf="!d.optionGroups?.length; else optionedTpl">
             <div class="dish-buy">
               <div class="dish-price" [class.discounted]="d.originalPrice">
                 <span *ngIf="d.originalPrice" class="orig"
@@ -86,41 +85,53 @@
             </div>
           </ng-container>
 
-          <!-- ─── Sized: price range header + one row per size ─ -->
-          <ng-template #sizedTpl>
-            <div class="dish-buy size-range">
-              <div class="dish-price">
+          <!-- ─── Optioned: "từ …đ" + open the picker ────────── -->
+          <ng-template #optionedTpl>
+            <div class="dish-buy">
+              <div class="dish-price" [class.discounted]="d.originalPrice">
+                <span class="from-label">từ</span>
+                <span *ngIf="d.originalPrice" class="orig"
+                      [title]="'Giá gốc ' + (d.originalPrice | vnd) + 'đ'">
+                  {{ d.originalPrice | vnd }}đ
+                </span>
                 <span class="now">
-                  <span class="amt">{{ sizePriceRange(d)?.min | vnd }}đ</span>
-                  <span class="size-sep" *ngIf="sizePriceRange(d) && sizePriceRange(d)!.min !== sizePriceRange(d)!.max">
-                    – {{ sizePriceRange(d)?.max | vnd }}đ
-                  </span>
+                  <span class="amt">{{ d.price | vnd }}</span>
+                  <span class="currency">đ</span>
                 </span>
               </div>
-              <span class="size-hint">Chọn size:</span>
+
+              <!-- Same slot and size as the plain `+`, but a list glyph instead:
+                   this dish opens a picker rather than dropping straight in. -->
+              <button
+                *ngIf="!d.out"
+                type="button"
+                class="add-btn opt-btn"
+                [class.in-cart]="qtyFor(d) > 0"
+                [class.required]="hasRequiredOption(d)"
+                [title]="hasRequiredOption(d) ? 'Cần chọn tùy chọn trước khi thêm' : 'Tuỳ chỉnh rồi thêm vào đơn'"
+                [attr.aria-label]="'Chọn tùy chọn cho ' + d.name"
+                (click)="pick.emit(d)"
+              >
+                <app-icon name="list" [size]="15"></app-icon>
+              </button>
             </div>
-            <ul class="size-list" *ngIf="!d.out">
-              <li *ngFor="let s of d.sizes; trackBy: trackBySize" class="size-row"
-                  [class.picked]="qtyForSize(d, s) > 0">
-                <span class="size-label">{{ s.label }}</span>
-                <span class="size-price">{{ s.price | vnd }}đ</span>
-                <ng-container *ngIf="qtyForSize(d, s) === 0; else sizedStepper">
-                  <button type="button" class="add-btn size-add" (click)="emitAdd(d, s)"
-                          [attr.aria-label]="'Thêm ' + d.name + ' size ' + s.label">
-                    <app-icon name="plus" [size]="14"></app-icon>
-                  </button>
-                </ng-container>
-                <ng-template #sizedStepper>
-                  <div class="qty-stepper small">
-                    <button type="button" (click)="emitMinus(d, s)"><app-icon name="minus" [size]="12"></app-icon></button>
-                    <span class="count">
-                      <span class="count-num" [@countFlip]="qtyForSize(d, s)">{{ qtyForSize(d, s) }}</span>
-                    </span>
-                    <button type="button" (click)="emitAdd(d, s)"><app-icon name="plus" [size]="12"></app-icon></button>
-                  </div>
-                </ng-template>
-              </li>
-            </ul>
+
+            <div class="opt-hint" [class.picked]="qtyFor(d) > 0">
+              <ng-container *ngIf="qtyFor(d) === 0; else pickedTpl">
+                <app-icon name="layers" [size]="11"></app-icon>
+                <span>
+                  <b>{{ hasRequiredOption(d) ? 'Cần chọn:' : 'Tuỳ chọn:' }}</b>
+                  {{ optionSummary(d) }}
+                </span>
+              </ng-container>
+              <ng-template #pickedTpl>
+                <app-icon name="check" [size]="11"></app-icon>
+                <span>
+                  Bạn đã chọn {{ qtyFor(d) }} phần<ng-container *ngIf="variantCount(d) > 1">
+                    · {{ variantCount(d) }} kiểu</ng-container>
+                </span>
+              </ng-template>
+            </div>
           </ng-template>
         </div>
       </div>

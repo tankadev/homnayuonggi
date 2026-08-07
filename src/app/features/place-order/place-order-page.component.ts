@@ -11,9 +11,9 @@ import {
 } from './mock-data';
 import { RoomDraft } from './modals/room-draft';
 import {
+  baseDishId,
   buildOrderDish,
   dishLineKey,
-  expandOrderableDishes,
   findDishInDelivery,
   findOrderByDish,
   mapDelivery,
@@ -21,8 +21,10 @@ import {
   mapHistory,
   mapMembers,
   mapOrders,
+  orderableDishes,
 } from './place-order.adapter';
 import { DishAddEvent } from './dish-menu.component';
+import { DishOptionsResult } from './modals/dish-options-modal.component';
 
 import { AuthService } from '../../core/services/auth.service';
 import { DeliveryService } from '../../core/services/delivery.service';
@@ -81,6 +83,8 @@ export class PlaceOrderPageComponent implements OnInit, OnChanges, OnDestroy {
 
   /* ─── modal state ─────────────────────────────────────────── */
   editingNote: MockCartLine | null = null;
+  /** Dish whose option picker is open, if any. */
+  optionsDish: MockDish | null = null;
   cancelOpen = false;
   submitOpen = false;
   editRoomOpen = false;
@@ -179,10 +183,12 @@ export class PlaceOrderPageComponent implements OnInit, OnChanges, OnDestroy {
 
   /* ─── derived getters used by template ────────────────────── */
   get allDishes(): MockDish[] {
-    /* Expand sized dishes into per-size virtual entries so cart lookups by composite
-       key (`${dishId}#${sizeLabel}`) resolve. The menu UI itself still iterates the
-       logical section.items, which keep `sizes` for the picker. */
-    return expandOrderableDishes(this.menu);
+    /* Plain menu dishes plus one entry per ordered variant, so cart lookups by
+       composite key (`${dishId}#${choiceIds}`) resolve. Variants come from the
+       orders rather than the menu — a dish with 4 option groups has far too many
+       combinations to enumerate up front. The menu UI still iterates
+       section.items, which keep `optionGroups` for the picker. */
+    return orderableDishes(this.menu, this.rawOrders, this.room?.key || '');
   }
   trackBySection = (_: number, s: MockMenuSection) => s.id;
 
@@ -195,7 +201,9 @@ export class PlaceOrderPageComponent implements OnInit, OnChanges, OnDestroy {
       .map((s) => ({
         ...s,
         items: s.items.filter((d) =>
-          [d.name, d.desc, d.options].some((f) => (f || '').toLowerCase().includes(q)),
+          [d.name, d.desc, d.options, ...(d.optionGroups || []).map((g) => g.name)].some((f) =>
+            (f || '').toLowerCase().includes(q),
+          ),
         ),
       }))
       .filter((s) => s.items.length > 0);
@@ -332,41 +340,78 @@ export class PlaceOrderPageComponent implements OnInit, OnChanges, OnDestroy {
 
   /* ─── cart mutations ──────────────────────────────────────── */
 
+  /** Dish card asked for the option picker. Cheap guard: if the source dish
+   *  vanished from the delivery we'd have nothing to price against. */
+  onPick(d: MockDish): void {
+    if (!d.optionGroups?.length || d.out) return;
+    if (!findDishInDelivery(this.delivery, d.id)) return;
+    this.optionsDish = d;
+  }
+
+  /** User confirmed a set of options — one cart line per distinct combination,
+   *  priced at base + surcharges so cart / bill / history need no menu lookup. */
+  async onOptionsConfirm(res: DishOptionsResult): Promise<void> {
+    const dish = this.optionsDish;
+    this.optionsDish = null;
+    if (!dish) return;
+    /* Pass the name explicitly: the variant's cart entry only exists once the
+       orders snapshot round-trips through Firebase, so dishName() would still
+       resolve to the raw line key at this point. */
+    const name = `${dish.shortName || dish.name} (${res.selections.map((s) => s.label).join(', ')})`;
+    await this.addPortions(dish.id, res.qty, res, name);
+  }
+
   async onAdd(ev: DishAddEvent | string): Promise<void> {
-    const evt = this.normalizeEvent(ev);
+    const lineKey = this.normalizeEvent(ev);
+    await this.addPortions(lineKey, 1, null);
+  }
+
+  /** Add `qty` portions of one cart line for the current user. `opts` is set only
+   *  when the line is being created from the option picker. */
+  private async addPortions(
+    lineKeyOrDishId: string,
+    qty: number,
+    opts: DishOptionsResult | null,
+    displayName?: string,
+  ): Promise<void> {
     const me = this.auth.currentUser;
-    if (!me || !this.room) return;
-    const lineKey = dishLineKey(evt.dishId, evt.sizeLabel);
+    if (!me || !this.room || qty <= 0) return;
+    const lineKey = opts ? dishLineKey(lineKeyOrDishId, opts.choiceIds) : lineKeyOrDishId;
     const existing = findOrderByDish(this.rawOrders, this.room.key, lineKey);
+    /* Resolved before the write: the orders snapshot can round-trip during the
+       await, and a variant's name is only derivable from its own order. */
+    const name = displayName || this.dishName(lineKey);
 
     if (existing) {
       const notes = [...(existing.userNotes || [])];
       const idx = notes.findIndex((n) => n.userId === me.key);
       if (idx >= 0) {
-        notes[idx] = { ...notes[idx], quantity: (notes[idx].quantity || 0) + 1 };
+        notes[idx] = { ...notes[idx], quantity: (notes[idx].quantity || 0) + qty };
       } else {
-        notes.push({ userId: me.key, content: '', quantity: 1 });
+        notes.push({ userId: me.key, content: '', quantity: qty });
       }
       await this.orderService.updateOrder(existing.key, { userNotes: notes });
     } else {
-      const dishMeta = findDishInDelivery(this.delivery, evt.dishId);
+      /* A line key with no order yet can only be built from its base dish. */
+      const dishMeta = findDishInDelivery(this.delivery, baseDishId(lineKey));
       if (!dishMeta) return;
-      const variant = buildOrderDish(dishMeta, lineKey, evt.sizeLabel, evt.sizePrice);
+      const variant = opts
+        ? buildOrderDish(dishMeta, lineKey, opts.selections, opts.price)
+        : dishMeta;
       const dto: OrderDTO = {
         roomKey: this.room.key,
         dish: variant,
-        userNotes: [{ userId: me.key, content: '', quantity: 1 }],
+        userNotes: [{ userId: me.key, content: '', quantity: qty }],
       };
       await this.orderService.addOrder(dto);
     }
-    this.logHistory(0, this.dishName(lineKey));
+    this.logHistory(0, name);
   }
 
   async onMinus(ev: DishAddEvent | string): Promise<void> {
-    const evt = this.normalizeEvent(ev);
     const me = this.auth.currentUser;
     if (!me || !this.room) return;
-    const lineKey = dishLineKey(evt.dishId, evt.sizeLabel);
+    const lineKey = this.normalizeEvent(ev);
     const existing = findOrderByDish(this.rawOrders, this.room.key, lineKey);
     if (!existing) return;
     const notes = [...(existing.userNotes || [])];
@@ -374,28 +419,27 @@ export class PlaceOrderPageComponent implements OnInit, OnChanges, OnDestroy {
     if (idx < 0) return;
     const cur = notes[idx];
     if ((cur.quantity || 0) <= 1) {
+      /* Resolve the name up front: a variant's name lives on its own order, so
+         once the delete lands and the orders snapshot round-trips there is
+         nothing left to look it up from. */
+      const name = this.dishName(lineKey);
       notes.splice(idx, 1);
       if (notes.length === 0) {
         await this.orderService.deleteOrder(existing.key);
       } else {
         await this.orderService.updateOrder(existing.key, { userNotes: notes });
       }
-      this.logHistory(1, this.dishName(lineKey));
+      this.logHistory(1, name);
     } else {
       notes[idx] = { ...cur, quantity: cur.quantity - 1 };
       await this.orderService.updateOrder(existing.key, { userNotes: notes });
     }
   }
 
-  /** cart-panel still emits the legacy `string` dishId (composite or bare) — normalize
-   *  to a DishAddEvent so both call sites can share the size-aware code path. */
-  private normalizeEvent(ev: DishAddEvent | string): DishAddEvent {
-    if (typeof ev === 'string') {
-      const hash = ev.indexOf('#');
-      if (hash > 0) return { dishId: ev.slice(0, hash), sizeLabel: ev.slice(hash + 1) };
-      return { dishId: ev };
-    }
-    return ev;
+  /** cart-panel emits a bare `string` line key, dish-menu emits a DishAddEvent.
+   *  Both already carry the full cart line key (composite or plain). */
+  private normalizeEvent(ev: DishAddEvent | string): string {
+    return typeof ev === 'string' ? ev : ev.dishId;
   }
 
   /* ─── modal handlers ─────────────────────────────────────── */
@@ -596,8 +640,14 @@ export class PlaceOrderPageComponent implements OnInit, OnChanges, OnDestroy {
 
   /* ─── helpers ────────────────────────────────────────────── */
 
-  private dishName(dishId: string): string {
-    return this.allDishes.find((d) => d.id === dishId)?.name || dishId;
+  /** Display name for a cart line key. Falls back through the order and then the
+   *  menu so a raw composite key (`123#45+67`) can never reach the history feed. */
+  private dishName(lineKey: string): string {
+    const hit = this.allDishes.find((d) => d.id === lineKey);
+    if (hit) return hit.name;
+    const order = findOrderByDish(this.rawOrders, this.room?.key || '', lineKey);
+    if (order?.dish?.name) return order.dish.name;
+    return findDishInDelivery(this.delivery, baseDishId(lineKey))?.name || lineKey;
   }
 
   private logHistory(action: 0 | 1 | 2, what: string, note?: string): void {

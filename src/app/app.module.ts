@@ -22,6 +22,7 @@ import { HistoryCardComponent } from './features/place-order/history-card.compon
 import { VoucherStripComponent } from './features/place-order/voucher-strip.component';
 import { DishMenuComponent } from './features/place-order/dish-menu.component';
 import { CartPanelComponent } from './features/place-order/cart-panel.component';
+import { DishOptionsModalComponent } from './features/place-order/modals/dish-options-modal.component';
 import { NoteEditModalComponent } from './features/place-order/modals/note-edit-modal.component';
 import { CancelOrderModalComponent } from './features/place-order/modals/cancel-order-modal.component';
 import { EditRoomModalComponent } from './features/place-order/modals/edit-room-modal.component';
@@ -65,6 +66,7 @@ export function initTheme(theme: ThemeService) {
     VoucherStripComponent,
     DishMenuComponent,
     CartPanelComponent,
+    DishOptionsModalComponent,
     NoteEditModalComponent,
     CancelOrderModalComponent,
     EditRoomModalComponent,
