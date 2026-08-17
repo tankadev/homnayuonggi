@@ -389,9 +389,19 @@
   font-size: 12px;
   letter-spacing: -0.015em;
   color: var(--ink);
+  /* Dish names run long ("Cuốn Khô Bò Đỏ Cút Đào"), and a single line cut with
+     an ellipsis often hid the part that distinguishes two variants. Allow two
+     lines, then ellipsis. -webkit-box is what line-clamp needs; the prefixed
+     property is the one every current engine implements. */
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  /* Must beat the nowrap this rule used to carry, or it can never wrap. */
+  white-space: normal;
   overflow: hidden;
   text-overflow: ellipsis;
-  white-space: nowrap;
+  line-height: 1.3;
 }
 /* Chosen options, one chip each — the surcharge is spelled out so the per-portion
    price below is never a mystery. */

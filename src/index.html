@@ -4,9 +4,22 @@
   <meta charset="utf-8">
   <title>Today Uống Gì?</title>
   <base href="/">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- viewport-fit=cover lets the palette background bleed into the notch and
+       home-indicator areas; app.component.scss pads the shell back off them
+       with env(safe-area-inset-*). -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="description" content="Ứng dụng web giúp chia tiền đặt món từ ShopeeFood nhanh chóng!">
+  <!-- Default is the saigon palette's --bg (body ships with .pal-saigon).
+       ThemeService rewrites this on every palette change so the phone's status
+       bar and browser chrome track the active theme. -->
+  <meta name="theme-color" content="#f9f1e2">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Uống Gì?">
   <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <!-- iOS ignores the manifest icons for Add to Home Screen. -->
+  <link rel="apple-touch-icon" href="assets/images/icon.png">
   <link rel="manifest" href="./manifest.json">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

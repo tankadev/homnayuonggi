@@ -1,3 +1,5 @@
+@use 'breakpoints' as bp;
+
 :host {
   display: flex;
   flex: 1;
@@ -1405,4 +1407,39 @@
 }
 .co-lightbox-close:hover {
   background: rgba(255, 255, 255, 0.32);
+}
+
+/* ─── Responsive ──────────────────────────────────────────────────────
+   This screen is already a centred single column capped at 480px, so it only
+   needs its generous padding trimmed and the field heights grown for thumbs.
+   (`.co-review-shop` collapses at 540px further up in this file.) */
+
+@include bp.phone {
+  .co-empty {
+    padding: 24px 18px 22px;
+    border-radius: var(--r-lg);
+  }
+  .main-empty {
+    padding: 14px 10px;
+  }
+
+  .co-input {
+    height: 44px;
+  }
+
+  .footer-text {
+    padding-bottom: calc(6px + env(safe-area-inset-bottom));
+  }
+}
+
+@include bp.tiny {
+  /* Three tip chips across a ~340px content box leaves ~100px each — enough for
+     a word, not for the label plus its value. */
+  .co-tips {
+    grid-template-columns: 1fr;
+  }
+  .co-cta {
+    width: 150px;
+    height: 180px;
+  }
 }

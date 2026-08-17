@@ -1,3 +1,5 @@
+@use 'breakpoints' as bp;
+
 .topbar {
   flex-shrink: 0;
   display: grid;
@@ -249,4 +251,116 @@
   background: var(--bg-2);
   color: var(--ink);
   border-color: var(--ink-2);
+}
+
+/* ─── Phone ───────────────────────────────────────────────────────── */
+
+/* Brand + room name + five actions will not share one 390px row. The room
+   pill drops to a second row where a long room name has space to breathe,
+   and the actions shed their labels down to icons. */
+@include bp.tablet {
+  .topbar {
+    grid-template-columns: auto 1fr;
+    gap: 6px 10px;
+    padding: 6px 12px;
+    /* Topmost element in the shell, so it owns the status-bar inset when the
+       page runs standalone with viewport-fit=cover. Resolves to 0 in a normal
+       browser tab. */
+    padding-top: calc(6px + env(safe-area-inset-top));
+  }
+
+  .brand {
+    grid-column: 1;
+    grid-row: 1;
+  }
+  .top-actions {
+    grid-column: 2;
+    grid-row: 1;
+  }
+  /* Matches both .room-pill and .room-pill-empty. */
+  .room-pill {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    /* A pill is inline-flex, so without this it stretches to the full row. */
+    justify-self: start;
+    max-width: 100%;
+  }
+  .room-pill .room-name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /* History mode renders no room pill, so row 2 simply collapses. */
+}
+
+@include bp.phone {
+  .brand-mark {
+    width: 32px;
+    height: 32px;
+    border-radius: 9px;
+  }
+  /* The wordmark plus five actions overflow a 390px row — "Thoát phòng" gets
+     clipped off the right edge. The logo alone identifies the app (and the room
+     pill on row 2 gives the context), so the text block goes and the actions get
+     the ~105px they need. */
+  .brand-block {
+    display: none;
+  }
+
+  .top-actions {
+    gap: 6px;
+  }
+
+  /* Grow the icon hit areas now that the labels are gone. */
+  .icon-btn {
+    width: 34px;
+    height: 34px;
+  }
+
+  /* Keep the avatar, drop the display name — it is the longest thing in the
+     row and the initial already identifies the user. */
+  .me-pill {
+    padding: 2px;
+    gap: 0;
+  }
+  .me-pill > span:not(.avatar) {
+    display: none;
+  }
+  .avatar {
+    width: 30px;
+    height: 30px;
+    font-size: 13px;
+  }
+
+  .btn-leave {
+    height: 34px;
+    padding: 0 10px;
+    font-size: 12px;
+    /* Fixed-height pill, so "Thoát phòng" breaking onto a second line spills
+       out of it. */
+    white-space: nowrap;
+  }
+}
+
+@include bp.tiny {
+  .top-actions {
+    gap: 4px;
+    /* Safety net: at 316px the row still overflowed and carried the logout
+       button clean off the right edge of the screen (the topbar clips, so it was
+       unreachable, not just ugly). Wrapping adapts to whatever combination of
+       actions the current screen renders instead of relying on them all
+       happening to fit. */
+    flex-wrap: wrap;
+    row-gap: 6px;
+  }
+  /* The action column must be allowed to shrink for wrapping to ever kick in —
+     an `auto` track sizes to max-content and never triggers it. */
+  .topbar {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+  .btn-leave {
+    padding: 0 8px;
+    font-size: 11.5px;
+  }
 }

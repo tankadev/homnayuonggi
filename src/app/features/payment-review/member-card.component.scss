@@ -1,3 +1,5 @@
+@use 'breakpoints' as bp;
+
 :host { display: contents; }
 
 .pr-member {
@@ -441,4 +443,65 @@
 }
 .pr-mem-paid-foot .undo:hover {
   background: color-mix(in oklab, var(--primary) 12%, transparent);
+}
+
+/* ─── Phone ───────────────────────────────────────────────────────────
+   Same failure as the history order card: the head is `auto 1fr auto auto`,
+   sized for a wide centre column. On a phone the avatar, the amount block and
+   the paid pill consume everything and the `1fr` name column collapses to 0px,
+   so the member's name overflows one word per line. Split into two rows. */
+
+@include bp.phone {
+  .pr-mem-head {
+    /* Two tracks only: everything below the avatar stacks in column 2, so a
+       third track would just sit empty at 0px. */
+    grid-template-columns: auto minmax(0, 1fr);
+    column-gap: 10px;
+    row-gap: 8px;
+    padding: 10px 12px;
+    /* Name and "Tạm tính …" sub-line both wrap, so top-align the avatar. */
+    align-items: start;
+  }
+  .pr-mem-avatar {
+    grid-column: 1;
+    grid-row: 1;
+  }
+  /* The name takes the whole first row. Keeping the amount beside it left only
+     42px here — the block carries a second line ("Tạm tính 35.000đ + phí theo
+     tỉ lệ") that is ~168px wide on its own. */
+  .pr-mem-name {
+    grid-column: 2 / -1;
+    grid-row: 1;
+  }
+  .pr-mem-amount {
+    grid-column: 2 / -1;
+    grid-row: 2;
+    justify-self: end;
+    text-align: right;
+  }
+  /* Whichever of the three variants renders (owner label, orderer's toggle, or
+     read-only status) drops to its own row, right-aligned. */
+  .pr-paid-static,
+  .pr-paid-toggle {
+    grid-column: 2 / -1;
+    grid-row: 3;
+    justify-self: end;
+  }
+  .pr-paid-toggle {
+    min-height: 36px;
+  }
+
+  /* "Món đã đặt" beside "Phải trả" is two ~150px columns of prices and dish
+     names — stack them and turn the divider from vertical to horizontal. */
+  .pr-mem-body {
+    grid-template-columns: 1fr;
+  }
+  .pr-mem-items {
+    border-right: 0;
+    border-bottom: 1px dashed var(--line-soft);
+    padding: 10px 12px 12px;
+  }
+  .pr-mem-breakdown {
+    padding: 10px 12px 12px;
+  }
 }

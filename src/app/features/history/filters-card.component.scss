@@ -1,3 +1,5 @@
+@use 'breakpoints' as bp;
+
 :host { display: block; }
 
 .h-card {
@@ -91,4 +93,23 @@
   outline: none;
   border-color: var(--primary);
   box-shadow: 0 0 0 3px color-mix(in oklab, var(--primary) 12%, transparent);
+}
+
+@include bp.phone {
+  /* inline-flex leaves the segmented control sized to its content, so the three
+     range buttons get squeezed and their labels break. Span the row instead and
+     let the equal-flex buttons divide it. */
+  .h-seg {
+    display: flex;
+    width: 100%;
+  }
+  .h-seg button {
+    white-space: nowrap;
+    padding: 7px 6px;
+  }
+
+  /* Native select — 44px is the comfortable minimum for a tap. */
+  .h-select {
+    min-height: 44px;
+  }
 }

@@ -1,3 +1,5 @@
+@use 'breakpoints' as bp;
+
 :host {
   display: flex;
   flex: 1;
@@ -409,4 +411,110 @@
   font-weight: 500;
   opacity: 0.78;
   letter-spacing: 0.02em;
+}
+
+/* ─── Responsive ──────────────────────────────────────────────────── */
+
+@include bp.lap {
+  .pr-main {
+    grid-template-columns: 280px 1fr 300px;
+    gap: 10px;
+    padding: 10px 12px;
+  }
+}
+
+@include bp.tablet {
+  /* Hand the scroll to .app-pages instead of clipping inside a fixed-height
+     pane — stacked, this content is taller than the viewport. Column direction
+     is needed so the action stack below can sit under .pr-main once it rejoins
+     the flow (:host is display:flex, i.e. a row by default). */
+  :host {
+    flex: 0 0 auto;
+    overflow: visible;
+    flex-direction: column;
+  }
+
+  .pr-main {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 10px 12px;
+    overflow: visible;
+    flex: 0 0 auto;
+  }
+
+  /* The action stack leaves position:fixed and becomes an action footer at the
+     end of the page.
+     Floating it would cost 175px of a 796px screen — 22%, permanently, because
+     the three buttons carry two-line labels. Reserving that much padding also
+     means guessing: the stack holds one, two or three buttons depending on the
+     viewer's role and the order state, so any fixed reservation is wrong most of
+     the time. In the flow it costs nothing and adapts by itself. These are
+     terminal actions (export image, spin the wheel, start a new order), so the
+     end of the review page is where they belong. */
+  .pr-fab-stack {
+    position: static;
+    flex-direction: column;
+    gap: 8px;
+    align-items: stretch;
+    padding: 2px 12px calc(14px + env(safe-area-inset-bottom));
+  }
+  .pr-fab-new-order {
+    width: 100%;
+    justify-content: center;
+    min-height: 46px;
+  }
+  .pr-fab-label {
+    align-items: center;
+    padding-right: 0;
+  }
+
+  /* The three columns stop scrolling independently and become one page scroll.
+     Reordered so the first thing on screen answers "how much do I owe": the
+     you-pay card is the third column on desktop but leads on a phone.
+
+     flex: 0 0 auto matters — the columns shrink by default, so they would be
+     squeezed to fit the old fixed-height frame while their now-visible overflow
+     painted over the column below. */
+  .pr-col {
+    flex: 0 0 auto;
+    height: auto;
+    min-height: 0;
+    overflow: visible;
+    padding-right: 0;
+  }
+  /* Selected by element type rather than :nth-child so the intent survives if a
+     column is added: the two rails are <aside>, the middle column is <main>. */
+  aside.pr-col:first-of-type {
+    order: 3;
+  }
+  main.pr-col {
+    order: 2;
+  }
+  aside.pr-col:last-of-type {
+    order: 1;
+  }
+
+  .pr-banner {
+    padding: 12px 14px;
+  }
+}
+
+@include bp.phone {
+  .pr-main {
+    padding: 8px 10px 4px;
+    gap: 10px;
+  }
+
+  /* Banner stacks its two halves — the right side holds the total, which needs
+     the full width rather than being squeezed into an auto column. */
+  .pr-banner {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .pr-fab-stack {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
 }

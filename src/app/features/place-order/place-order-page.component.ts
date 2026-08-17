@@ -81,6 +81,14 @@ export class PlaceOrderPageComponent implements OnInit, OnChanges, OnDestroy {
   /** Free-text dish filter for the menu column. */
   dishQuery = '';
 
+  /**
+   * Phone only: the cart is the third column on desktop, but there is no room
+   * for it beside the menu on a phone, so it becomes a bottom sheet opened from
+   * the sticky summary bar. Ignored above the phone breakpoint, where the
+   * column is always visible.
+   */
+  cartSheetOpen = false;
+
   /* ─── modal state ─────────────────────────────────────────── */
   editingNote: MockCartLine | null = null;
   /** Dish whose option picker is open, if any. */
@@ -221,6 +229,19 @@ export class PlaceOrderPageComponent implements OnInit, OnChanges, OnDestroy {
   }
   get subtotal(): number {
     return this.cart.reduce((s, l) => s + (this.dishMap[l.dishId]?.price || 0) * l.qty, 0);
+  }
+
+  /** Portions across the whole room — the number on the phone summary bar. */
+  get cartItemCount(): number {
+    return this.cart.reduce((n, l) => n + l.qty, 0);
+  }
+
+  toggleCartSheet(): void {
+    this.cartSheetOpen = !this.cartSheetOpen;
+  }
+
+  closeCartSheet(): void {
+    this.cartSheetOpen = false;
   }
 
   /** True iff the logged-in user is the orderer assigned for this delivery. */
@@ -468,6 +489,10 @@ export class PlaceOrderPageComponent implements OnInit, OnChanges, OnDestroy {
 
   askClear(): void {
     if (!this.delivery) return;
+    /* Both actions are triggered from inside the cart, which on a phone is the
+       bottom sheet. Drop the sheet first so its backdrop doesn't stack under
+       the modal's. */
+    this.cartSheetOpen = false;
     this.cancelOpen = true;
   }
 
@@ -490,6 +515,7 @@ export class PlaceOrderPageComponent implements OnInit, OnChanges, OnDestroy {
 
   askSubmit(): void {
     if (!this.isOrderer || this.cart.length === 0) return;
+    this.cartSheetOpen = false;
     this.submitOpen = true;
   }
 

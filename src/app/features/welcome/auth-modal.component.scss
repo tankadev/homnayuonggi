@@ -1,3 +1,5 @@
+@use 'breakpoints' as bp;
+
 .wel-modal {
   position: fixed;
   inset: 0;
@@ -475,4 +477,64 @@
 @keyframes wm-slide-back {
   from { opacity: 0; transform: translateX(-16px); }
   to { opacity: 1; transform: translateX(0); }
+}
+
+/* ─── Phone: bottom sheet ─────────────────────────────────────────────
+   This is the login gate, and it predates the shared <app-modal> wrapper — it
+   builds its own shell out of .wel-modal / .wel-modal-card, so the bottom-sheet
+   rules in styles/modal.scss do not reach it. Mirrored here so the first screen
+   a phone user meets behaves like every other sheet in the app. */
+
+@include bp.phone {
+  .wel-modal {
+    place-items: end stretch;
+    padding: 0;
+  }
+
+  .wel-modal-card {
+    max-width: none;
+    border-radius: 26px 26px 0 0;
+    border-bottom: 0;
+    border-left: 0;
+    border-right: 0;
+    max-height: 94dvh;
+    animation: wm-in-sheet 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .wm-head {
+    padding: 16px 18px 0;
+  }
+  .wm-body {
+    padding: 12px 18px 4px;
+    /* The card can now be taller than the screen (phone number + OTP steps), so
+       the body takes the scroll and the footer stays reachable. */
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+  .wm-foot {
+    padding: 12px 18px calc(12px + env(safe-area-inset-bottom));
+    position: sticky;
+    bottom: 0;
+    background: var(--surface);
+    border-top: 1px solid var(--line-soft);
+  }
+
+  /* Thumb-sized targets. */
+  .wm-close {
+    height: 38px;
+    padding: 0 14px;
+  }
+  .wm-input-wrap {
+    min-height: 46px;
+  }
+
+  /* Two login-method tiles side by side are too cramped to read at this width. */
+  .wm-modes {
+    grid-template-columns: 1fr;
+  }
+}
+
+@keyframes wm-in-sheet {
+  from { opacity: 0; transform: translateY(100%); }
+  to { opacity: 1; transform: translateY(0); }
 }

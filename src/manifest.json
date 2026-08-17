@@ -1,3 +1,22 @@
 {
-    "gcm_sender_id": "405891226420"
+    "gcm_sender_id": "405891226420",
+    "name": "Today Uống Gì?",
+    "short_name": "Uống Gì?",
+    "description": "Đặt món nhóm từ ShopeeFood và chia tiền nhanh gọn.",
+    "lang": "vi",
+    "dir": "ltr",
+    "start_url": "/",
+    "scope": "/",
+    "display": "standalone",
+    "orientation": "any",
+    "background_color": "#f9f1e2",
+    "theme_color": "#f9f1e2",
+    "icons": [
+        {
+            "src": "assets/images/icon.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any"
+        }
+    ]
 }

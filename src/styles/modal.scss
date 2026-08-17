@@ -1,3 +1,5 @@
+@use 'breakpoints' as bp;
+
 /* ─── Modal shell ──────────────────────────────────────────────────── */
 
 .modal-backdrop {
@@ -28,6 +30,7 @@
   display: flex;
   flex-direction: column;
   max-height: calc(100vh - 48px);
+  max-height: calc(100dvh - 48px);
 }
 .modal.modal-lg { max-width: 640px; }
 .modal.modal-sm { max-width: 440px; }
@@ -399,4 +402,124 @@ select.field-input {
 }
 @keyframes spin {
   to { transform: rotate(360deg); }
+}
+
+/* ─── Touch affordances ───────────────────────────────────────────── */
+
+/* The lift-on-hover treatment sticks after a tap on touch devices — the button
+   stays raised until something else is touched. Drop the movement and keep the
+   colour states. */
+@include bp.touch {
+  .btn-primary:hover,
+  .btn-danger:hover {
+    transform: none;
+  }
+  .btn-primary:active,
+  .btn-danger:active {
+    transform: scale(0.98);
+  }
+}
+
+/* ─── Phone: centred dialog → bottom sheet ───────────────────────── */
+
+@include bp.phone {
+  .modal-backdrop {
+    /* Anchor to the bottom edge and let the sheet span the full width. */
+    place-items: end stretch;
+    padding: 0;
+  }
+
+  .modal,
+  .modal.modal-lg,
+  .modal.modal-sm {
+    max-width: none;
+    /* Only the top corners round — the sheet is flush with the screen edge. */
+    border-radius: 22px 22px 0 0;
+    border-bottom: 0;
+    border-left: 0;
+    border-right: 0;
+    /* Leave a strip of backdrop visible so it still reads as a layer over the
+       page, and so there is somewhere to tap to dismiss. */
+    max-height: 92dvh;
+    animation: m-in-sheet 0.26s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .modal-head {
+    padding: 18px 18px 4px;
+  }
+  .modal-title {
+    font-size: 18px;
+  }
+
+  .modal-body {
+    padding: 12px 18px 4px;
+    /* Stop a scroll that reaches the end of the sheet from chaining through to
+       the page behind it. */
+    overscroll-behavior: contain;
+  }
+
+  .modal-foot {
+    padding: 12px 18px;
+    /* Actions stay put while the body scrolls — on a tall form the confirm
+       button would otherwise sit below the fold. */
+    position: sticky;
+    bottom: 0;
+    background: var(--surface);
+    border-top: 1px solid var(--line-soft);
+    /* Clear the home indicator on gesture-nav iPhones. */
+    padding-bottom: calc(12px + env(safe-area-inset-bottom));
+  }
+
+  /* Comfortable hit targets — 32-40px controls are fiddly with a thumb. */
+  .modal-close {
+    width: 38px;
+    height: 38px;
+  }
+  .field-input {
+    height: 44px;
+  }
+  .btn-ghost,
+  .btn-primary,
+  .btn-danger {
+    min-height: 44px;
+    padding: 10px 14px;
+    font-size: 13.5px;
+  }
+  .switch {
+    width: 46px;
+    height: 28px;
+  }
+  .switch::after {
+    width: 22px;
+    height: 22px;
+  }
+  .switch.on::after {
+    left: 21px;
+  }
+}
+
+@keyframes m-in-sheet {
+  from { opacity: 0; transform: translateY(100%); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* A phone in landscape is ~380px tall; a 92dvh sheet with sticky header and
+   footer leaves almost no body. Go near-fullscreen and tighten the chrome. */
+@include bp.phone-landscape {
+  .modal,
+  .modal.modal-lg,
+  .modal.modal-sm {
+    max-height: 100dvh;
+    border-radius: 0;
+  }
+  .modal-head {
+    padding: 10px 16px 2px;
+  }
+  .modal-title {
+    font-size: 16px;
+  }
+  .modal-foot {
+    padding-top: 8px;
+    padding-bottom: calc(8px + env(safe-area-inset-bottom));
+  }
 }

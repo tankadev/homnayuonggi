@@ -1,3 +1,5 @@
+@use 'breakpoints' as bp;
+
 /* ─── reset & base ─────────────────────────────────────────────────── */
 
 * { box-sizing: border-box; }
@@ -17,6 +19,14 @@ body {
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
   overflow: hidden;
+
+  /* iOS inflates text when a phone is rotated to landscape unless pinned. */
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+
+  /* App-like shell: don't let a stray vertical swipe trigger the browser's
+     pull-to-refresh and blow away in-progress order state. */
+  overscroll-behavior-y: contain;
 }
 /* Rooms screen needs scrollable body — applied dynamically by RoomsPage */
 body.rooms-body { overflow-y: auto; }
@@ -54,4 +64,42 @@ img,
 svg {
   display: block;
   max-width: 100%;
+}
+
+/* ─── mobile base ──────────────────────────────────────────────────── */
+
+@include bp.phone {
+  body {
+    /* 13px is fine at arm's length on a monitor, cramped in the hand. */
+    font-size: 14px;
+  }
+}
+
+/* iOS Safari zooms the whole page when focusing a field whose computed
+   font-size is under 16px, and never zooms back out. Fields across the app
+   declare their own sizes (11.5px in history search, 12.5px in room search,
+   13.5px in create-order, 14px in the fee fields), and because Angular scopes
+   component styles with an attribute selector those all outrank a plain
+   `input` rule here.
+   `!important` is deliberate: this is a platform-bug guard that must not lose
+   to a component, and it is sealed inside a coarse-pointer query so no
+   mouse-driven layout is affected. Keyed on pointer rather than width so a
+   narrow desktop window keeps the tighter design. */
+@include bp.touch {
+  input,
+  textarea,
+  select {
+    font-size: 16px !important;
+  }
+}
+
+@include bp.touch {
+  /* Grey flash on every tap reads as jank in an app-like context. */
+  a,
+  button,
+  [role='button'],
+  label,
+  summary {
+    -webkit-tap-highlight-color: transparent;
+  }
 }

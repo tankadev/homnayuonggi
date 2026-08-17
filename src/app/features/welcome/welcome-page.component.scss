@@ -1,3 +1,5 @@
+@use 'breakpoints' as bp;
+
 :host {
   display: flex;
   flex: 1;
@@ -729,4 +731,143 @@
   }
   .wel-vis { height: 380px; }
   .wel-title { font-size: 42px; }
+}
+
+/* ─── Phone ───────────────────────────────────────────────────────── */
+
+@include bp.tablet {
+  /* Stacked, the hero is taller than a phone screen, so this screen has to
+     scroll instead of clipping at the fold. */
+  .wel-app {
+    overflow: visible;
+  }
+  .wel-main {
+    overflow-y: auto;
+  }
+  .wel-hero {
+    gap: 20px;
+  }
+  .wel-vis {
+    height: 300px;
+  }
+  .wel-title {
+    font-size: 34px;
+  }
+
+  /* `width: min(400px, 100%)` looks responsive but is not: for intrinsic sizing
+     Chrome ignores the percentage, so the card contributes a 400px min-content
+     width. Every flex ancestor here has the default `min-width: auto`, so that
+     400px propagated all the way up and made the whole screen 418px wide inside
+     a 316px viewport — clipped, not scrollable, because .wel-app hides overflow.
+     max-width carries no such min-content contribution. */
+  .wel-card {
+    width: 100%;
+    max-width: 400px;
+  }
+
+  /* Belt and braces: let the flex/grid chain shrink below its content so one
+     stubborn child can never widen the page again. */
+  .wel-app,
+  .wel-main,
+  .wel-hero,
+  .wel-copy,
+  .wel-vis {
+    min-width: 0;
+  }
+
+  /* Brand · (spacer) · actions — the 1fr middle track collapsed to 0px and the
+     two ends still overflowed. Let the row wrap instead. */
+  .wel-header-inner {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 10px 12px;
+  }
+}
+
+@include bp.phone {
+  .wel-title {
+    font-size: 27px;
+    letter-spacing: -0.035em;
+  }
+  .wel-sub {
+    font-size: 13px;
+  }
+  .wel-name {
+    font-size: 18px;
+  }
+  .wel-vis {
+    height: 250px;
+  }
+
+  /* Three feature tiles across ~350px leaves each about 110px — not enough for
+     a label plus its line of copy. Stacked, the icon can sit beside the text. */
+  .wel-features {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+  .wel-feat {
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+  }
+
+  .wel-cta-row {
+    gap: 10px;
+  }
+  .wel-btn-primary {
+    width: 100%;
+    justify-content: center;
+  }
+
+  /* The three social-proof chips are positioned to spill outside the hero card
+     (-8%, -4%, -10%), which works beside a 400px card and not beside a 268px
+     one: f3 was clipped by the right edge of the screen and f1 sat 3px from the
+     left. Pull them inside and shrink them so they stop smothering the
+     illustration they are meant to frame. */
+  .wel-float {
+    padding: 7px 9px;
+    gap: 6px;
+    border-radius: 13px;
+    max-width: 72%;
+  }
+  .wel-float.f1 {
+    left: 0;
+    top: 2%;
+  }
+  .wel-float.f2 {
+    left: 0;
+  }
+  .wel-float.f3 {
+    right: 0;
+    /* f1 (top 6%) and f3 (top 12%) are only ~15px apart on a 250px-tall card,
+       so at this width the two chips landed on top of each other. */
+    top: 30%;
+  }
+  .wel-float-ic {
+    width: 26px;
+    height: 26px;
+    font-size: 14px;
+    border-radius: 8px;
+  }
+
+  /* The blobs are sized for a desktop canvas; at phone width they wash out the
+     whole background, and three 60px blurs cost real fill-rate on a mobile GPU. */
+  .wel-blob {
+    filter: blur(44px);
+    opacity: 0.45;
+  }
+  .wel-blob.b1 {
+    width: 200px;
+    height: 200px;
+  }
+  .wel-blob.b2 {
+    width: 220px;
+    height: 220px;
+  }
+  .wel-blob.b3 {
+    width: 130px;
+    height: 130px;
+  }
 }

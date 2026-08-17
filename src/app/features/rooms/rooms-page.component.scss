@@ -1,3 +1,5 @@
+@use 'breakpoints' as bp;
+
 :host {
   display: flex;
   flex: 1;
@@ -297,4 +299,96 @@
 .rooms-footer b {
   color: var(--ink-2);
   font-weight: 700;
+}
+
+/* ─── Responsive ──────────────────────────────────────────────────────
+   The room grid is already fluid (auto-fill / minmax), so this is mostly the
+   hero, the toolbar and spacing. */
+
+@include bp.tablet {
+  .rooms-main {
+    padding: 16px 14px 0;
+  }
+
+  /* Title and the stats block stop competing for one row. */
+  .rooms-hero {
+    grid-template-columns: 1fr;
+    gap: 14px;
+    padding: 2px 0 14px;
+  }
+  .rooms-stats {
+    /* Stats read left-to-right on their own row instead of right-aligned. */
+    width: 100%;
+  }
+  .stat-cell {
+    flex: 1;
+    text-align: left;
+    min-width: 0;
+  }
+}
+
+@include bp.phone {
+  .rooms-main {
+    padding: 12px 10px 0;
+  }
+  .rooms-hero-title {
+    font-size: 22px;
+  }
+  .rooms-hero-sub {
+    font-size: 12px;
+  }
+
+  /* The uppercase labels ("ĐANG HOẠT ĐỘNG") wrap onto a second line at this
+     width, which leaves the three cells at uneven heights. Tighten the label and
+     the padding so each fits on one line. */
+  .stat-cell {
+    padding: 8px 10px;
+  }
+  .stat-cell b {
+    font-size: 17px;
+  }
+  .stat-cell span {
+    font-size: 8.5px;
+    letter-spacing: 0.03em;
+    white-space: nowrap;
+  }
+
+  /* Four chips can't share 366px, and wrapping broke "Tất cả" mid-phrase. Let the
+     strip scroll sideways instead — the standard phone filter pattern. */
+  .filter-chips {
+    max-width: 100%;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .filter-chips::-webkit-scrollbar {
+    display: none;
+  }
+  .filter-chip {
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  /* .rooms-toolbar already wraps; give the search the whole row it lands on and
+     let the create button share a row with the filter chips. */
+  .search-room {
+    min-width: 0;
+    max-width: none;
+    width: 100%;
+    order: 3;
+  }
+  .btn-create {
+    height: 38px;
+    margin-left: 0;
+  }
+
+  .room-grid {
+    /* One card per row below ~520px either way; this just removes the dead
+       space either side of a card that can't quite fit two. */
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .rooms-footer {
+    padding: 20px 0 calc(12px + env(safe-area-inset-bottom));
+  }
 }

@@ -99,5 +99,22 @@ export class ThemeService {
       .filter((c) => c.startsWith('pal-'))
       .forEach((c) => body.classList.remove(c));
     body.classList.add(`pal-${id}`);
+    this.syncThemeColor();
+  }
+
+  /**
+   * Point <meta name="theme-color"> at the palette's --bg so the phone status bar
+   * and browser chrome match the theme (and the standalone PWA splash doesn't
+   * flash a stale colour).
+   *
+   * Reads the computed value rather than PaletteMeta.swatches because the two
+   * disagree: for `espresso` the background is swatches[1] (#1c1612) while every
+   * light palette has it at swatches[2]. The computed --bg is always right.
+   */
+  private syncThemeColor(): void {
+    const meta = document.querySelector('meta[name="theme-color"]');
+    if (!meta) return;
+    const bg = getComputedStyle(document.body).getPropertyValue('--bg').trim();
+    if (bg) meta.setAttribute('content', bg);
   }
 }

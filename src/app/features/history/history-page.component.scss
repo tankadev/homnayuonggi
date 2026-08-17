@@ -1,3 +1,5 @@
+@use 'breakpoints' as bp;
+
 :host {
   display: flex;
   flex: 1;
@@ -365,4 +367,90 @@
   font-size: 9px;
   font-weight: 800;
   font-family: var(--display);
+}
+
+/* ─── Responsive ──────────────────────────────────────────────────── */
+
+@include bp.lap {
+  .h-main {
+    grid-template-columns: 260px 1fr 280px;
+    gap: 10px;
+    padding: 10px 12px;
+  }
+}
+
+@include bp.tablet {
+  /* The desktop layout is a fixed-height pane that clips; stacked, the content
+     is taller than the viewport, so the host stops claiming a fixed share and
+     lets .app-pages (overflow-y: auto at this breakpoint) do the scrolling. */
+  :host {
+    flex: 0 0 auto;
+    overflow: visible;
+  }
+
+  .h-main {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 10px 12px;
+    overflow: visible;
+    flex: 0 0 auto;
+  }
+
+  /* One page scroll instead of three panes. DOM order already reads correctly
+     top-to-bottom on a phone — balance summary, then the order list, then the
+     who-owes-whom pairs — so no reordering is needed here.
+
+     flex: 0 0 auto is the important part: the columns default to flex-shrink: 1,
+     so the three of them were being squeezed to fit the old fixed-height frame
+     (the first column collapsed to 108px) while their content, now overflow:
+     visible, spilled out and painted over the column below. */
+  .h-col,
+  .h-col.scroll {
+    flex: 0 0 auto;
+    height: auto;
+    min-height: 0;
+    overflow: visible;
+    padding-right: 0;
+  }
+
+  .h-banner {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+}
+
+@include bp.phone {
+  .h-main {
+    padding: 8px 10px calc(12px + env(safe-area-inset-bottom));
+    gap: 10px;
+  }
+
+  /* Fixed 120px is too narrow to read a query in, and the row has spare width
+     now that it is full-bleed. */
+  .h-search {
+    width: 100%;
+  }
+  .h-search input {
+    width: 100%;
+    flex: 1;
+    min-width: 0;
+  }
+
+  /* Four tabs ("Tất cả · Bạn cần trả · Bạn cần thu · Đã xong") can't share
+     366px: the group is inline-flex with no wrap, so the labels were breaking
+     mid-phrase into "Tất / cả". Scroll the strip sideways instead. The sliding
+     .h-list-pill indicator lives inside the group, so it travels with it. */
+  .h-list-tabs-group {
+    max-width: 100%;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .h-list-tabs-group::-webkit-scrollbar {
+    display: none;
+  }
+  .h-list-tab {
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
 }

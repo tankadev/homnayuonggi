@@ -1,3 +1,5 @@
+@use 'breakpoints' as bp;
+
 :host { display: contents; }
 
 .h-order {
@@ -610,4 +612,120 @@
 .h-order-mini-btn.settle:hover {
   background: color-mix(in oklab, var(--accent, #c14e63) 85%, var(--ink));
   color: white;
+}
+
+/* ─── Phone ───────────────────────────────────────────────────────────
+   Every row in this card is a five-column grid built for a 320px-wide rail on
+   a desktop. On a 366px card the three `auto` columns plus the icon and gaps
+   consume the whole width, the `1fr` text column collapses to literally 0px,
+   and the shop name overflows as one word per line — a 13-line vertical
+   staircase. The fix is to break each row into two, so the flexible text
+   column always has real width. */
+
+@include bp.phone {
+  /* ── Card header ──
+     Row 1: icon · shop name + meta · total · chevron
+     Row 2: status chip, full width
+     The total stays on row 1 (it is only ~78px and it is the number people scan
+     for); the status chip is what would not fit, at ~147px. */
+  .h-order-head {
+    grid-template-columns: 40px minmax(0, 1fr) auto auto;
+    column-gap: 8px;
+    row-gap: 8px;
+    padding: 10px 12px;
+    /* A long shop name now wraps to three or four lines; centring would leave
+       the thumbnail and the total floating halfway down it. */
+    align-items: start;
+  }
+  .h-order-shop-icon {
+    grid-column: 1;
+    grid-row: 1;
+  }
+  .h-order-info {
+    grid-column: 2;
+    grid-row: 1;
+  }
+  .h-order-amount {
+    grid-column: 3;
+    grid-row: 1;
+  }
+  .h-order-chev {
+    grid-column: 4;
+    grid-row: 1;
+  }
+  .h-order-status {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    justify-self: start;
+  }
+
+  .h-order-amount .v {
+    font-size: 15px;
+  }
+  /* The name still wraps, but now inside a real column instead of a 0px one. */
+  .h-order-shop {
+    font-size: 13px;
+  }
+
+  /* ── Per-person payment rows ──
+     Row 1: avatar · name + status line · share
+     Row 2: the action (mark paid / người thu), right-aligned. */
+  .h-pay-row {
+    grid-template-columns: 26px minmax(0, 1fr) auto;
+    column-gap: 8px;
+    row-gap: 6px;
+  }
+  .h-pay-avatar {
+    grid-column: 1;
+    grid-row: 1;
+  }
+  .h-pay-name {
+    grid-column: 2;
+    grid-row: 1;
+  }
+  .h-pay-amt {
+    grid-column: 3;
+    grid-row: 1;
+  }
+  /* Renders "—" or nothing at all — pure spacer, and a whole grid column of a
+     366px card is too much to pay for it. */
+  .h-pay-when {
+    display: none;
+  }
+  .h-pay-status,
+  .h-pay-toggle {
+    grid-column: 2 / -1;
+    grid-row: 2;
+    justify-self: end;
+  }
+  .h-pay-toggle {
+    /* Comfortable thumb target for the mark-as-paid action. */
+    min-height: 36px;
+  }
+
+  /* ── "Trả cho ai" list ──
+     22px · label · value · copy button, where the value is an account number
+     that has to stay readable. Label and copy share row 1, value gets its own. */
+  .h-pay-to-item {
+    grid-template-columns: 22px minmax(0, 1fr) auto;
+    column-gap: 8px;
+    row-gap: 2px;
+  }
+  .h-pay-to-item .m-ico {
+    grid-column: 1;
+    grid-row: 1;
+  }
+  .h-pay-to-item .m-label {
+    grid-column: 2;
+    grid-row: 1;
+  }
+  .h-pay-to-item .m-copy {
+    grid-column: 3;
+    grid-row: 1 / span 2;
+    align-self: center;
+  }
+  .h-pay-to-item .m-value {
+    grid-column: 2;
+    grid-row: 2;
+  }
 }

@@ -1,0 +1,66 @@
+/* ─── responsive breakpoints ────────────────────────────────────────────
+   Single source of truth for every media query in the app. Component SCSS
+   pulls these in with `@use 'breakpoints' as bp;` — resolved through
+   `stylePreprocessorOptions.includePaths: ["src/styles"]` in angular.json.
+
+   The app was built desktop-first (fixed 3-column grids, 100dvh shell, no
+   page scroll), so these mixins are all max-width overrides layered on top
+   of the existing desktop rules rather than a mobile-first base.
+
+   Ladder:
+     desktop   > 1080px   untouched — the original 3-column layouts
+     lap       ≤ 1080px   3-col → 2-col, side rails narrow
+     tablet    ≤  860px   3-col → single column, rails stack or move to sheets
+     phone     ≤  600px   compact spacing, bottom sheets, sticky action bars
+     tiny      ≤  380px   iPhone SE / small Android — tighten further
+   ──────────────────────────────────────────────────────────────────────── */
+
+$lap: 1080px;
+$tablet: 860px;
+$phone: 600px;
+$tiny: 380px;
+
+/* ≤1080px — laptops and small windows. */
+@mixin lap {
+  @media (max-width: $lap) {
+    @content;
+  }
+}
+
+/* ≤860px — tablets portrait and below. This is where multi-column dies. */
+@mixin tablet {
+  @media (max-width: $tablet) {
+    @content;
+  }
+}
+
+/* ≤600px — phones. The main target. */
+@mixin phone {
+  @media (max-width: $phone) {
+    @content;
+  }
+}
+
+/* ≤380px — very small phones. */
+@mixin tiny {
+  @media (max-width: $tiny) {
+    @content;
+  }
+}
+
+/* Phone held sideways: wide but very short. Vertical padding must collapse
+   or the sticky bars eat the whole screen. */
+@mixin phone-landscape {
+  @media (max-height: 480px) and (orientation: landscape) {
+    @content;
+  }
+}
+
+/* Coarse pointer — real touch devices regardless of width. Use for hit-target
+   sizing and for dropping :hover-only affordances, NOT for layout. A narrow
+   desktop window is still a mouse. */
+@mixin touch {
+  @media (hover: none) and (pointer: coarse) {
+    @content;
+  }
+}

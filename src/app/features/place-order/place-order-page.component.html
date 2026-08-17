@@ -57,7 +57,21 @@
     </div>
   </section>
 
-  <div class="col-right">
+  <!-- Phone only: dims the menu behind the cart sheet and gives a tap target to
+       dismiss it. Hidden by CSS above the phone breakpoint. -->
+  <div
+    class="cart-sheet-backdrop"
+    *ngIf="cartSheetOpen"
+    (click)="closeCartSheet()"
+    aria-hidden="true"
+  ></div>
+
+  <div class="col-right" [class.is-open]="cartSheetOpen">
+    <!-- Phone-only sheet handle; doubles as the close button. -->
+    <button type="button" class="sheet-grip" (click)="closeCartSheet()" aria-label="Đóng giỏ hàng">
+      <span class="sheet-grip-bar"></span>
+    </button>
+
     <app-cart-panel
       [cart]="cart"
       [members]="members"
@@ -76,6 +90,22 @@
       (viewModeChange)="onCartViewModeChange($event)"
     ></app-cart-panel>
   </div>
+
+  <!-- Phone only: the cart column is off-screen, so this bar carries the running
+       total and is the way back into it. Hidden by CSS above the phone
+       breakpoint and while the sheet itself is open. -->
+  <button type="button" class="cart-bar" (click)="toggleCartSheet()">
+    <span class="cb-badge">{{ cartItemCount }}</span>
+    <span class="cb-text">
+      <span class="cb-label">Giỏ của phòng</span>
+      <span class="cb-total">{{ subtotal | vnd }}đ</span>
+    </span>
+    <span class="cb-cta">
+      Xem giỏ
+      <!-- The registry only ships a down-chevron; .cb-cta app-icon flips it. -->
+      <app-icon name="chevron" [size]="14"></app-icon>
+    </span>
+  </button>
 </main>
 
 <app-dish-options-modal

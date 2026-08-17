@@ -1,8 +1,21 @@
+@use 'breakpoints' as bp;
+
 .app {
+  /* 100vh on mobile means "viewport with the browser chrome hidden", so the
+     bottom of the shell sits behind the address bar until the user scrolls.
+     dvh tracks the chrome as it collapses; vh stays as the fallback for
+     engines without dvh (pre-15.4 Safari). */
   height: 100vh;
+  height: 100dvh;
   display: flex;
   flex-direction: column;
   overflow: hidden;
+
+  /* index.html opts into viewport-fit=cover so the palette background reaches
+     the screen edges; that puts the notch and home indicator in play, so pad
+     the shell back off them. Left/right matter in landscape. */
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
 }
 
 /* Wraps the [ngSwitch] outlet so the page-level fade trigger has a stable
@@ -14,4 +27,14 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
+}
+
+@include bp.tablet {
+  /* Below the multi-column breakpoint the screens stop being self-contained
+     100%-height panes and become one tall scroll, so the shell hands vertical
+     scrolling down to the active page instead of clipping it. */
+  .app-pages {
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
 }

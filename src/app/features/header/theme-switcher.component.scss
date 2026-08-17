@@ -1,6 +1,17 @@
+@use 'breakpoints' as bp;
+
 :host {
   position: relative;
   display: inline-flex;
+}
+
+/* Below ~380px the header action row runs out of width and pushes the logout
+   button off-screen entirely. The palette name is the cheapest ~40px to give
+   back — the colour swatches already identify the active theme. */
+@include bp.tiny {
+  .theme-trigger-name {
+    display: none;
+  }
 }
 
 .theme-trigger {
